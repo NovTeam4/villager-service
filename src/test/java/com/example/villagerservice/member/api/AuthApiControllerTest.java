@@ -8,23 +8,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.example.villagerservice.common.exception.CommonErrorCode.DATA_INVALID_ERROR;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -73,8 +69,8 @@ class AuthApiControllerTest {
                         .content(memberJson)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.errorCode").value("MEMBER_VALIDATE_ERROR"))
-                .andExpect(jsonPath("$.errorMessage").value("유효성 검사에 실패하였습니다."))
+                .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
                 .andExpect(jsonPath("$.validation.nickname").value("닉네임은 필수입력 값입니다."))
                 .andDo(print());
     }
@@ -92,8 +88,8 @@ class AuthApiControllerTest {
                         .content(memberJson)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.errorCode").value("MEMBER_VALIDATE_ERROR"))
-                .andExpect(jsonPath("$.errorMessage").value("유효성 검사에 실패하였습니다."))
+                .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
                 .andExpect(jsonPath("$.validation.email").value("유효하지 않은 이메일 형식입니다."))
                 .andDo(print());
     }
@@ -111,8 +107,8 @@ class AuthApiControllerTest {
                         .content(memberJson)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.errorCode").value("MEMBER_VALIDATE_ERROR"))
-                .andExpect(jsonPath("$.errorMessage").value("유효성 검사에 실패하였습니다."))
+                .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
                 .andExpect(jsonPath("$.validation.password").value("비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요."))
                 .andDo(print());
     }

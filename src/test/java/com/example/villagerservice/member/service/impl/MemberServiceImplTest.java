@@ -55,7 +55,7 @@ class MemberServiceImplTest {
         // then
         verify(memberRepository, times(1)).findByEmail(captor.capture());
         assertThat(captor.getValue()).isEqualTo(email);
-        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_DUPLICATE_ERROR);
+        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_DUPLICATE_ERROR);
     }
 
     @Test
