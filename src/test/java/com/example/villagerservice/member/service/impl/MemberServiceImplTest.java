@@ -94,7 +94,7 @@ class MemberServiceImplTest {
     @DisplayName("회원정보 변경 시 회원이 없을 경우 테스트")
     void updateMemberInfoNotFoundTest() {
         // given
-        given(memberRepository.findById(anyLong()))
+        given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.empty());
 
         // when
@@ -114,7 +114,7 @@ class MemberServiceImplTest {
         MemberInfoUpdate memberInfoUpdate = MemberInfoUpdate.builder()
                 .build();
 
-        given(memberRepository.findById(anyLong()))
+        given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(Member.builder().build()));
 
         // when
@@ -137,7 +137,7 @@ class MemberServiceImplTest {
 
         Member mockMember = spy(member);
 
-        given(memberRepository.findById(anyLong()))
+        given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(mockMember));
 
         MemberInfoUpdate memberInfoUpdate = MemberInfoUpdate.builder()
@@ -158,7 +158,7 @@ class MemberServiceImplTest {
     @DisplayName("회원 비밀번호 변경 시 회원이 없을 경우 테스트")
     void updateMemberPasswordNotFoundTest() {
         // given
-        given(memberRepository.findById(anyLong()))
+        given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.empty());
 
         // when
@@ -176,7 +176,7 @@ class MemberServiceImplTest {
     void updateMemberPasswordEmptyTest() {
         // given
 
-        given(memberRepository.findById(anyLong()))
+        given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(Member.builder().build()));
 
         // when
