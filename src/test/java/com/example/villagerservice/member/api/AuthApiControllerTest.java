@@ -1,6 +1,6 @@
 package com.example.villagerservice.member.api;
 
-import com.example.villagerservice.config.security.provider.JwtTokenProvider;
+import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.member.request.MemberCreate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
