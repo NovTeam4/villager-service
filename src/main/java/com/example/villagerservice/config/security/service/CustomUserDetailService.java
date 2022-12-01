@@ -3,7 +3,7 @@ package com.example.villagerservice.config.security.service;
 import com.example.villagerservice.config.security.context.MemberContext;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.exception.MemberException;
-import com.example.villagerservice.member.repository.MemberRepository;
+import com.example.villagerservice.member.domain.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

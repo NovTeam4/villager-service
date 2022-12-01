@@ -1,6 +1,7 @@
 package com.example.villagerservice.member.request;
 
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.member.valid.Password;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,8 +24,7 @@ public class MemberCreate {
             regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$")
     private String email;
 
-    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}",
-            message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+    @Password
     private String password;
 
     public void passwordEncrypt(String encryptPassword) {
@@ -35,7 +35,7 @@ public class MemberCreate {
         return Member.builder()
                 .nickname(this.nickname)
                 .email(this.email)
-                .pass(this.password)
+                .encodedPassword(this.password)
                 .build();
     }
 }
