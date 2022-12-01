@@ -1,4 +1,4 @@
-package com.example.villagerservice.common.response;
+package com.example.villagerservice.common.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -19,7 +19,6 @@ public class ErrorResponse {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }
-
     public void addValidError(String fieldName, String errorMessage) {
         if (validation == null) {
             validation = new HashMap<>();
