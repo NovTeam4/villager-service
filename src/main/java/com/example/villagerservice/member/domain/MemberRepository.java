@@ -1,6 +1,5 @@
-package com.example.villagerservice.member.repository;
+package com.example.villagerservice.member.domain;
 
-import com.example.villagerservice.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
