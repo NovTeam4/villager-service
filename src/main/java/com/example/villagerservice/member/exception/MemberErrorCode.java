@@ -1,6 +1,6 @@
 package com.example.villagerservice.member.exception;
 
-import com.example.villagerservice.common.response.ErrorResponse;
+import com.example.villagerservice.common.exception.ErrorResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

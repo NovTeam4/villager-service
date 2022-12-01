@@ -1,6 +1,5 @@
 package com.example.villagerservice.common.exception;
 
-import com.example.villagerservice.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
