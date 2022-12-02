@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_UPDATE_SAME_PASS;
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_VALID_NOT;
@@ -31,6 +32,8 @@ public class Member extends BaseTimeEntity {
     private String nickname;
     private String email;
     private String encodedPassword;
+    private boolean isDeleted;
+    private LocalDateTime deletedAt;
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
@@ -40,6 +43,7 @@ public class Member extends BaseTimeEntity {
         this.email = email;
         this.encodedPassword = encodedPassword;
         this.roleType = RoleType.USER;
+        this.isDeleted = false;
     }
 
     public void updateMemberInfo(String nickname) {
@@ -62,5 +66,10 @@ public class Member extends BaseTimeEntity {
         }
 
         this.encodedPassword = passwordEncoder.encode(rawPassword);
+    }
+
+    public void deleteMember() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
     }
 }
