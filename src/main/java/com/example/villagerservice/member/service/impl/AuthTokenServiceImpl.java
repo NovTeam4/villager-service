@@ -3,7 +3,6 @@ package com.example.villagerservice.member.service.impl;
 import com.example.villagerservice.common.jwt.JwtTokenException;
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.common.jwt.JwtTokenInfoDto;
-import com.example.villagerservice.common.jwt.JwtTokenType;
 import com.example.villagerservice.config.redis.RedisRepository;
 import com.example.villagerservice.member.service.AuthTokenService;
 import lombok.RequiredArgsConstructor;

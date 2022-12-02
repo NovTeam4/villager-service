@@ -5,6 +5,6 @@ import com.example.villagerservice.party.request.PartyCreate;
 
 public interface PartyService {
 
-    public void createParty(Member member , PartyCreate partyCreate);
+    public void createParty(String email , PartyCreate partyCreate);
 
 }

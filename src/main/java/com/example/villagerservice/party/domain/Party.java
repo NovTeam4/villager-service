@@ -1,5 +1,6 @@
 package com.example.villagerservice.party.domain;
 
+import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.request.PartyCreate;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class Party {
+public class Party extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "party_id")
@@ -48,4 +49,7 @@ public class Party {
         this.member = member;
     }
 
+    public Party() {
+
+    }
 }

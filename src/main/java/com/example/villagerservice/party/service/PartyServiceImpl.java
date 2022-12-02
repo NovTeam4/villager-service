@@ -1,7 +1,7 @@
 package com.example.villagerservice.party.service;
 
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.member.repository.MemberRepository;
+import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyRepository;
@@ -16,7 +16,6 @@ import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_N
 
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PartyServiceImpl implements PartyService{
 
@@ -24,15 +23,16 @@ public class PartyServiceImpl implements PartyService{
     private final MemberRepository memberRepository;
 
     @Override
-    public void createParty(Member member , PartyCreate partyCreate) {
+    public void createParty(String email , PartyCreate partyCreate) {
 
-        memberCheckedByEmail(member.getEmail());
+        Member member = memberCheckedByEmail(email);
         Party party = new Party(partyCreate , member);
+
         partyRepository.save(party);
 
     }
 
-    private void memberCheckedByEmail(String email) {
+    private Member memberCheckedByEmail(String email) {
 
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
 
@@ -40,5 +40,6 @@ public class PartyServiceImpl implements PartyService{
             throw new PartyException(PARTY_NOT_FOUND_MEMBER);
         }
 
+        return optionalMember.get();
     }
 }
