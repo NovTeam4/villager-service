@@ -8,4 +8,5 @@ public interface MemberService {
 
     void updateMemberInfo(String email, MemberInfoUpdate memberInfoUpdate);
     void updateMemberPassword(String email, String pass);
+    void deleteMember(String email);
 }
