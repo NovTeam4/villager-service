@@ -1,5 +1,6 @@
 package com.example.villagerservice.config.security.handler;
 
+import com.example.villagerservice.common.exception.AuthVillagerException;
 import com.example.villagerservice.common.exception.ErrorResponse;
 import com.example.villagerservice.member.exception.MemberErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,12 +17,19 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class CustomFailureHandler implements AuthenticationFailureHandler {
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
 
-        ErrorResponse errorResponse = MemberErrorCode.createErrorResponse(MemberErrorCode.MEMBER_AUTH_NOT_VALID);
+        ErrorResponse errorResponse = createErrorResponse((AuthVillagerException) e);
         new ObjectMapper().writeValue(response.getWriter(), errorResponse);
+    }
+
+    private ErrorResponse createErrorResponse(AuthVillagerException e) {
+        return ErrorResponse.builder()
+                .errorCode(e.getCommonErrorCode().getErrorCode())
+                .errorMessage(e.getCommonErrorCode().getErrorMessage())
+                .build();
     }
 }

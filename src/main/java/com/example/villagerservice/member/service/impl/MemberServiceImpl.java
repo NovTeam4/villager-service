@@ -44,6 +44,13 @@ public class MemberServiceImpl implements MemberService {
         member.changePassword(passwordEncoder, password);
     }
 
+    @Override
+    @Transactional
+    public void deleteMember(String email) {
+        Member member = findByMemberEmail(email);
+        member.deleteMember();
+    }
+
     private Member findByMemberEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));

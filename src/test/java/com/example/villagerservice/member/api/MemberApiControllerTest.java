@@ -30,6 +30,7 @@ import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBE
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_UPDATE_SAME_PASS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -250,6 +251,32 @@ class MemberApiControllerTest {
         Member findMember = memberRepository.findByEmail("hello@naver.com")
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
+        // then
         assertThat(passwordEncoder.matches(newPassword, findMember.getEncodedPassword())).isTrue();
+    }
+    
+    @Test
+    @DisplayName("회원 탈퇴 테스트")
+    void deleteMemberTest() throws Exception {
+        Member member = Member.builder()
+                .email("hello@naver.com")
+                .nickname("hello")
+                .encodedPassword(passwordEncoder.encode("default!!Password@1"))
+                .build();
+        memberRepository.save(member);
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(member, null, null);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        // when
+        mockMvc.perform(delete("/api/v1/members"))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        Member findMember = memberRepository.findByEmail("hello@naver.com")
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+
+        // then
+        assertThat(findMember.isDeleted()).isTrue();
     }
 }

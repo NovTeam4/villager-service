@@ -7,10 +7,7 @@ import com.example.villagerservice.member.request.MemberPasswordUpdate;
 import com.example.villagerservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -31,5 +28,10 @@ public class MemberApiController {
     public void updateMemberPassword(@AuthenticationPrincipal Member member,
                                      @Valid @RequestBody MemberPasswordUpdate memberPasswordUpdate) {
         memberService.updateMemberPassword(member.getEmail(), memberPasswordUpdate.getPassword());
+    }
+
+    @DeleteMapping
+    public void deleteMember(@AuthenticationPrincipal Member member) {
+        memberService.deleteMember(member.getEmail());
     }
 }
