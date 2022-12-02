@@ -1,5 +1,11 @@
 package com.example.villagerservice.party.domain;
 
+import com.example.villagerservice.common.domain.BaseTimeEntity;
+import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.party.request.PartyCreate;
+import lombok.Builder;
+import lombok.Getter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -8,17 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Party {
+@Getter
+public class Party extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "party_id")
     private Long id;
 
-    @NotEmpty
     @Column(name = "party_name")
     private String partyName;
 
-    @NotEmpty
     private Integer score;
 
     @Column(name = "start_dt")
@@ -27,9 +32,24 @@ public class Party {
     @Column(name = "end_dt")
     private LocalDateTime endDt;
 
-    @Size(min = 10000 , max = 30000)
     private Integer amount;
 
     //Member와 연결 필요
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
+    @Builder
+    public Party(PartyCreate partyCreate, Member member) {
+        this.partyName = partyCreate.getPartyName();
+        this.score = partyCreate.getScore();
+        this.startDt = partyCreate.getStartDt();
+        this.endDt = partyCreate.getEndDt();
+        this.amount = partyCreate.getAmount();
+        this.member = member;
+    }
+
+    public Party() {
+
+    }
 }
