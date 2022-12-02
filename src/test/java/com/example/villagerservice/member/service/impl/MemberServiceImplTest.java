@@ -1,5 +1,6 @@
 package com.example.villagerservice.member.service.impl;
 
+import com.example.villagerservice.common.exception.CommonErrorCode;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.exception.MemberException;
 import com.example.villagerservice.member.domain.MemberRepository;
@@ -59,6 +60,7 @@ class MemberServiceImplTest {
         });
 
         // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
         verify(memberRepository, times(1)).findByEmail(captor.capture());
         assertThat(captor.getValue()).isEqualTo(email);
         assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_DUPLICATE_ERROR);
@@ -84,6 +86,7 @@ class MemberServiceImplTest {
         memberService.createMember(memberCreate);
 
         // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
         verify(memberRepository, times(1)).save(captor.capture());
         assertThat(captor.getValue().getNickname()).isEqualTo(nickname);
         assertThat(captor.getValue().getEmail()).isEqualTo(email);
@@ -102,6 +105,7 @@ class MemberServiceImplTest {
                 () -> memberService.updateMemberInfo("test@gamil.com", any()));
 
         // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
         assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_NOT_FOUND);
         assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_NOT_FOUND.getErrorCode());
         assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_NOT_FOUND.getErrorMessage());
@@ -122,6 +126,7 @@ class MemberServiceImplTest {
                 () -> memberService.updateMemberInfo("test@gamil.com", memberInfoUpdate));
 
         // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
         assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_VALID_NOT);
         assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_VALID_NOT.getErrorCode());
         assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_VALID_NOT.getErrorMessage());
@@ -149,6 +154,7 @@ class MemberServiceImplTest {
         memberService.updateMemberInfo("test@gamil.com", memberInfoUpdate);
 
         // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
         verify(mockMember, times(1)).updateMemberInfo(captor.capture());
         assertThat(captor.getValue()).isEqualTo("변경 닉네임");
         assertThat(mockMember.getNickname()).isEqualTo("변경 닉네임");
@@ -166,6 +172,7 @@ class MemberServiceImplTest {
                 () -> memberService.updateMemberPassword("test@gamil.com", any()));
 
         // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
         assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_NOT_FOUND);
         assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_NOT_FOUND.getErrorCode());
         assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_NOT_FOUND.getErrorMessage());
@@ -184,6 +191,7 @@ class MemberServiceImplTest {
                 () -> memberService.updateMemberPassword("test@gamil.com", ""));
 
         // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
         assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_VALID_NOT);
         assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_VALID_NOT.getErrorCode());
         assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_VALID_NOT.getErrorMessage());
@@ -196,7 +204,7 @@ class MemberServiceImplTest {
         // given
         String password = "test1234";
 
-        given(memberRepository.findById(anyLong()))
+        given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(Member.builder().build()));
 
 
@@ -209,9 +217,46 @@ class MemberServiceImplTest {
                 () -> memberService.updateMemberPassword("test@gamil.com", "test1234"));
 
         // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
         assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_UPDATE_SAME_PASS);
         assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_UPDATE_SAME_PASS.getErrorCode());
         assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_UPDATE_SAME_PASS.getErrorMessage());
+    }
+    
+    @Test
+    @DisplayName("회원탈퇴 시 회원이 없을 경우 테스트")
+    void deleteMemberNotFoundTest() {
+        // given
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.empty());
+
+        // when
+        MemberException memberException = assertThrows(MemberException.class,
+                () -> memberService.deleteMember("test@gamil.com"));
+
+        // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
+        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_NOT_FOUND);
+        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_NOT_FOUND.getErrorCode());
+        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("회원탈퇴 테스트")
+    void deleteMemberTest() {
+        // given
+        Member member = Member.builder().build();
+        Member mockMember = spy(member);
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(mockMember));
+
+        // when
+        memberService.deleteMember("test@gamil.com");
+
+        // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
+        verify(mockMember, times(1)).deleteMember();
+        assertThat(mockMember.isDeleted()).isTrue();
     }
 
     private Member createMember(String nickname, String email, String pass) {
