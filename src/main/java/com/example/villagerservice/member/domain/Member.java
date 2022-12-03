@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_UPDATE_SAME_PASS;
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_VALID_NOT;
@@ -35,15 +36,28 @@ public class Member extends BaseTimeEntity {
     private boolean isDeleted;
     private LocalDateTime deletedAt;
     @Enumerated(EnumType.STRING)
+    @Column(length = 5)
+    private Gender gender;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
     private RoleType roleType;
+    @Embedded
+    private Birthday birthday;
+    @Embedded
+    private MannerPoint mannerPoint;
+    @Embedded
+    private TagCollection tagCollection = new TagCollection();
 
     @Builder
-    private Member(String nickname, String email, String encodedPassword) {
+    private Member(String nickname, String email, String encodedPassword, Gender gender, Birthday birthday) {
         this.nickname = nickname;
         this.email = email;
         this.encodedPassword = encodedPassword;
-        this.roleType = RoleType.USER;
+        this.gender = gender;
+        this.birthday = birthday;
         this.isDeleted = false;
+        this.mannerPoint = new MannerPoint(50);
+        this.roleType = RoleType.USER;
     }
 
     public void updateMemberInfo(String nickname) {
@@ -71,5 +85,9 @@ public class Member extends BaseTimeEntity {
     public void deleteMember() {
         this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void addMemberAttentionTag(List<Tag> tags) {
+        this.tagCollection.addTags(tags);
     }
 }
