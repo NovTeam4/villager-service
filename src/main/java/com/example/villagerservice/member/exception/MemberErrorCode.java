@@ -1,6 +1,5 @@
 package com.example.villagerservice.member.exception;
 
-import com.example.villagerservice.common.exception.ErrorResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +10,7 @@ public enum MemberErrorCode {
     MEMBER_DUPLICATE_ERROR("INFO-402", "회원이 중복되었습니다."),
     MEMBER_NOT_FOUND("INFO-403", "회원이 존재하지 않습니다."),
     MEMBER_UPDATE_SAME_PASS("INFO-404", "비밀번호가 동일합니다."),
+    MEMBER_TAG_MAX_COUNT("INFO-405", "관심태그는 최대 5개까지 가능합니다."),
     ;
 
     private final String errorCode;
