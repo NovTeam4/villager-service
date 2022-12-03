@@ -1,4 +1,4 @@
-package com.example.villagerservice.member.api;
+package com.example.villagerservice.party.api;
 
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.member.domain.Member;

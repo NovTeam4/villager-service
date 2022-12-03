@@ -5,12 +5,15 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum PartyErrorCode {
-    //600번대
+public enum PartyListErrorCode {
+    //700번대
+    PARTY_NOT_FOUND("INFO-700","일치하는 모임이 없습니다"),
+    ALREADY_BEAN_APPLIED("INFO-701","이미 신청된 모임입니다.")
 
-    PARTY_NOT_FOUND_MEMBER("INFO-600","일치하는 회원이 없습니다"),
     ;
 
     private final String errorCode;
     private final String errorMessage;
+
+
 }

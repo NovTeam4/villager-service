@@ -1,4 +1,4 @@
-package com.example.villagerservice.member.service.impl;
+package com.example.villagerservice.party.service.impl;
 
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
@@ -6,7 +6,7 @@ import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyCreate;
-import com.example.villagerservice.party.service.PartyServiceImpl;
+import com.example.villagerservice.party.service.impl.PartyServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

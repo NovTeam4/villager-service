@@ -4,6 +4,7 @@ import com.example.villagerservice.common.jwt.JwtTokenException;
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.common.jwt.JwtTokenInfoDto;
 import com.example.villagerservice.config.redis.RedisRepository;
+import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.service.AuthTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -35,6 +36,7 @@ public class AuthTokenServiceImpl implements AuthTokenService {
 
         JwtTokenInfoDto jwtTokenInfoDto = jwtTokenProvider.generateToken(authentication);
         redisRepository.saveRefreshToken(authentication, jwtTokenInfoDto);
+
         return jwtTokenInfoDto;
     }
 }

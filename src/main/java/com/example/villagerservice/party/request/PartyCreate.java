@@ -20,8 +20,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class PartyCreate {
-
-
     @Column(name = "party_name")
     @NotEmpty
     private String partyName;
