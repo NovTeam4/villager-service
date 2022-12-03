@@ -2,6 +2,7 @@ package com.example.villagerservice.member.api;
 
 
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.member.request.MemberAddAttentionTag;
 import com.example.villagerservice.member.request.MemberInfoUpdate;
 import com.example.villagerservice.member.request.MemberPasswordUpdate;
 import com.example.villagerservice.member.service.MemberService;
@@ -27,11 +28,17 @@ public class MemberApiController {
     @PatchMapping("/password")
     public void updateMemberPassword(@AuthenticationPrincipal Member member,
                                      @Valid @RequestBody MemberPasswordUpdate memberPasswordUpdate) {
-        memberService.updateMemberPassword(member.getEmail(), memberPasswordUpdate.getPassword());
+        memberService.updateMemberPassword(member.getEmail(), memberPasswordUpdate);
     }
 
     @DeleteMapping
     public void deleteMember(@AuthenticationPrincipal Member member) {
         memberService.deleteMember(member.getEmail());
+    }
+
+    @PostMapping("/tags")
+    public void addMemberAttentionTag(@AuthenticationPrincipal Member member,
+                                      @Valid @RequestBody MemberAddAttentionTag addAttentionTag) {
+        memberService.addAttentionTag(member.getEmail(), addAttentionTag);
     }
 }
