@@ -15,7 +15,8 @@ public enum JwtTokenErrorCode {
     JWT_REFRESH_TOKEN_NOT_EXIST("INFO-505", "JWT Refresh Token이 존재하지 않습니다."),
     JWT_REFRESH_TOKEN_NOT_SAME("INFO-506", "JWT Refresh 토큰이 일치하지 않습니다."),
     JWT_ACCESS_TOKEN_MALFORMED_ERROR("INFO-507", "잘못된 JWT Access Token 서명입니다."),
-    JWT_REFRESH_TOKEN_MALFORMED_ERROR("INFO-507", "잘못된 JWT Refresh Token 서명입니다.")
+    JWT_REFRESH_TOKEN_MALFORMED_ERROR("INFO-507", "잘못된 JWT Refresh Token 서명입니다."),
+    JWT_REFRESH_TOKEN_NOT_VALID("INFO-508", "Refresh Token과 현재 접속한 사용자의 정보가 일치하지 않습니다.")
     ;
 
     private final String errorCode;
