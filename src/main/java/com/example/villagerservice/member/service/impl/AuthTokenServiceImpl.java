@@ -42,6 +42,7 @@ public class AuthTokenServiceImpl implements AuthTokenService {
 
         JwtTokenInfoDto jwtTokenInfoDto = jwtTokenProvider.generateToken(authentication);
         redisRepository.saveRefreshToken(authentication, jwtTokenInfoDto);
+
         return jwtTokenInfoDto;
     }
 }

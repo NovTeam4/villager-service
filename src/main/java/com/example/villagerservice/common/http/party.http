@@ -1,0 +1,15 @@
+### 모임 등록
+POST http://localhost:9000/api/v1/parties
+Content-Type: application/json
+
+{
+  "partyName": "파티이름",
+  "score": "100",
+  "startDt": "2022-12-03 00:00:00",
+  "entDt": "2022-12-03 00:00:01",
+  "amount": "100"
+}
+
+### 모임 신청
+POST http://localhost:9000/api/v1/parties/1
+Content-Type: application/json
