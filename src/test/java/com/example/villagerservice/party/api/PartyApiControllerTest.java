@@ -5,6 +5,7 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.exception.PartyException;
+import com.example.villagerservice.party.exception.PartyListException;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyCreate;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,13 +39,12 @@ import java.util.Optional;
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_UPDATE_SAME_PASS;
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_FOUND_MEMBER;
+import static com.example.villagerservice.party.exception.PartyListErrorCode.PARTY_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -113,8 +113,9 @@ public class PartyApiControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(value))
                 .andExpect(status().isOk())
-                .andDo(print())).hasCause(new PartyException(PARTY_NOT_FOUND_MEMBER));
-
+                .andExpect(jsonPath("$.errorCode").value(MEMBER_NOT_FOUND.getErrorCode()))
+                .andExpect(jsonPath("$.errorMessage").value(MEMBER_NOT_FOUND.getErrorMessage()))
+                .andDo(print()));
     }
 
     @Test
@@ -153,4 +154,75 @@ public class PartyApiControllerTest {
         Assertions.assertThat(optionalParty.get().getAmount()).isEqualTo(party.getAmount());
         Assertions.assertThat(optionalParty.get().getScore()).isEqualTo(party.getScore());
     }
+
+    @Test
+    @DisplayName("모임 조회 시 , 모임이 없을 경우")
+    void getPartyWithoutParty() throws Exception {
+
+        PartyCreate partyCreate = PartyCreate.builder()
+                .partyName("TestParty")
+                .score(20)
+                .amount(10000)
+                .build();
+
+        Member member = Member.builder()
+                .nickname("Test")
+                .encodedPassword("1234")
+                .email("hello@naver.com")
+                .build();
+
+        Party party = new Party(partyCreate , member);
+
+        String value = objectMapper.writeValueAsString(party);
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(member, null, null);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+
+        Assertions.assertThatThrownBy(() -> this.mockMvc.perform(get("/api/v1/parties/" + party.getId())
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errorCode").value(PARTY_NOT_FOUND.getErrorCode()))
+                .andExpect(jsonPath("$.errorMessage").value(PARTY_NOT_FOUND.getErrorMessage()))
+                .andDo(print()));
+    }
+
+    @Test
+    @DisplayName("모임 조회 테스트")
+    void getParty() throws Exception {
+
+        PartyCreate partyCreate = PartyCreate.builder()
+                .partyName("TestParty")
+                .score(20)
+                .amount(10000)
+                .build();
+
+        Member member = Member.builder()
+                .nickname("Test")
+                .encodedPassword("1234")
+                .email("hello@naver.com")
+                .build();
+
+        Party party = new Party(partyCreate , member);
+
+        memberRepository.save(member);
+        partyRepository.save(party);
+
+        String value = objectMapper.writeValueAsString(party);
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(member, null, null);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        mockMvc.perform(get("/api/v1/parties/" + party.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andDo(print());
+
+        Party findParty = partyRepository.findById(party.getId()).get();
+
+        Assertions.assertThat(findParty.getPartyName()).isEqualTo(party.getPartyName());
+        Assertions.assertThat(findParty.getMember()).isEqualTo(party.getMember());
+    }
+
+
 }
