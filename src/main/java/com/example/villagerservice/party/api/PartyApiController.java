@@ -1,11 +1,11 @@
 package com.example.villagerservice.party.api;
 
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.request.PartyCreate;
 import com.example.villagerservice.party.service.PartyListService;
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +23,14 @@ public class PartyApiController {
         partyService.createParty(member.getEmail() , partyCreate);
 
     }
+
+    @GetMapping("/{partyId}")
+    public PartyDTO getParty(@PathVariable Long partyId) {
+
+        return partyService.getParty(partyId);
+
+    }
+
 
     @PostMapping("/{partyId}")
     public void applyParty(@AuthenticationPrincipal Member member, @PathVariable Long partyId){

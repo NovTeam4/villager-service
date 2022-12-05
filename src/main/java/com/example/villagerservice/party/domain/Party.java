@@ -3,6 +3,7 @@ package com.example.villagerservice.party.domain;
 import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.request.PartyCreate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 
