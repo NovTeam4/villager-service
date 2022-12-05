@@ -158,7 +158,6 @@ public class PartyServiceImplTest {
         assertEquals("TestParty",party.getPartyName());
         assertEquals(100,party.getScore());
         assertEquals(member,party.getMember());
-        assertEquals("홍길동",party.getMember().getNickname());
 
     }
 }
