@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
-public class LocalJwtAuthenticationFilter extends OncePerRequestFilter {
+public class LocalAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -23,6 +23,7 @@ public class LocalJwtAuthenticationFilter extends OncePerRequestFilter {
         Member member = Member.builder()
                 .email("test@gmail.com")
                 .build();
+        member.setJwtMemberId(1L);
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(member, null, null);

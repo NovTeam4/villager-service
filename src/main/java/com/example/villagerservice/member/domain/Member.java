@@ -30,34 +30,35 @@ public class Member extends BaseTimeEntity {
     @Column(name = "member_id")
     private Long id;
 
-    private String nickname;
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private MemberDetail memberDetail;
+
     private String email;
     private String encodedPassword;
     private boolean isDeleted;
     private LocalDateTime deletedAt;
-    @Enumerated(EnumType.STRING)
-    @Column(length = 5)
-    private Gender gender;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private RoleType roleType;
-    @Embedded
-    private Birthday birthday;
-    @Embedded
-    private MannerPoint mannerPoint;
+
     @Embedded
     private TagCollection tagCollection = new TagCollection();
 
     @Builder
     private Member(String nickname, String email, String encodedPassword, Gender gender, Birthday birthday) {
-        this.nickname = nickname;
         this.email = email;
         this.encodedPassword = encodedPassword;
-        this.gender = gender;
-        this.birthday = birthday;
         this.isDeleted = false;
-        this.mannerPoint = new MannerPoint(50);
         this.roleType = RoleType.USER;
+        addMemberDetail(nickname, gender, birthday);
+    }
+
+    private void addMemberDetail(String nickname, Gender gender, Birthday birthday) {
+        if (this.memberDetail == null) {
+            this.memberDetail = new MemberDetail();
+        }
+        this.memberDetail.addDetail(this, nickname, gender, birthday);
     }
 
     public void updateMemberInfo(String nickname) {
@@ -65,9 +66,7 @@ public class Member extends BaseTimeEntity {
             throw new MemberException(MEMBER_VALID_NOT);
         }
 
-        if (!this.nickname.equals(nickname)) {
-            this.nickname = nickname;
-        }
+        this.memberDetail.nickNameUpdate(nickname);
     }
 
     public void changePassword(PasswordEncoder passwordEncoder, String rawPassword) {
@@ -89,5 +88,9 @@ public class Member extends BaseTimeEntity {
 
     public void addMemberAttentionTag(List<Tag> tags) {
         this.tagCollection.addTags(tags);
+    }
+
+    public void setJwtMemberId(Long memberId) {
+        this.id = memberId;
     }
 }

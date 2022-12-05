@@ -1,19 +1,11 @@
 package com.example.villagerservice.config.security;
 
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
-import com.example.villagerservice.config.redis.RedisRepository;
-import com.example.villagerservice.config.security.filters.CustomAuthenticationFilter;
-import com.example.villagerservice.config.security.filters.JwtAuthenticationFilter;
-import com.example.villagerservice.config.security.filters.LocalJwtAuthenticationFilter;
-import com.example.villagerservice.config.security.handler.CustomFailureHandler;
-import com.example.villagerservice.config.security.handler.CustomSuccessHandler;
+import com.example.villagerservice.config.security.filters.LocalAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -28,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Profile(value = {"local"})
 public class LocalSecurityConfig {
 
+    private final JwtTokenProvider jwtTokenProvider;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -56,7 +49,7 @@ public class LocalSecurityConfig {
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
-                .addFilterBefore(new LocalJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new LocalAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         ;
 
         return http.build();

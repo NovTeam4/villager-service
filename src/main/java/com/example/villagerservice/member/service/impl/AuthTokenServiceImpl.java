@@ -25,13 +25,13 @@ public class AuthTokenServiceImpl implements AuthTokenService {
     private final RedisRepository redisRepository;
 
     @Override
-    public JwtTokenInfoDto getReissueTokenInfo(String email, String accessToken, String refreshToken) {
+    public JwtTokenInfoDto getReissueTokenInfo(Long loginMemberId, String accessToken, String refreshToken) {
         jwtTokenProvider.validateToken(accessToken, ACCESS_TOKEN);
         jwtTokenProvider.validateToken(refreshToken, REFRESH_TOKEN);
 
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
-        if(!email.equals(((Member) authentication.getPrincipal()).getEmail())) {
+        if(!loginMemberId.equals(((Member) authentication.getPrincipal()).getId())) {
             throw new JwtTokenException(JWT_REFRESH_TOKEN_NOT_VALID);
         }
 

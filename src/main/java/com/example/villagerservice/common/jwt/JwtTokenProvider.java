@@ -83,7 +83,8 @@ public class JwtTokenProvider {
     private Map<String, Object> createClaims(Member member) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", member.getEmail());
-        claims.put("nickname", member.getNickname());
+        claims.put("id", member.getId());
+         claims.put("nickname", member.getMemberDetail().getNickname());
         return claims;
     }
 
@@ -103,10 +104,17 @@ public class JwtTokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        return new UsernamePasswordAuthenticationToken(Member.builder()
+        Member member = createMember(claims);
+        return new UsernamePasswordAuthenticationToken(member, "", authorities);
+    }
+
+    private Member createMember(Claims claims) {
+        Member member = Member.builder()
                 .email(claims.getSubject())
                 .nickname((String) claims.get("nickname"))
-                .build(), "", authorities);
+                .build();
+        member.setJwtMemberId(((Integer) claims.get("id")).longValue());
+        return member;
     }
 
     public void validateAccessToken(String accessToken) {

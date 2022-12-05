@@ -25,6 +25,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String servletPath = request.getServletPath();
@@ -35,11 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
 
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer")) {
-//                JwtTokenResponse.createJwtTokenErrorResponse(response, SC_BAD_REQUEST, JWT_ACCESS_TOKEN_NOT_EXIST);
-                UsernamePasswordAuthenticationToken authenticationToken = new
-                    UsernamePasswordAuthenticationToken(Member.builder().email("123@naver.com").build(), null, null);
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                filterChain.doFilter(request, response);
+                JwtTokenResponse.createJwtTokenErrorResponse(response, SC_BAD_REQUEST, JWT_ACCESS_TOKEN_NOT_EXIST);
             } else {
                 try {
                     String accessToken = jwtTokenProvider.resolveToken(request);
@@ -51,12 +48,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                 } catch (JwtTokenException e) {
                     JwtTokenResponse.createJwtTokenErrorResponse(response, SC_BAD_REQUEST, e.getMemberErrorCode());
-                } 
+                }
             }
         }
     }
+
     private boolean isPass(String path) {
-        return path.equals("/api/v1/auth/login") || path.equals("/api/v1/auth/refresh") ||
-                path.equals("/api/v1/auth/signup") || path.equals("/h2-console");
+        return path.equals("/api/v1/auth/login") ||
+               path.equals("/api/v1/auth/signup") ||
+               path.equals("/h2-console");
     }
 }
