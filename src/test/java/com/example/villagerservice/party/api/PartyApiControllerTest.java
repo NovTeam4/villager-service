@@ -4,6 +4,7 @@ import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
+import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.exception.PartyListException;
 import com.example.villagerservice.party.repository.PartyRepository;
@@ -90,20 +91,20 @@ public class PartyApiControllerTest {
     @DisplayName("모임 등록 시 , 회원이 없을 경우")
     void createPartyWithoutMemberTest() throws Exception {
 
-        PartyCreate partyCreate = PartyCreate.builder()
-                .partyName("TestParty")
-                .score(20)
-                .amount(10000)
-                .build();
-
         Member member = Member.builder()
-                .email("hello@naver.com")
-                .nickname("Test")
+                .email("test@gmail.com")
+                .nickname("홍길동")
                 .build();
 
-        Party party = new Party(partyCreate , member);
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDateTime.now())
+                .endDt(LocalDateTime.now())
+                .amount(1000)
+                .build();
 
-        String value = objectMapper.writeValueAsString(party);
+        String value = objectMapper.writeValueAsString(partyRequest);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(member, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -121,22 +122,24 @@ public class PartyApiControllerTest {
     @Test
     @DisplayName("모임 등록 테스트")
     void createParty() throws Exception {
-        PartyCreate partyCreate = PartyCreate.builder()
-                .partyName("TestParty")
-                .score(20)
-                .amount(10000)
-                .build();
+
 
         Member member = Member.builder()
-                .email("hello@naver.com")
-                .nickname("Test")
+                .email("test@gmail.com")
+                .nickname("홍길동")
+                .build();
+
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDateTime.now())
+                .endDt(LocalDateTime.now())
+                .amount(1000)
                 .build();
 
         memberRepository.save(member);
 
-        Party party = new Party(partyCreate , member);
-
-        String value = objectMapper.writeValueAsString(party);
+        String value = objectMapper.writeValueAsString(partyRequest);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(member, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -150,30 +153,29 @@ public class PartyApiControllerTest {
 
         Optional<Party> optionalParty = partyRepository.findById(member.getId());
 
-        Assertions.assertThat(optionalParty.get().getPartyName()).isEqualTo(party.getPartyName());
-        Assertions.assertThat(optionalParty.get().getAmount()).isEqualTo(party.getAmount());
-        Assertions.assertThat(optionalParty.get().getScore()).isEqualTo(party.getScore());
+        Assertions.assertThat(optionalParty.get().getPartyName()).isEqualTo(partyRequest.getPartyName());
+        Assertions.assertThat(optionalParty.get().getAmount()).isEqualTo(partyRequest.getAmount());
+        Assertions.assertThat(optionalParty.get().getScore()).isEqualTo(partyRequest.getScore());
     }
 
     @Test
     @DisplayName("모임 조회 시 , 모임이 없을 경우")
     void getPartyWithoutParty() throws Exception {
 
-        PartyCreate partyCreate = PartyCreate.builder()
-                .partyName("TestParty")
-                .score(20)
-                .amount(10000)
-                .build();
-
         Member member = Member.builder()
-                .nickname("Test")
-                .encodedPassword("1234")
-                .email("hello@naver.com")
+                .email("test@gmail.com")
+                .nickname("홍길동")
                 .build();
 
-        Party party = new Party(partyCreate , member);
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDateTime.now())
+                .endDt(LocalDateTime.now())
+                .amount(1000)
+                .build();
 
-        String value = objectMapper.writeValueAsString(party);
+        Party party = Party.createParty(partyRequest.getPartyName(), partyRequest.getScore(), partyRequest.getStartDt(), partyRequest.getEndDt(), partyRequest.getAmount(), member);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(member, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -191,24 +193,23 @@ public class PartyApiControllerTest {
     @DisplayName("모임 조회 테스트")
     void getParty() throws Exception {
 
-        PartyCreate partyCreate = PartyCreate.builder()
-                .partyName("TestParty")
-                .score(20)
-                .amount(10000)
-                .build();
-
         Member member = Member.builder()
-                .nickname("Test")
-                .encodedPassword("1234")
-                .email("hello@naver.com")
+                .email("test@gmail.com")
+                .nickname("홍길동")
                 .build();
 
-        Party party = new Party(partyCreate , member);
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDateTime.now())
+                .endDt(LocalDateTime.now())
+                .amount(1000)
+                .build();
+
+        Party party = Party.createParty(partyRequest.getPartyName(), partyRequest.getScore(), partyRequest.getStartDt(), partyRequest.getEndDt(), partyRequest.getAmount(), member);
 
         memberRepository.save(member);
         partyRepository.save(party);
-
-        String value = objectMapper.writeValueAsString(party);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(member, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);

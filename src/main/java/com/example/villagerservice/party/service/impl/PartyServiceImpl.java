@@ -26,23 +26,22 @@ public class PartyServiceImpl implements PartyService {
     private final MemberRepository memberRepository;
 
     @Override
-    public void createParty(Long memberId , PartyCreate partyCreate) {
+    public void createParty(Long memberId , PartyDTO.Request partyRequest) {
 
         Member member = memberCheckedById(memberId);
-        Party party = new Party(partyCreate , member);
-
+        Party party = Party.createParty(partyRequest.getPartyName(), partyRequest.getScore(), partyRequest.getStartDt(), partyRequest.getEndDt(), partyRequest.getAmount(), member);
         partyRepository.save(party);
 
     }
 
     @Override
-    public PartyDTO getParty(Long partyId) {
+    public PartyDTO.Response getParty(Long partyId) {
 
         Party party = partyRepository.findById(partyId).orElseThrow(
                 () -> new PartyListException(PARTY_NOT_FOUND)
         );
 
-        return PartyDTO.createPartyDTO(party);
+        return PartyDTO.Response.createPartyResponse(party);
 
     }
 

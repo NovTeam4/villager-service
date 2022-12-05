@@ -4,8 +4,10 @@ import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.request.PartyCreate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -16,6 +18,9 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Party extends BaseTimeEntity {
 
     @Id @GeneratedValue
@@ -40,17 +45,14 @@ public class Party extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Builder
-    public Party(PartyCreate partyCreate, Member member) {
-        this.partyName = partyCreate.getPartyName();
-        this.score = partyCreate.getScore();
-        this.startDt = partyCreate.getStartDt();
-        this.endDt = partyCreate.getEndDt();
-        this.amount = partyCreate.getAmount();
-        this.member = member;
-    }
-
-    public Party() {
-
+    public static Party createParty(String partyName , Integer score , LocalDateTime startDt , LocalDateTime endDt , Integer amount , Member member) {
+        return Party.builder()
+                .partyName(partyName)
+                .score(score)
+                .startDt(startDt)
+                .endDt(endDt)
+                .amount(amount)
+                .member(member)
+                .build();
     }
 }

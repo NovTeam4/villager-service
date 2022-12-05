@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyList;
+import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.repository.PartyListRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyCreate;
@@ -40,13 +41,13 @@ class PartyListServiceImplTest {
         // given
         Long partyId = 1L;
 
-        PartyCreate partyCreate = PartyCreate.builder()
-            .partyName("재밌는모임")
-            .score(100)
-            .startDt(LocalDateTime.now())
-            .endDt(LocalDateTime.now().plusHours(2))
-            .amount(1000)
-            .build();
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("재밌는모임")
+                .score(100)
+                .startDt(LocalDateTime.now())
+                .endDt(LocalDateTime.now().plusHours(2))
+                .amount(1000)
+                .build();
 
         Member member = Member.builder()
                 .nickname("홍길동")
@@ -56,15 +57,23 @@ class PartyListServiceImplTest {
 
         given(partyRepository.findById(anyLong()))
             .willReturn(Optional.of(Party.builder()
-                    .member(member)
-                    .partyCreate(partyCreate)
+                            .partyName(partyRequest.getPartyName())
+                            .score(partyRequest.getScore())
+                            .startDt(partyRequest.getStartDt())
+                            .endDt(partyRequest.getEndDt())
+                            .amount(partyRequest.getAmount())
+                            .member(member)
                     .build()));
 
         given(partyRepository.save(any()))
             .willReturn(Optional.of(Party.builder()
-                .member(member)
-                .partyCreate(partyCreate)
-                .build()));
+                    .partyName(partyRequest.getPartyName())
+                    .score(partyRequest.getScore())
+                    .startDt(partyRequest.getStartDt())
+                    .endDt(partyRequest.getEndDt())
+                    .amount(partyRequest.getAmount())
+                    .member(member)
+                    .build()));
 
         ArgumentCaptor<PartyList> captor = ArgumentCaptor.forClass(PartyList.class);
 
@@ -82,13 +91,13 @@ class PartyListServiceImplTest {
         // given
         Long partyId = 1L;
 
-        PartyCreate partyCreate = PartyCreate.builder()
-            .partyName("재밌는모임")
-            .score(100)
-            .startDt(LocalDateTime.now())
-            .endDt(LocalDateTime.now().plusHours(2))
-            .amount(1000)
-            .build();
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("재밌는모임")
+                .score(100)
+                .startDt(LocalDateTime.now())
+                .endDt(LocalDateTime.now().plusHours(2))
+                .amount(1000)
+                .build();
 
         Member member = Member.builder()
             .nickname("홍길동")
@@ -98,15 +107,23 @@ class PartyListServiceImplTest {
 
         given(partyRepository.findById(anyLong()))
             .willReturn(Optional.of(Party.builder()
-                .member(member)
-                .partyCreate(partyCreate)
-                .build()));
+                    .partyName(partyRequest.getPartyName())
+                    .score(partyRequest.getScore())
+                    .startDt(partyRequest.getStartDt())
+                    .endDt(partyRequest.getEndDt())
+                    .amount(partyRequest.getAmount())
+                    .member(member)
+                    .build()));
 
         given(partyRepository.save(any()))
             .willReturn(Optional.of(Party.builder()
-                .member(member)
-                .partyCreate(partyCreate)
-                .build()));
+                    .partyName(partyRequest.getPartyName())
+                    .score(partyRequest.getScore())
+                    .startDt(partyRequest.getStartDt())
+                    .endDt(partyRequest.getEndDt())
+                    .amount(partyRequest.getAmount())
+                    .member(member)
+                    .build()));
 
         ArgumentCaptor<PartyList> captor = ArgumentCaptor.forClass(PartyList.class);
 
