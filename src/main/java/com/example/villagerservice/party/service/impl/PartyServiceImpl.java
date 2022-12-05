@@ -11,7 +11,6 @@ import com.example.villagerservice.party.request.PartyCreate;
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,34 +26,29 @@ public class PartyServiceImpl implements PartyService {
     private final MemberRepository memberRepository;
 
     @Override
-    public void createParty(String email , PartyCreate partyCreate) {
+    public void createParty(Long memberId , PartyDTO.Request partyRequest) {
 
-        Member member = memberCheckedByEmail(email);
-        Party party = new Party(partyCreate , member);
-
+        Member member = memberCheckedById(memberId);
+        Party party = Party.createParty(partyRequest.getPartyName(), partyRequest.getScore(), partyRequest.getStartDt(), partyRequest.getEndDt(), partyRequest.getAmount(), member);
         partyRepository.save(party);
 
     }
 
     @Override
-    public PartyDTO getParty(Long partyId) {
+    public PartyDTO.Response getParty(Long partyId) {
 
         Party party = partyRepository.findById(partyId).orElseThrow(
                 () -> new PartyListException(PARTY_NOT_FOUND)
         );
 
-        return PartyDTO.createPartyDTO(party);
+        return PartyDTO.Response.createPartyResponse(party);
 
     }
 
-    private Member memberCheckedByEmail(String email) {
+    private Member memberCheckedById(Long memberId) {
 
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
-
-        if(optionalMember.isEmpty()) {
-            throw new PartyException(PARTY_NOT_FOUND_MEMBER);
-        }
-
-        return optionalMember.get();
+        return memberRepository.findById(memberId).orElseThrow(
+                () -> new PartyException(PARTY_NOT_FOUND_MEMBER)
+        );
     }
 }

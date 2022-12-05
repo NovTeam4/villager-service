@@ -2,7 +2,6 @@ package com.example.villagerservice.party.api;
 
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.dto.PartyDTO;
-import com.example.villagerservice.party.request.PartyCreate;
 import com.example.villagerservice.party.service.PartyListService;
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +17,14 @@ public class PartyApiController {
     private final PartyListService partyListService;
 
     @PostMapping()
-    public void createParty(@AuthenticationPrincipal Member member , @Validated @RequestBody PartyCreate partyCreate) {
+    public void createParty(@AuthenticationPrincipal Member member , @Validated @RequestBody PartyDTO.Request partyRequest) {
 
-        partyService.createParty(member.getEmail() , partyCreate);
+        partyService.createParty(member.getId() , partyRequest);
 
     }
 
     @GetMapping("/{partyId}")
-    public PartyDTO getParty(@PathVariable Long partyId) {
+    public PartyDTO.Response getParty(@PathVariable Long partyId) {
 
         return partyService.getParty(partyId);
 

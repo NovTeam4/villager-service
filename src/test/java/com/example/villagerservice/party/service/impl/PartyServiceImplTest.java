@@ -50,20 +50,22 @@ public class PartyServiceImplTest {
     @DisplayName("모임 등록 시 , 회원 없을 경우")
     public void createPartyWithoutMember() {
 
-        PartyCreate partyCreate = PartyCreate.builder()
-                .partyName("TestParty")
-                .score(20)
-                .amount(10000)
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDateTime.now())
+                .endDt(LocalDateTime.now())
+                .amount(1000)
                 .build();
 
         Member member = Member.builder()
-                .email("hello@naver.com")
-                .nickname("Test")
+                .email("test@gmail.com")
+                .nickname("홍길동")
                 .build();
 
 
         PartyException partyException = assertThrows(PartyException.class, () -> {
-            partyService.createParty(member.getEmail(), partyCreate);
+            partyService.createParty(member.getId(), partyRequest);
         });
 
         assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND_MEMBER.getErrorCode());
@@ -75,31 +77,30 @@ public class PartyServiceImplTest {
     @DisplayName("모임 등록 테스트")
     public void createParty(){
 
-        PartyCreate partyCreate = PartyCreate.builder()
-                .partyName("TestParty")
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("test-party")
                 .score(100)
                 .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusHours(2))
+                .endDt(LocalDateTime.now())
                 .amount(1000)
                 .build();
 
-        String email = "123@123";
 
-        given(memberRepository.findByEmail(anyString()))
+        given(memberRepository.findById(anyLong()))
                 .willReturn(Optional.of(Member.builder()
                         .nickname("홍길동")
                         .encodedPassword("1234")
-                        .email("123@123")
+                        .email("test@gmail.com")
                         .build()));
 
         ArgumentCaptor<Party> captor = ArgumentCaptor.forClass(Party.class);
 
-        partyService.createParty(email , partyCreate);
+        partyService.createParty(1L , partyRequest);
 
         verify(partyRepository,times(1)).save(captor.capture());
-        assertEquals("TestParty",captor.getValue().getPartyName());
-        assertEquals(100,captor.getValue().getScore());
-        assertEquals(1000,captor.getValue().getAmount());
+        assertEquals("test-party" , captor.getValue().getPartyName());
+        assertEquals(100, captor.getValue().getScore());
+        assertEquals("홍길동" , captor.getValue().getMember().getMemberDetail().getNickname());
 
     }
 
@@ -107,18 +108,18 @@ public class PartyServiceImplTest {
     @DisplayName("모임 조회 시 , 모임이 없을 경우")
     public void getPartyWithoutParty() {
 
-        PartyCreate partyCreate = PartyCreate.builder()
-                .partyName("TestParty")
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("test-party")
                 .score(100)
                 .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusHours(2))
+                .endDt(LocalDateTime.now())
                 .amount(1000)
                 .build();
 
         Member member = Member.builder()
                 .nickname("홍길동")
                 .encodedPassword("1234")
-                .email("123@123")
+                .email("test@gmail.com")
                 .build();
 
         PartyListException partyListException = assertThrows(PartyListException.class, () -> {
@@ -133,32 +134,34 @@ public class PartyServiceImplTest {
     @DisplayName("모임 조회 테스트")
     public void getParty() {
 
-        PartyCreate partyCreate = PartyCreate.builder()
-                .partyName("TestParty")
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("test-party")
                 .score(100)
                 .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusHours(2))
+                .endDt(LocalDateTime.now())
                 .amount(1000)
                 .build();
 
         Member member = Member.builder()
                 .nickname("홍길동")
                 .encodedPassword("1234")
-                .email("123@123")
+                .email("test@gmail.com")
                 .build();
 
         given(partyRepository.findById(anyLong()))
                 .willReturn(Optional.of(Party.builder()
-                        .partyCreate(partyCreate)
+                        .partyName(partyRequest.getPartyName())
+                        .score(partyRequest.getScore())
+                        .startDt(partyRequest.getStartDt())
+                        .endDt(partyRequest.getEndDt())
+                        .amount(partyRequest.getAmount())
                         .member(member)
                         .build()));
 
-        PartyDTO party = partyService.getParty(1L);
+        PartyDTO.Response party = partyService.getParty(1L);
 
-        assertEquals("TestParty",party.getPartyName());
+        assertEquals("test-party",party.getPartyName());
         assertEquals(100,party.getScore());
-        assertEquals(member,party.getMember());
-        assertEquals("홍길동",party.getMember().getNickname());
 
     }
 }
