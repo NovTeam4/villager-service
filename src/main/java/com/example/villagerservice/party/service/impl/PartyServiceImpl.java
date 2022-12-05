@@ -11,7 +11,6 @@ import com.example.villagerservice.party.request.PartyCreate;
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,9 +26,9 @@ public class PartyServiceImpl implements PartyService {
     private final MemberRepository memberRepository;
 
     @Override
-    public void createParty(String email , PartyCreate partyCreate) {
+    public void createParty(Long memberId , PartyCreate partyCreate) {
 
-        Member member = memberCheckedByEmail(email);
+        Member member = memberCheckedById(memberId);
         Party party = new Party(partyCreate , member);
 
         partyRepository.save(party);
@@ -47,14 +46,10 @@ public class PartyServiceImpl implements PartyService {
 
     }
 
-    private Member memberCheckedByEmail(String email) {
+    private Member memberCheckedById(Long memberId) {
 
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
-
-        if(optionalMember.isEmpty()) {
-            throw new PartyException(PARTY_NOT_FOUND_MEMBER);
-        }
-
-        return optionalMember.get();
+        return memberRepository.findById(memberId).orElseThrow(
+                () -> new PartyException(PARTY_NOT_FOUND_MEMBER)
+        );
     }
 }

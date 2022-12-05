@@ -20,7 +20,7 @@ public class PartyApiController {
     @PostMapping()
     public void createParty(@AuthenticationPrincipal Member member , @Validated @RequestBody PartyCreate partyCreate) {
 
-        partyService.createParty(member.getEmail() , partyCreate);
+        partyService.createParty(member.getId() , partyCreate);
 
     }
 

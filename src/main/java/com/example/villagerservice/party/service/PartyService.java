@@ -5,7 +5,7 @@ import com.example.villagerservice.party.request.PartyCreate;
 
 public interface PartyService {
 
-    public void createParty(String email , PartyCreate partyCreate);
+    public void createParty(Long memberId , PartyCreate partyCreate);
 
     PartyDTO getParty(Long partyId);
 }
