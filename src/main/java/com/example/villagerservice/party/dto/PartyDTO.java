@@ -1,18 +1,15 @@
 package com.example.villagerservice.party.dto;
 
 import com.example.villagerservice.member.domain.MannerPoint;
-import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.domain.Party;
-import com.example.villagerservice.party.domain.PartyList;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Getter
 public class PartyDTO {
