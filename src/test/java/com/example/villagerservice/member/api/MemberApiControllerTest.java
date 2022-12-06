@@ -132,6 +132,7 @@ class MemberApiControllerTest {
         Member findMember = memberRepository.findByEmail("hello@naver.com")
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
+        assertThat(findMember.getMemberDetail().getNickname()).isEqualTo("닉네임 변경!");
     }
 
     @Test
