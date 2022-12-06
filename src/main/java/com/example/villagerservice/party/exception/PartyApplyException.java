@@ -4,12 +4,12 @@ import com.example.villagerservice.common.exception.VillagerException;
 import lombok.Getter;
 
 @Getter
-public class PartyListException extends VillagerException {
+public class PartyApplyException extends VillagerException {
 
-    private final PartyListErrorCode partyListErrorCode;
+    private final PartyApplyErrorCode partyApplyErrorCode;
 
-    public PartyListException(PartyListErrorCode errorCode) {
+    public PartyApplyException(PartyApplyErrorCode errorCode) {
         super(errorCode.getErrorCode(), errorCode.getErrorMessage());
-        this.partyListErrorCode = errorCode;
+        this.partyApplyErrorCode = errorCode;
     }
 }

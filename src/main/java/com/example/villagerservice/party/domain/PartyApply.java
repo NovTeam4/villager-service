@@ -2,7 +2,6 @@ package com.example.villagerservice.party.domain;
 
 import com.example.villagerservice.common.domain.BaseTimeEntity;
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class PartyList extends BaseTimeEntity {
+public class PartyApply extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "party_list_id")
@@ -29,8 +28,8 @@ public class PartyList extends BaseTimeEntity {
     @JoinColumn(name = "party_id")
     private Party party;
 
-    public static PartyList createPartyList(Party party){
-        return PartyList.builder()
+    public static PartyApply createPartyList(Party party){
+        return PartyApply.builder()
             .targetMemberId(1L)
             .party(party)
             .isAccept(false)
