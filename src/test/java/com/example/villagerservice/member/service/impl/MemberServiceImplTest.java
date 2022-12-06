@@ -94,6 +94,7 @@ class MemberServiceImplTest {
         verify(memberCreateMock, times(1)).passwordEncrypt(passwordEncoder);
         verify(memberRepository, times(1)).findByEmail(anyString());
         verify(memberRepository, times(1)).save(captor.capture());
+        assertThat(captor.getValue().getMemberDetail().getNickname()).isEqualTo(nickname);
         assertThat(captor.getValue().getEmail()).isEqualTo(email);
     }
 
@@ -161,6 +162,7 @@ class MemberServiceImplTest {
         verify(memberRepository, times(1)).findByEmail(anyString());
         verify(mockMember, times(1)).updateMemberInfo(captor.capture());
         assertThat(captor.getValue()).isEqualTo("변경 닉네임");
+        assertThat(mockMember.getMemberDetail().getNickname()).isEqualTo("변경 닉네임");
     }
 
     @Test

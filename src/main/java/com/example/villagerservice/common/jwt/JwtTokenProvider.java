@@ -84,7 +84,7 @@ public class JwtTokenProvider {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", member.getEmail());
         claims.put("id", member.getId());
-         claims.put("nickname", member.getMemberDetail().getNickname());
+        claims.put("nickname", member.getMemberDetail().getNickname());
         return claims;
     }
 
