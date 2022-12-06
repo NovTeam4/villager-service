@@ -4,10 +4,10 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.domain.Tag;
 import com.example.villagerservice.member.exception.MemberException;
-import com.example.villagerservice.member.request.MemberAddAttentionTag;
-import com.example.villagerservice.member.request.MemberCreate;
-import com.example.villagerservice.member.request.MemberInfoUpdate;
-import com.example.villagerservice.member.request.MemberPasswordUpdate;
+import com.example.villagerservice.member.dto.CreateMemberAttentionTag;
+import com.example.villagerservice.member.dto.CreateMember;
+import com.example.villagerservice.member.dto.UpdateMemberInfo;
+import com.example.villagerservice.member.dto.UpdateMemberPassword;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static com.example.villagerservice.member.exception.MemberErrorCode.*;
@@ -50,7 +49,7 @@ class MemberServiceImplTest {
         String email = "test@gmail.com";
         String pass = "123456789";
 
-        MemberCreate memberCreate = createMemberRequest(nickname, email, pass);
+        CreateMember.Request createMember = createMemberRequest(nickname, email, pass);
         Member member = createMember(email, nickname, pass);
 
         given(memberRepository.findByEmail(anyString()))
@@ -60,7 +59,7 @@ class MemberServiceImplTest {
 
         // when
         MemberException memberException = assertThrows(MemberException.class, () -> {
-            memberService.createMember(memberCreate);
+            memberService.createMember(createMember);
         });
 
         // then
@@ -78,9 +77,9 @@ class MemberServiceImplTest {
         String email = "test@gmail.com";
         String pass = "123456789";
 
-        MemberCreate memberCreate = createMemberRequest(nickname, email, pass);
+        CreateMember.Request createMember = createMemberRequest(nickname, email, pass);
         Member member = createMember(email, nickname, pass);
-        MemberCreate memberCreateMock = spy(memberCreate);
+        CreateMember.Request createMemberMock = spy(createMember);
 
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.empty());
@@ -88,10 +87,10 @@ class MemberServiceImplTest {
         ArgumentCaptor<Member> captor = ArgumentCaptor.forClass(Member.class);
 
         // when
-        memberService.createMember(memberCreateMock);
+        memberService.createMember(createMemberMock);
 
         // then
-        verify(memberCreateMock, times(1)).passwordEncrypt(passwordEncoder);
+        verify(createMemberMock, times(1)).passwordEncrypt(passwordEncoder);
         verify(memberRepository, times(1)).findByEmail(anyString());
         verify(memberRepository, times(1)).save(captor.capture());
         assertThat(captor.getValue().getEmail()).isEqualTo(email);
@@ -119,7 +118,7 @@ class MemberServiceImplTest {
     @DisplayName("회원 정보 변경 시 변경할 데이터가 비어있을 경우 테스트")
     void updateMemberInfoEmptyTest() {
         // given
-        MemberInfoUpdate memberInfoUpdate = MemberInfoUpdate.builder()
+        UpdateMemberInfo.Request updateMemberInfo = UpdateMemberInfo.Request.builder()
                 .build();
 
         given(memberRepository.findByEmail(anyString()))
@@ -127,7 +126,7 @@ class MemberServiceImplTest {
 
         // when
         MemberException memberException = assertThrows(MemberException.class,
-                () -> memberService.updateMemberInfo("test@gamil.com", memberInfoUpdate));
+                () -> memberService.updateMemberInfo("test@gamil.com", updateMemberInfo));
 
         // then
         verify(memberRepository, times(1)).findByEmail(anyString());
@@ -149,13 +148,13 @@ class MemberServiceImplTest {
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(mockMember));
 
-        MemberInfoUpdate memberInfoUpdate = MemberInfoUpdate.builder()
+        UpdateMemberInfo.Request updateMemberInfo = UpdateMemberInfo.Request.builder()
                 .nickname("변경 닉네임")
                 .build();
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
 
         // when
-        memberService.updateMemberInfo("test@gamil.com", memberInfoUpdate);
+        memberService.updateMemberInfo("test@gamil.com", updateMemberInfo);
 
         // then
         verify(memberRepository, times(1)).findByEmail(anyString());
@@ -185,7 +184,7 @@ class MemberServiceImplTest {
     @DisplayName("회원 비밀번호 변경 시 비밀번호 데이터가 비어있을 경우 테스트")
     void updateMemberPasswordEmptyTest() {
         // given
-        MemberPasswordUpdate passwordUpdate = MemberPasswordUpdate.builder().build();
+        UpdateMemberPassword.Request passwordUpdate = UpdateMemberPassword.Request.builder().build();
 
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(Member.builder().build()));
@@ -207,7 +206,7 @@ class MemberServiceImplTest {
     void updateMemberPasswordSameTest() {
         // given
         String password = "test1234";
-        MemberPasswordUpdate passwordUpdate = MemberPasswordUpdate.builder()
+        UpdateMemberPassword.Request passwordUpdate = UpdateMemberPassword.Request.builder()
                 .password(password)
                 .build();
         given(memberRepository.findByEmail(anyString()))
@@ -288,12 +287,12 @@ class MemberServiceImplTest {
     void addAttentionTagTest() {
         // given
         Member member = Member.builder().build();
-        MemberAddAttentionTag memberAddAttentionTag = MemberAddAttentionTag.builder()
+        CreateMemberAttentionTag.Request createMemberAttentionTag = CreateMemberAttentionTag.Request.builder()
                 .tags(Arrays.asList("봄", "여름", "가을", "겨울"))
                 .build();
 
         Member mockMember = spy(member);
-        MemberAddAttentionTag  mockMemberAddAttentionTag = spy(memberAddAttentionTag);
+        CreateMemberAttentionTag.Request mockCreateMemberAttentionTag = spy(createMemberAttentionTag);
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(mockMember));
 
@@ -302,11 +301,11 @@ class MemberServiceImplTest {
         ArgumentCaptor<List<Tag>> captor = ArgumentCaptor.forClass(listClass);
 
         // when
-        memberService.addAttentionTag("test@gmail.com", mockMemberAddAttentionTag);
+        memberService.addAttentionTag("test@gmail.com", mockCreateMemberAttentionTag);
 
         // then
         verify(memberRepository, times(1)).findByEmail(anyString());
-        verify(mockMemberAddAttentionTag, times(1)).toEntity();
+        verify(mockCreateMemberAttentionTag, times(1)).toEntity();
         verify(mockMember, times(1)).addMemberAttentionTag(captor.capture());
         assertThat(captor.getValue().size()).isEqualTo(4);
         assertThat(captor.getValue().get(0).getName()).isEqualTo("봄");
@@ -325,8 +324,8 @@ class MemberServiceImplTest {
                 .build();
     }
 
-    private MemberCreate createMemberRequest(String nickname, String email, String pass) {
-        return MemberCreate.builder()
+    private CreateMember.Request createMemberRequest(String nickname, String email, String pass) {
+        return CreateMember.Request.builder()
                 .nickname(nickname)
                 .email(email)
                 .password(pass)

@@ -5,12 +5,11 @@ import com.example.villagerservice.common.jwt.JwtTokenInfoDto;
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.common.jwt.JwtTokenResponse;
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.member.request.MemberCreate;
+import com.example.villagerservice.member.dto.CreateMember;
 import com.example.villagerservice.member.service.AuthTokenService;
 import com.example.villagerservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +29,8 @@ public class AuthApiController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/signup")
-    public void createMember(@Valid @RequestBody MemberCreate memberCreate) {
-        memberService.createMember(memberCreate);
+    public void createMember(@Valid @RequestBody CreateMember.Request createMember) {
+        memberService.createMember(createMember);
     }
 
     @PostMapping("/refresh")
@@ -48,7 +47,8 @@ public class AuthApiController {
             throw new JwtTokenException(JWT_REFRESH_TOKEN_NOT_EXIST);
         }
 
-        JwtTokenInfoDto jwtTokenInfoDto = authTokenService.getReissueTokenInfo(member.getId(), accessToken, refreshToken);
+        JwtTokenInfoDto jwtTokenInfoDto = authTokenService.getReissueTokenInfo(
+                member.getId(), accessToken, refreshToken);
         return JwtTokenResponse.createResponseBody(jwtTokenInfoDto);
     }
 }

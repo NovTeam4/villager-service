@@ -4,9 +4,9 @@ import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.exception.MemberException;
-import com.example.villagerservice.member.request.MemberAddAttentionTag;
-import com.example.villagerservice.member.request.MemberInfoUpdate;
-import com.example.villagerservice.member.request.MemberPasswordUpdate;
+import com.example.villagerservice.member.dto.CreateMemberAttentionTag;
+import com.example.villagerservice.member.dto.UpdateMemberInfo;
+import com.example.villagerservice.member.dto.UpdateMemberPassword;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -81,10 +81,10 @@ class MemberApiControllerTest {
     @DisplayName("회원 정보 변경 시 회원이 없을 경우 테스트")
     void updateMemberInfoNotFoundMemberTest() throws Exception {
         // given
-        MemberInfoUpdate memberInfoUpdate = MemberInfoUpdate.builder()
+        UpdateMemberInfo.Request updateMemberInfo = UpdateMemberInfo.Request.builder()
                 .nickname("닉네임 변경!")
                 .build();
-        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(memberInfoUpdate);
+        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(updateMemberInfo);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(Member.builder()
                 .email("hello@naver.com")
@@ -113,10 +113,10 @@ class MemberApiControllerTest {
                 .build();
         memberRepository.save(member);
 
-        MemberInfoUpdate memberInfoUpdate = MemberInfoUpdate.builder()
+        UpdateMemberInfo.Request updateMemberInfo = UpdateMemberInfo.Request.builder()
                 .nickname("닉네임 변경!")
                 .build();
-        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(memberInfoUpdate);
+        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(updateMemberInfo);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(member, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -138,10 +138,10 @@ class MemberApiControllerTest {
     @DisplayName("회원 비밀번호 변경 시 회원이 없을 경우 테스트")
     void updateMemberPasswordNotFoundMemberTest() throws Exception {
         // given
-        MemberPasswordUpdate memberPasswordUpdate = MemberPasswordUpdate.builder()
+        UpdateMemberPassword.Request updateMemberPassword = UpdateMemberPassword.Request.builder()
                 .password("new!!Password@1")
                 .build();
-        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(memberPasswordUpdate);
+        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(updateMemberPassword);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(Member.builder()
                 .email("hello@naver.com")
@@ -172,10 +172,10 @@ class MemberApiControllerTest {
                 .build();
         memberRepository.save(member);
 
-        MemberPasswordUpdate memberPasswordUpdate = MemberPasswordUpdate.builder()
+        UpdateMemberPassword.Request updateMemberPassword = UpdateMemberPassword.Request.builder()
                 .password(password)
                 .build();
-        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(memberPasswordUpdate);
+        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(updateMemberPassword);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(member, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -204,11 +204,11 @@ class MemberApiControllerTest {
                 .build();
         memberRepository.save(member);
 
-        MemberPasswordUpdate memberPasswordUpdate = MemberPasswordUpdate.builder()
+        UpdateMemberPassword.Request updateMemberPassword = UpdateMemberPassword.Request.builder()
                 .password(newPassword)
                 .build();
 
-        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(memberPasswordUpdate);
+        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(updateMemberPassword);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(member, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -237,11 +237,11 @@ class MemberApiControllerTest {
                 .build();
         memberRepository.save(member);
 
-        MemberPasswordUpdate memberPasswordUpdate = MemberPasswordUpdate.builder()
+        UpdateMemberPassword.Request updateMemberPassword = UpdateMemberPassword.Request.builder()
                 .password(newPassword)
                 .build();
 
-        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(memberPasswordUpdate);
+        String jsonMemberInfoUpdate = objectMapper.writeValueAsString(updateMemberPassword);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(member, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -303,12 +303,12 @@ class MemberApiControllerTest {
                 new UsernamePasswordAuthenticationToken(member, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-        MemberAddAttentionTag memberAddAttentionTag = MemberAddAttentionTag.builder()
+        CreateMemberAttentionTag.Request createMemberAttentionTag = CreateMemberAttentionTag.Request.builder()
                 .tags(Arrays.asList("#봄", "#여름", "#가을", "#겨울", "#테스트", "태그"))
                 .build();
 
         String jsonMemberAddAttentionTag =
-                objectMapper.writeValueAsString(memberAddAttentionTag);
+                objectMapper.writeValueAsString(createMemberAttentionTag);
 
         // when & then
         mockMvc.perform(post("/api/v1/members/tags")
@@ -336,12 +336,12 @@ class MemberApiControllerTest {
                 new UsernamePasswordAuthenticationToken(member, null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-        MemberAddAttentionTag memberAddAttentionTag = MemberAddAttentionTag.builder()
+        CreateMemberAttentionTag.Request createMemberAttentionTag = CreateMemberAttentionTag.Request.builder()
                 .tags(Arrays.asList("#봄", "#여름", "#가을", "#겨울", "#계절"))
                 .build();
 
         String jsonMemberAddAttentionTag =
-                objectMapper.writeValueAsString(memberAddAttentionTag);
+                objectMapper.writeValueAsString(createMemberAttentionTag);
 
         // when
         mockMvc.perform(post("/api/v1/members/tags")

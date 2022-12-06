@@ -3,10 +3,10 @@ package com.example.villagerservice.member.service.impl;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.exception.MemberException;
 import com.example.villagerservice.member.domain.MemberRepository;
-import com.example.villagerservice.member.request.MemberAddAttentionTag;
-import com.example.villagerservice.member.request.MemberCreate;
-import com.example.villagerservice.member.request.MemberInfoUpdate;
-import com.example.villagerservice.member.request.MemberPasswordUpdate;
+import com.example.villagerservice.member.dto.CreateMemberAttentionTag;
+import com.example.villagerservice.member.dto.CreateMember;
+import com.example.villagerservice.member.dto.UpdateMemberInfo;
+import com.example.villagerservice.member.dto.UpdateMemberPassword;
 import com.example.villagerservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,24 +24,24 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void createMember(MemberCreate memberCreate) {
+    public void createMember(CreateMember.Request createMember) {
         // 이메일 중복 체크
-        memberCheckedEmailValid(memberCreate.getEmail());
+        memberCheckedEmailValid(createMember.getEmail());
         // 비밀번호 암호화
-        memberCreate.passwordEncrypt(passwordEncoder);
-        memberRepository.save(memberCreate.toEntity());
+        createMember.passwordEncrypt(passwordEncoder);
+        memberRepository.save(createMember.toEntity());
     }
 
     @Override
     @Transactional
-    public void updateMemberInfo(String email, MemberInfoUpdate memberInfoUpdate) {
+    public void updateMemberInfo(String email, UpdateMemberInfo.Request updateMemberInfo) {
         Member member = findByMemberEmail(email);
-        member.updateMemberInfo(memberInfoUpdate.getNickname());
+        member.updateMemberInfo(updateMemberInfo.getNickname());
     }
 
     @Override
     @Transactional
-    public void updateMemberPassword(String email, MemberPasswordUpdate passwordUpdate) {
+    public void updateMemberPassword(String email, UpdateMemberPassword.Request passwordUpdate) {
         Member member = findByMemberEmail(email);
         member.changePassword(passwordEncoder, passwordUpdate.getPassword());
     }
@@ -55,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void addAttentionTag(String email, MemberAddAttentionTag addAttentionTag) {
+    public void addAttentionTag(String email, CreateMemberAttentionTag.Request addAttentionTag) {
         Member member = findByMemberEmail(email);
         member.addMemberAttentionTag(addAttentionTag.toEntity());
     }

@@ -1,7 +1,7 @@
 package com.example.villagerservice.member.api;
 
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
-import com.example.villagerservice.member.request.MemberCreate;
+import com.example.villagerservice.member.dto.CreateMember;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -130,12 +130,12 @@ class AuthApiControllerTest {
 
 
     private String createMember(String nickname, String email, String pass) throws JsonProcessingException {
-        MemberCreate memberCreate = MemberCreate.builder()
+        CreateMember.Request createMember = CreateMember.Request.builder()
                 .nickname(nickname)
                 .email(email)
                 .password(pass)
                 .build();
 
-        return objectMapper.writeValueAsString(memberCreate);
+        return objectMapper.writeValueAsString(createMember);
     }
 }
