@@ -66,7 +66,9 @@ public class Member extends BaseTimeEntity {
             throw new MemberException(MEMBER_VALID_NOT);
         }
 
-        this.memberDetail.nickNameUpdate(nickname);
+        if(this.memberDetail != null) {
+            this.memberDetail.nickNameUpdate(nickname);
+        }
     }
 
     public void changePassword(PasswordEncoder passwordEncoder, String rawPassword) {

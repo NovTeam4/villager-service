@@ -50,7 +50,7 @@ public class SecurityConfig {
 
         http
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth/**", "/h2-console/**")
+                .antMatchers("/api/v1/auth/**", "/h2-console/**", "/docs/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated();

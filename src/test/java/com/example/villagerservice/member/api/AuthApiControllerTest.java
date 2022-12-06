@@ -6,6 +6,7 @@ import com.example.villagerservice.member.domain.Gender;
 import com.example.villagerservice.member.request.MemberCreate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,11 +30,12 @@ import static com.example.villagerservice.common.exception.CommonErrorCode.DATA_
 import static io.restassured.RestAssured.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
+import static com.epages.restdocs.apispec.RestAssuredRestDocumentationWrapper.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @ActiveProfiles({"test"})
 class AuthApiControllerTest extends BaseControllerTest {
@@ -69,30 +71,29 @@ class AuthApiControllerTest extends BaseControllerTest {
                 Gender.MAN, 2022, 12, 5);
 
         // when & then
-        mockMvc.perform(post("/api/v1/auth/signup")
-                        .contentType(APPLICATION_JSON)
-                        .content(memberJson)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
-                .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
-                .andExpect(jsonPath("$.validation.nickname").value("닉네임은 필수입력 값입니다."))
-                .andDo(print());
+//        mockMvc.perform(post("/api/v1/auth/signup")
+//                        .contentType(APPLICATION_JSON)
+//                        .content(memberJson)
+//                )
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
+//                .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
+//                .andExpect(jsonPath("$.validation.nickname").value("닉네임은 필수입력 값입니다."))
+//                .andDo(print());
 
 
-//        given(this.spec)
-//                .filter(document(DEFAULT_RESTDOC_PATH)) // API 문서 관련 필터 추가
-//                .accept(MediaType.APPLICATION_JSON_VALUE)
-//                .header("Content-type", "application/json")
-//                .body(memberJson)
-//                .log().all()
-//
-//                .when()
-//                .post("/api/v1/auth/signup")
-//                .then()
-//                .statusCode(HttpStatus.OK.value())
-//                .body("errorCode", Matchers.equalTo(DATA_INVALID_ERROR.getErrorCode()))
-//                .body("errorMessage", Matchers.equalTo(DATA_INVALID_ERROR.getErrorMessage()));
+        given(this.spec)
+                .filter(document(DEFAULT_RESTDOC_PATH)) // API 문서 관련 필터 추가
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Content-type", "application/json")
+                .body(memberJson)
+                .log().all()
+                .when()
+                .post("/api/v1/auth/signup")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("errorCode", Matchers.equalTo(DATA_INVALID_ERROR.getErrorCode()))
+                .body("errorMessage", Matchers.equalTo(DATA_INVALID_ERROR.getErrorMessage()));
     }
 
     @ParameterizedTest
@@ -145,7 +146,6 @@ class AuthApiControllerTest extends BaseControllerTest {
             fieldWithPath("day").type(JsonFieldType.NUMBER).description("일")
     );
 
-    private static final Snippet RESPONSE_FIELDS = responseFields();
 
     @Test
     @DisplayName("회원가입 테스트")
@@ -171,9 +171,7 @@ class AuthApiControllerTest extends BaseControllerTest {
                 .when()
                 .post("/api/v1/auth/signup")
                 .then()
-                .statusCode(HttpStatus.OK.value())
-
-        ;
+                .statusCode(HttpStatus.OK.value());
     }
 
 
