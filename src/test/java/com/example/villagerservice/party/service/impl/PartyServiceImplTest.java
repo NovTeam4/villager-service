@@ -1,18 +1,22 @@
 package com.example.villagerservice.party.service.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
-import com.example.villagerservice.party.domain.PartyList;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
-import com.example.villagerservice.party.exception.PartyListErrorCode;
-import com.example.villagerservice.party.exception.PartyListException;
 import com.example.villagerservice.party.repository.PartyRepository;
-import com.example.villagerservice.party.request.PartyCreate;
-import com.example.villagerservice.party.service.impl.PartyServiceImpl;
-import org.junit.jupiter.api.Assertions;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,17 +24,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -122,11 +115,11 @@ public class PartyServiceImplTest {
                 .email("test@gmail.com")
                 .build();
 
-        PartyListException partyListException = assertThrows(PartyListException.class, () -> {
+        PartyException partyListException = assertThrows(PartyException.class, () -> {
             partyService.getParty(1L);
         });
 
-        assertEquals(partyListException.getErrorCode(), PartyListErrorCode.PARTY_NOT_FOUND.getErrorCode());
+        assertEquals(partyListException.getErrorCode(), PartyErrorCode.PARTY_NOT_FOUND.getErrorCode());
 
     }
 
