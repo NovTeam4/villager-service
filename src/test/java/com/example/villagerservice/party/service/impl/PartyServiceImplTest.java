@@ -97,6 +97,7 @@ public class PartyServiceImplTest {
 
     }
 
+<<<<<<< Updated upstream
     @Test
     @DisplayName("모임 조회 시 , 모임이 없을 경우")
     public void getPartyWithoutParty() {
@@ -157,4 +158,6 @@ public class PartyServiceImplTest {
         assertEquals(100,party.getScore());
 
     }
+=======
+>>>>>>> Stashed changes
 }

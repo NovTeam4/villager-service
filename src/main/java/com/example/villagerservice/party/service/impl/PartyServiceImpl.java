@@ -30,6 +30,7 @@ public class PartyServiceImpl implements PartyService {
 
     }
 
+<<<<<<< Updated upstream
     @Override
     public PartyDTO.Response getParty(Long partyId) {
 
@@ -41,6 +42,8 @@ public class PartyServiceImpl implements PartyService {
 
     }
 
+=======
+>>>>>>> Stashed changes
     private Member memberCheckedById(Long memberId) {
 
         return memberRepository.findById(memberId).orElseThrow(

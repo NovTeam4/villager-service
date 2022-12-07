@@ -7,5 +7,4 @@ public interface PartyService {
 
     public void createParty(Long memberId , PartyDTO.Request partyRequest);
 
-    PartyDTO.Response getParty(Long partyId);
 }
