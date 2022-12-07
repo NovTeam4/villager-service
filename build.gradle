@@ -69,6 +69,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // 테스트 lombok 추가
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
@@ -107,8 +111,8 @@ compileQuerydsl {
 
 openapi3 {
     setServer("http://localhost:8080")
-    title = "restdocs-swagger API Documentation"
-    description = "Spring REST Docs with SwaggerUI."
+    title = "동네친구들 API Documentation"
+    description = "NovTeam4"
     version = "0.0.1"
     format = "yaml"
 }
