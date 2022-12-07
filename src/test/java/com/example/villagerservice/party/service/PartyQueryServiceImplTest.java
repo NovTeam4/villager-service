@@ -3,8 +3,8 @@ package com.example.villagerservice.party.service;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.dto.PartyDTO;
-import com.example.villagerservice.party.exception.PartyListErrorCode;
-import com.example.villagerservice.party.exception.PartyListException;
+import com.example.villagerservice.party.exception.PartyApplyErrorCode;
+import com.example.villagerservice.party.exception.PartyApplyException;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.service.impl.PartyQueryServiceImpl;
@@ -39,11 +39,11 @@ public class PartyQueryServiceImplTest {
     @DisplayName("모임 조회 시 , 모임이 없을 경우")
     public void getPartyWithoutParty() {
 
-        PartyListException partyListException = assertThrows(PartyListException.class, () -> {
+        PartyApplyException partyListException = assertThrows(PartyApplyException.class, () -> {
             partyQueryService.getParty(1L);
         });
 
-        assertEquals(partyListException.getErrorCode(), PartyListErrorCode.PARTY_NOT_FOUND.getErrorCode());
+        assertEquals(partyListException.getErrorCode(), PartyApplyErrorCode.PARTY_NOT_FOUND.getErrorCode());
 
     }
 

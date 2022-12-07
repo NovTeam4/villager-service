@@ -1,16 +1,10 @@
 package com.example.villagerservice.party.api;
 
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.dto.PartyDTO;
-<<<<<<< Updated upstream
 import com.example.villagerservice.party.request.PartyApplyDto;
-import com.example.villagerservice.party.request.PartyCreate;
 import com.example.villagerservice.party.service.PartyApplyService;
-=======
-import com.example.villagerservice.party.service.PartyListService;
 import com.example.villagerservice.party.service.PartyQueryService;
->>>>>>> Stashed changes
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
