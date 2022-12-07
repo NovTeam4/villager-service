@@ -17,6 +17,8 @@ import com.example.villagerservice.party.exception.PartyApplyException;
 import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyApplyDto;
+import com.example.villagerservice.party.request.PartyApplyDto.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +28,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 @ExtendWith(MockitoExtension.class)
 class PartyApplyServiceImplTest {
@@ -93,8 +97,41 @@ class PartyApplyServiceImplTest {
     }
 
     @Test
+    @DisplayName("모임 신청 목록 조회 성공")
+    void getApplyPartyListSuccess() {
+        // given
+        List<PartyApply> list = new ArrayList<>();
+        Long partyId = 1L;
+        Long targetMemberId = 1L;
+        list.add(PartyApply.builder()
+            .id(1L)
+            .targetMemberId(targetMemberId)
+            .isAccept(false)
+            .party(Party.builder().id(partyId).build())
+            .build());
+        list.add(PartyApply.builder()
+            .id(2L)
+            .targetMemberId(targetMemberId)
+            .isAccept(false)
+            .party(Party.builder().id(partyId).build())
+            .build());
+        Page<PartyApply> pageList = new PageImpl<>(list);
+
+        given(partyRepository.existsById(anyLong()))
+            .willReturn(true);
+        given(partyApplyRepository.findByParty_Id(anyLong(), any()))
+            .willReturn(pageList);
+
+        // when
+        Page<PartyApplyDto.Response> response = partyApplyService.getApplyPartyList(1L, null);
+
+        // then
+        assertEquals(list.size(), response.getTotalElements());
+    }
+
+    @Test
     @DisplayName("모임 신청 목록 조회 실패 - 해당 모임이 없는 경우")
-    void getApplyPartyListTest() {
+    void getApplyPartyListFailedEmptyParty() {
         // given
         given(partyRepository.existsById(anyLong()))
             .willReturn(false);
