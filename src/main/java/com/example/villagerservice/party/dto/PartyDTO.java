@@ -37,6 +37,7 @@ public class PartyDTO {
 
     @Getter
     @Builder
+    @AllArgsConstructor
     public static class Response{
 
         private String partyName;
@@ -53,7 +54,7 @@ public class PartyDTO {
 
         private String nickname;
 
-        private MannerPoint mannerPoint;
+        private Integer mannerPoint;
 
         public static PartyDTO.Response createPartyResponse(Party party) {
             return PartyDTO.Response.builder()
@@ -63,7 +64,7 @@ public class PartyDTO {
                     .endDt(party.getEndDt())
                     .amount(party.getAmount())
                     .nickname(party.getMember().getMemberDetail().getNickname())
-                    .mannerPoint(party.getMember().getMemberDetail().getMannerPoint())
+                    .mannerPoint(party.getMember().getMemberDetail().getMannerPoint().getPoint())
                     .build();
         }
     }

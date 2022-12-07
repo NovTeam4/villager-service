@@ -1,6 +1,6 @@
 package com.example.villagerservice.config.security.filters;
 
-import com.example.villagerservice.member.request.MemberLogin;
+import com.example.villagerservice.member.dto.LoginMember;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,8 +26,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            MemberLogin memberLogin = objectMapper.readValue(request.getInputStream(), MemberLogin.class);
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(memberLogin.getEmail(), memberLogin.getPassword());
+            LoginMember.Request loginMember = objectMapper.readValue(request.getInputStream(), LoginMember.Request.class);
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginMember.getEmail(), loginMember.getPassword());
             return getAuthenticationManager().authenticate(token);
         } catch (IOException e) {
             throw new RuntimeException(e);
