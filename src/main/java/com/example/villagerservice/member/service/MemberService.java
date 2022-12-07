@@ -1,14 +1,14 @@
 package com.example.villagerservice.member.service;
 
-import com.example.villagerservice.member.request.MemberAddAttentionTag;
-import com.example.villagerservice.member.request.MemberCreate;
-import com.example.villagerservice.member.request.MemberInfoUpdate;
-import com.example.villagerservice.member.request.MemberPasswordUpdate;
+import com.example.villagerservice.member.dto.CreateMemberAttentionTag;
+import com.example.villagerservice.member.dto.CreateMember;
+import com.example.villagerservice.member.dto.UpdateMemberInfo;
+import com.example.villagerservice.member.dto.UpdateMemberPassword;
 
 public interface MemberService {
-    void createMember(MemberCreate memberCreate);
-    void updateMemberInfo(String email, MemberInfoUpdate memberInfoUpdate);
-    void updateMemberPassword(String email, MemberPasswordUpdate pass);
+    void createMember(CreateMember.Request createMember);
+    void updateMemberInfo(String email, UpdateMemberInfo.Request updateMemberInfo);
+    void updateMemberPassword(String email, UpdateMemberPassword.Request pass);
     void deleteMember(String email);
-    void addAttentionTag(String email, MemberAddAttentionTag addAttentionTag);
+    void addAttentionTag(String email, CreateMemberAttentionTag.Request addAttentionTag);
 }
