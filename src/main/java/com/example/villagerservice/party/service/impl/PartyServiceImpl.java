@@ -1,6 +1,5 @@
 package com.example.villagerservice.party.service.impl;
 
-import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_FOUND;
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_FOUND_MEMBER;
 
 import com.example.villagerservice.member.domain.Member;
@@ -27,17 +26,6 @@ public class PartyServiceImpl implements PartyService {
         Member member = memberCheckedById(memberId);
         Party party = Party.createParty(partyRequest.getPartyName(), partyRequest.getScore(), partyRequest.getStartDt(), partyRequest.getEndDt(), partyRequest.getAmount(), member);
         partyRepository.save(party);
-
-    }
-
-    @Override
-    public PartyDTO.Response getParty(Long partyId) {
-
-        Party party = partyRepository.findById(partyId).orElseThrow(
-                () -> new PartyException(PARTY_NOT_FOUND)
-        );
-
-        return PartyDTO.Response.createPartyResponse(party);
 
     }
 
