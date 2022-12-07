@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 
 @ExtendWith(MockitoExtension.class)
 class PartyApplyServiceImplTest {
+
     @Mock
     private PartyApplyRepository partyApplyRepository;
 
@@ -87,6 +88,4 @@ class PartyApplyServiceImplTest {
         // then
         assertEquals(PartyApplyErrorCode.PARTY_NOT_FOUND.getErrorCode(), exception.getErrorCode());
     }
-
-
 }
