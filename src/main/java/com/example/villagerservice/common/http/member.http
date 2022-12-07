@@ -5,6 +5,8 @@ Content-Type: application/json
 {
   "nickname": "123",
   "email": "123@naver.com",
+  "month": 12,
+  "day" : 12,
   "password": "Abc123!!"
 }
 

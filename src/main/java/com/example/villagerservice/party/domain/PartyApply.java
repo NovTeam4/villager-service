@@ -31,7 +31,7 @@ public class PartyApply extends BaseTimeEntity {
 
     public static PartyApply createPartyList(Party party){
         return PartyApply.builder()
-            .targetMemberId(1L)
+            .targetMemberId(party.getId())
             .party(party)
             .isAccept(false)
             .build();
