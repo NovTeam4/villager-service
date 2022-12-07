@@ -1,14 +1,14 @@
 package com.example.villagerservice.party.service.impl;
 
 import com.example.villagerservice.party.dto.PartyDTO;
-import com.example.villagerservice.party.exception.PartyApplyException;
+import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.service.PartyQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.villagerservice.party.exception.PartyApplyErrorCode.PARTY_NOT_FOUND;
+import static com.example.villagerservice.party.exception.PartyErrorCode.*;
 
 
 @Service
@@ -22,7 +22,7 @@ public class PartyQueryServiceImpl implements PartyQueryService {
     public PartyDTO.Response getParty(Long partyId) {
 
         return partyQueryRepository.getParty(partyId).orElseThrow(
-                () -> new PartyApplyException(PARTY_NOT_FOUND)
+                () -> new PartyException(PARTY_NOT_FOUND)
         );
 
     }
