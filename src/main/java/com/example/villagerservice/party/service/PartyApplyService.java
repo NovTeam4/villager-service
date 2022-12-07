@@ -1,5 +1,6 @@
 package com.example.villagerservice.party.service;
 
+import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.request.PartyApplyDto.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ public interface PartyApplyService {
      * @param partyId
      * @return
      */
-    void applyParty(String email, Long partyId);
+    PartyApplyDto.Response applyParty(String email, Long partyId);
 
     /**
      * 모임 신청 리스트 반환

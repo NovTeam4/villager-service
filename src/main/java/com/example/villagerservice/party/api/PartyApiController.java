@@ -36,13 +36,12 @@ public class PartyApiController {
 
 
     @PostMapping("/{partyId}/apply")
-    public void applyParty(@AuthenticationPrincipal Member member, @PathVariable Long partyId){
-        partyApplyService.applyParty(member.getEmail(), partyId);
+    public PartyApplyDto.Response applyParty(@AuthenticationPrincipal Member member, @PathVariable Long partyId){
+        return partyApplyService.applyParty(member.getEmail(), partyId);
     }
 
     @GetMapping("/{partyId}/apply")
     public Page<PartyApplyDto.Response> getApplyPartyList(@PathVariable Long partyId, final Pageable pageable){
         return partyApplyService.getApplyPartyList(partyId, pageable);
     }
-
 }

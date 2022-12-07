@@ -2,21 +2,18 @@ package com.example.villagerservice.party.api;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.villagerservice.party.domain.Party;
-import com.example.villagerservice.party.domain.PartyApply;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.service.PartyApplyService;
 import com.example.villagerservice.party.service.PartyService;
-import com.example.villagerservice.party.service.impl.PartyApplyServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(PartyApiController.class)
@@ -41,15 +36,26 @@ public class PartyApiControllerTest2 {
     private MockMvc mockMvc;
     
     @Test
+    @DisplayName("모임 신청 성공")
     void successApplyParty() throws Exception {
         // given
+        given(partyApplyService.applyParty(anyString(), anyLong()))
+            .willReturn(PartyApplyDto.Response.builder()
+                .id(1L)
+                .partyId(1L)
+                .targetMemberId(1L)
+                .isAccept(false)
+                .build());
+
         // when
         // then
-        mockMvc.perform(post("/api/v1/parties/1/apply"))
+        mockMvc.perform(post("/api/v1/parties/1/apply")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(""
+            ))
             .andExpect(status().isOk())
             .andDo(print());
     }
-
 
     @Test
     @DisplayName("모임 신청 목록 조회 성공")

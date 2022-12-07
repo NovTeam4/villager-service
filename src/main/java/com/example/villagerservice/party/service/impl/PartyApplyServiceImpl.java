@@ -7,6 +7,7 @@ import com.example.villagerservice.party.domain.PartyApply;
 import com.example.villagerservice.party.exception.PartyApplyException;
 import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
+import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.request.PartyApplyDto.Response;
 import com.example.villagerservice.party.service.PartyApplyService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class PartyApplyServiceImpl implements PartyApplyService {
     private final PartyApplyRepository partyApplyRepository;
 
     @Override
-    public void applyParty(String email, Long partyId) {
+    public PartyApplyDto.Response applyParty(String email, Long partyId) {
         Party party = partyRepository.findById(partyId).orElseThrow(
             () -> new PartyApplyException(PARTY_NOT_FOUND)
         );
@@ -29,7 +30,7 @@ public class PartyApplyServiceImpl implements PartyApplyService {
             throw new PartyApplyException(ALREADY_BEAN_APPLIED);
         }
 
-        partyApplyRepository.save(PartyApply.createPartyList(party));
+        return Response.toDto(partyApplyRepository.save(PartyApply.createPartyList(party)));
     }
 
     @Override
