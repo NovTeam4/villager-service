@@ -4,6 +4,7 @@ import com.example.villagerservice.common.jwt.JwtTokenInfoDto;
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.config.WithMockCustomMember;
 import com.example.villagerservice.member.dto.CreateMember;
+import com.example.villagerservice.member.dto.ValidMemberNickname;
 import com.example.villagerservice.member.service.AuthTokenService;
 import com.example.villagerservice.member.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -301,6 +303,53 @@ class AuthApiControllerTest {
         verify(jwtTokenProvider, times(1)).resolveRefreshToken(any());
         verify(authTokenService, times(1))
                 .getReissueTokenInfo(anyLong(), anyString(), anyString());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "       "})
+    @DisplayName("닉네임 유효성 검사 시 닉네임은 전달 안한 경우 테스트")
+    void validNicknameNotFormatTest(String nickname) throws Exception {
+        // given
+        ValidMemberNickname.Request request = ValidMemberNickname.Request.builder()
+                .nickname(nickname)
+                .build();
+        String body = objectMapper.writeValueAsString(request);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/auth/valid/nickname")
+                        .contentType(APPLICATION_JSON)
+                        .content(body)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
+                .andExpect(jsonPath("$.validation.nickname").value("닉네임은 필수입력 값이며," +
+                        " 공백은 포함될 수 없습니다."))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("닉네임 유효성 검사 테스트")
+    void validNicknameTest() throws Exception {
+        // given
+        ValidMemberNickname.Request request = ValidMemberNickname.Request.builder()
+                .nickname("닉네임_변경")
+                .build();
+        String body = objectMapper.writeValueAsString(request);
+
+        doNothing()
+                .when(memberService)
+                .validNickname(any());
+
+        // when & then
+        mockMvc.perform(get("/api/v1/auth/valid/nickname")
+                        .contentType(APPLICATION_JSON)
+                        .content(body)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(memberService, times(1)).validNickname(any());
     }
 
     @NotNull
