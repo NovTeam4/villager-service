@@ -68,7 +68,6 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
                         UpdateMemberInfo.Request.class.getName()))
                 .when()
                 .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
-                .header("refresh-token", jwtTokenResponse.getRefreshToken())
                 .patch("/api/v1/members/info")
                 .then()
                 .statusCode(HttpStatus.OK.value());
@@ -99,7 +98,6 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
                         UpdateMemberPassword.Request.class.getName()))
                 .when()
                 .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
-                .header("refresh-token", jwtTokenResponse.getRefreshToken())
                 .patch("/api/v1/members/password")
                 .then()
                 .statusCode(HttpStatus.OK.value());
@@ -122,7 +120,6 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
                         "회원 탈퇴"))
                 .when()
                 .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
-                .header("refresh-token", jwtTokenResponse.getRefreshToken())
                 .delete("/api/v1/members")
                 .then()
                 .statusCode(HttpStatus.OK.value());
@@ -152,7 +149,6 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
                         CreateMemberAttentionTag.Request.class.getName()))
                 .when()
                 .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
-                .header("refresh-token", jwtTokenResponse.getRefreshToken())
                 .post("/api/v1/members/tags")
                 .then()
                 .statusCode(HttpStatus.OK.value());
