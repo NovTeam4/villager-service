@@ -9,7 +9,9 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.dto.CreateMember;
 import com.example.villagerservice.member.dto.LoginMember;
+import com.example.villagerservice.member.dto.ValidMemberNickname;
 import com.example.villagerservice.member.service.MemberService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
@@ -114,36 +116,7 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
     @DisplayName("토큰 재요청")
     void reissueTest() throws Exception {
         // given
-        CreateMember.Request request = CreateMember.Request.builder()
-                .email("test5@gamil.com")
-                .password("hello11@nW")
-                .nickname("testNickname")
-                .gender("MAN")
-                .year(2022)
-                .month(12)
-                .day(8)
-                .build();
-        given()
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .header("Content-type", "application/json")
-                .body(objectMapper.writeValueAsString(request))
-                .log().all()
-                .post("/api/v1/auth/signup");
-
-        LoginMember.Request login = LoginMember.Request.builder()
-                .email("test5@gamil.com")
-                .password("hello11@nW")
-                .build();
-
-        Response response = given()
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .header("Content-type", "application/json")
-                .body(objectMapper.writeValueAsString(login))
-                .log().all()
-                .post("/api/v1/auth/login");
-
-
-        JwtTokenResponse jwtTokenResponse = objectMapper.readValue(response.asString(), JwtTokenResponse.class);
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
 
         // when & then
         Response refreshTokenResponse = givenAuth("",
@@ -211,8 +184,30 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                 .body("accessTokenExpirationTime", Matchers.equalTo(jwtTokenResponse.getAccessTokenExpirationTime().intValue()));
     }
 
+    @Test
+    @DisplayName("회원 닉네임 유효성 검사 테스트")
+    void validNicknameApiTest() throws Exception {
+        // given
+        ValidMemberNickname.Request request = ValidMemberNickname.Request.builder()
+                .nickname("닉네임테스트")
+                .build();
+
+        String body = objectMapper.writeValueAsString(request);
+
+        // when & then
+        givenAuthPass(body,
+                template.requestRestDocumentation(
+                        "닉네임 중복체크",
+                        getValidNicknameRequestFields(),
+                        ValidMemberNickname.Request.class.getName()))
+                .when()
+                .get("/api/v1/auth/valid/nickname")
+                .then()
+                .statusCode(HttpStatus.OK.value());
+    }
+
     @NotNull
-    private static List<FieldDescriptor> getJwtTokenResponseFields() {
+    private List<FieldDescriptor> getJwtTokenResponseFields() {
         return Arrays.asList(
                 fieldWithPath("accessToken").type(JsonFieldType.STRING).description("access-token"),
                 fieldWithPath("grantType").description("type"),
@@ -221,4 +216,34 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
         );
     }
 
+    @NotNull
+    private List<FieldDescriptor> getValidNicknameRequestFields() {
+        return List.of(fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"));
+    }
+
+    private void createMember() {
+        Member member = Member.builder()
+                .email("test@gmail.com")
+                .encodedPassword(passwordEncoder.encode("hello11@@nW"))
+                .nickname("original")
+                .build();
+        memberRepository.save(member);
+    }
+    private JwtTokenResponse getJwtTokenResponse() throws JsonProcessingException {
+        createMember();
+        LoginMember.Request login = LoginMember.Request.builder()
+                .email("test@gmail.com")
+                .password("hello11@@nW")
+                .build();
+
+        Response response = given()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Content-type", "application/json")
+                .body(objectMapper.writeValueAsString(login))
+                .log().all()
+                .post("/api/v1/auth/login");
+
+
+        return objectMapper.readValue(response.asString(), JwtTokenResponse.class);
+    }
 }

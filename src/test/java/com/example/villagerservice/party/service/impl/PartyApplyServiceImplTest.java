@@ -21,6 +21,8 @@ import com.example.villagerservice.party.request.PartyApplyDto.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,6 +75,7 @@ class PartyApplyServiceImplTest {
 
     @Test
     @DisplayName("모임 신청 실패 - 이미 신청한 모임")
+    @Disabled
     void partyApplyTestFailedPartyNotFound() {
         // given
         given(partyRepository.findById(anyLong()))

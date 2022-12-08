@@ -6,6 +6,7 @@ import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.common.jwt.JwtTokenResponse;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.dto.CreateMember;
+import com.example.villagerservice.member.dto.ValidMemberNickname;
 import com.example.villagerservice.member.service.AuthTokenService;
 import com.example.villagerservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,11 @@ public class AuthApiController {
     @PostMapping("/signup")
     public void createMember(@Valid @RequestBody CreateMember.Request createMember) {
         memberService.createMember(createMember);
+    }
+
+    @GetMapping("/valid/nickname")
+    public void validNickname(@Valid @RequestBody ValidMemberNickname.Request request) {
+        memberService.validNickname(request);
     }
 
     @PostMapping("/refresh")
