@@ -14,15 +14,14 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static com.epages.restdocs.apispec.RestAssuredRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.Schema.schema;
 import static io.restassured.RestAssured.given;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
@@ -81,7 +80,7 @@ public abstract class BaseDocumentation {
                 ));
     }
 
-    protected RequestSpecification givenAuth(String body, RestDocumentation restDocumentation) {
+    protected RequestSpecification givenAuthRefreshToken(String body, RestDocumentation restDocumentation) {
         return given(this.spec)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("Content-type", "application/json")
@@ -105,6 +104,35 @@ public abstract class BaseDocumentation {
                                         .requestHeaders(Arrays.asList(
                                                 new HeaderDescriptorWithType(AUTHORIZATION).description("JWT Access-Token"),
                                                 new HeaderDescriptorWithType("refresh-token").description("JWT Refresh-Token")
+                                        ))
+                                        .build()
+                        )
+                ));
+    }
+
+    protected RequestSpecification givenAuth(String body, RestDocumentation restDocumentation) {
+        return given(this.spec)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Content-type", "application/json")
+                .body(body)
+                .log().all()
+                .filter(document(
+                        restDocumentation.getIdentifier(),
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag(restDocumentation.getTag())
+                                        .summary(restDocumentation.getSummary())
+                                        .description(restDocumentation.getDescription())
+                                        .requestSchema(schema(restDocumentation.getRequestSchema()))
+                                        .responseSchema(schema(restDocumentation.getResponseSchema()))
+                                        .requestFields(restDocumentation.getRequestFields())
+                                        .pathParameters(restDocumentation.getPathParameters())
+                                        .requestParameters(restDocumentation.getRequestParameters())
+                                        .responseFields(restDocumentation.getResponseFields())
+                                        .requestHeaders(List.of(
+                                                new HeaderDescriptorWithType(AUTHORIZATION).description("JWT Access-Token")
                                         ))
                                         .build()
                         )

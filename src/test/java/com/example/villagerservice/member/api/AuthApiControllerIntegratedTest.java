@@ -119,7 +119,7 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
 
         // when & then
-        Response refreshTokenResponse = givenAuth("",
+        Response refreshTokenResponse = givenAuthRefreshToken("",
                 template.responseRestDocumentation(
                         "토큰 재요청",
                         getJwtTokenResponseFields(),
@@ -201,7 +201,7 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                         getValidNicknameRequestFields(),
                         ValidMemberNickname.Request.class.getName()))
                 .when()
-                .get("/api/v1/auth/valid/nickname")
+                .post("/api/v1/auth/valid/nickname")
                 .then()
                 .statusCode(HttpStatus.OK.value());
     }
