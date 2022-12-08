@@ -21,6 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,12 +42,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 class AuthApiControllerIntegratedTest extends BaseDocumentation {
 
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private RedisRepository redisRepository;
     @Autowired
     private MemberService memberService;
@@ -54,12 +49,7 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
     @Value("${jwt.access-token-validity-in-seconds}")
     private Long accessTokenValiditySeconds;
 
-    private RestDocumentationTemplate template = new RestDocumentationTemplate("Auth api");
-
-    @BeforeEach
-    void clean() {
-        memberRepository.deleteAll();
-    }
+    private RestDocumentationTemplate template = new RestDocumentationTemplate("인증 API");
 
     @Test
     @DisplayName("회원가입 테스트")
@@ -201,7 +191,7 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                         getValidNicknameRequestFields(),
                         ValidMemberNickname.Request.class.getName()))
                 .when()
-                .post("/api/v1/auth/valid/nickname")
+                .get("/api/v1/auth/valid/nickname")
                 .then()
                 .statusCode(HttpStatus.OK.value());
     }
@@ -219,31 +209,5 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
     @NotNull
     private List<FieldDescriptor> getValidNicknameRequestFields() {
         return List.of(fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"));
-    }
-
-    private void createMember() {
-        Member member = Member.builder()
-                .email("test@gmail.com")
-                .encodedPassword(passwordEncoder.encode("hello11@@nW"))
-                .nickname("original")
-                .build();
-        memberRepository.save(member);
-    }
-    private JwtTokenResponse getJwtTokenResponse() throws JsonProcessingException {
-        createMember();
-        LoginMember.Request login = LoginMember.Request.builder()
-                .email("test@gmail.com")
-                .password("hello11@@nW")
-                .build();
-
-        Response response = given()
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .header("Content-type", "application/json")
-                .body(objectMapper.writeValueAsString(login))
-                .log().all()
-                .post("/api/v1/auth/login");
-
-
-        return objectMapper.readValue(response.asString(), JwtTokenResponse.class);
     }
 }

@@ -34,7 +34,7 @@ public class AuthApiController {
         memberService.createMember(createMember);
     }
 
-    @PostMapping("/valid/nickname")
+    @GetMapping("/valid/nickname")
     public void validNickname(@Valid @RequestBody ValidMemberNickname.Request request) {
         memberService.validNickname(request);
     }
