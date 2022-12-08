@@ -1,34 +1,42 @@
 package com.example.villagerservice.town.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.hibernate.collection.internal.PersistentList;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TownList {
     @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class LocationRequest {
         private Double latitude;
         private Double longitude;
-        private int limit;
     }
 
     @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class NameRequest {
 
         private String name;
-        private int limit;
     }
 
     @Getter
-    @Builder
+    @NoArgsConstructor
     public static class Response {
-        private List<TownListDetail> details = new ArrayList<>();
+        private int totalCount;
+        private List<TownListDetail> towns = new ArrayList<>();
 
-        public Response(List<TownListDetail> details) {
-            this.details = details;
+        @Builder
+        private Response(List<TownListDetail> towns) {
+            this.totalCount = towns.size();
+            this.towns = towns;
         }
     }
 }
