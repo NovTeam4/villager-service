@@ -48,12 +48,14 @@ public class AuthConfig {
                 .sameOrigin()
         ;
 
-        http
-                .authorizeRequests()
-                .antMatchers("/api/v1/auth/**", "/h2-console/**", "/docs/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated();
+//        http
+//                .authorizeRequests()
+//                .antMatchers("/api/v1/auth/**",
+//                        "/h2-console/**",
+//                        "/docs/**")
+//                .permitAll()
+//                .anyRequest()
+//                .authenticated();
 
         http
                 .csrf()
