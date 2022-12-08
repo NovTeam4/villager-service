@@ -19,10 +19,12 @@ public class TownQueryRepositoryImpl implements TownQueryRepository {
 
     private final JPAQueryFactory queryFactory;
     private final JdbcTemplate jdbcTemplate;
+    private final static int DEFAULT_LIMIT = 40;
 
     @Override
     public TownList.Response getTownListWithLocation(TownList.LocationRequest locationRequest) {
-        return new TownList.Response(jdbcTemplate.query(getLocationQuery(locationRequest), mapRow()));
+        List<TownListDetail> result = jdbcTemplate.query(getLocationQuery(locationRequest), mapRow());
+        return TownList.Response.builder().towns(result).build();
     }
     private String getLocationQuery(TownList.LocationRequest locationRequest) {
         return "select *" +
@@ -32,7 +34,8 @@ public class TownQueryRepositoryImpl implements TownQueryRepository {
                 " from town " +
                 " group by village " +
                 " order by distance " +
-                " limit " + locationRequest.getLimit();
+                //" limit " + locationRequest.getLimit();
+                " limit " + DEFAULT_LIMIT;
     }
     private RowMapper<TownListDetail> mapRow() {
         return ((rs, rowNum) -> new TownListDetail(
@@ -54,10 +57,10 @@ public class TownQueryRepositoryImpl implements TownQueryRepository {
                         town.code, town.latitude, town.longitude))
                 .from(town)
                 .where(town.village.startsWith(nameRequest.getName()))
-                .limit(nameRequest.getLimit())
+                .limit(DEFAULT_LIMIT)
                 .groupBy(town.village)
                 .orderBy(town.code.asc())
                 .fetch();
-        return new TownList.Response(result);
+        return TownList.Response.builder().towns(result).build();
     }
 }
