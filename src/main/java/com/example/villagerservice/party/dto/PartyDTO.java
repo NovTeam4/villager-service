@@ -19,10 +19,10 @@ public class PartyDTO {
     @AllArgsConstructor
     @Builder
     public static class Request{
-        @NotEmpty
+        @NotEmpty(message = "모임 이름을 입력해주세요.")
         private String partyName;
 
-        @NotNull
+        @NotNull(message = "모임 점수를 입력해주세요.")
         private Integer score;
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
