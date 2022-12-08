@@ -1,4 +1,4 @@
-package com.example.villagerservice.party.service;
+package com.example.villagerservice.party.service.impl;
 
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;

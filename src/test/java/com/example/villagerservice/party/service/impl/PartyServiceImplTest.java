@@ -16,6 +16,7 @@ import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -95,5 +96,53 @@ public class PartyServiceImplTest {
         assertEquals(100, captor.getValue().getScore());
         assertEquals("홍길동" , captor.getValue().getMember().getMemberDetail().getNickname());
 
+    }
+
+    @Test
+    @DisplayName("모임 삭제 시, 모임이 없을 경우")
+    void deletePartyWithoutParty() {
+
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.deleteParty(anyLong());
+        });
+
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorMessage());
+
+    }
+
+    @Test
+    @DisplayName("모임 삭제 테스트")
+    void deleteParty() {
+
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDateTime.now())
+                .endDt(LocalDateTime.now())
+                .amount(1000)
+                .build();
+
+        Member member = Member.builder()
+                .email("test@gmail.com")
+                .nickname("홍길동")
+                .build();
+
+        Party party = Party.createParty(
+                partyRequest.getPartyName(),
+                partyRequest.getScore(),
+                partyRequest.getStartDt(),
+                partyRequest.getEndDt(),
+                partyRequest.getAmount(),
+                member
+        );
+
+        given(partyRepository.findById(1L)).willReturn(Optional.of(party));
+
+        partyService.deleteParty(1L);
+
+        List<Party> parties = partyRepository.findAll();
+
+        assertEquals(parties.size(),0);
     }
 }
