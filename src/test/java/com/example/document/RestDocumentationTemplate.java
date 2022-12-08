@@ -51,6 +51,22 @@ public class RestDocumentationTemplate extends BaseRestDocumentationTemplate {
                 new ArrayList<>());
     }
 
+    public RestDocumentation requestRestDocumentation(String summary) {
+
+        String identifier = summary;
+        return createRestDocumentation(
+                tag,
+                summary,
+                identifier,
+                "",
+                "",
+                "",
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>());
+    }
+
     public RestDocumentation responseRestDocumentation(String summary,
                                                        List<FieldDescriptor> responseFieldDescriptor,
                                                        String responseSimpleName) {
