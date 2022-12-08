@@ -20,11 +20,6 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
-    @GetMapping("/valid/nickname")
-    public void validNickname(@Valid @RequestBody ValidMemberNickname.Request request) {
-        memberService.validNickname(request);
-    }
-
     @PatchMapping("/info")
     public void updateMemberInfo(@AuthenticationPrincipal Member member,
                                  @Valid @RequestBody UpdateMemberInfo.Request updateMemberInfo) {
