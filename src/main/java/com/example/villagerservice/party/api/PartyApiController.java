@@ -36,6 +36,13 @@ public class PartyApiController {
 
     }
 
+    @DeleteMapping("/{partyId}")
+    public void deleteParty(@PathVariable Long partyId) {
+
+        partyService.deleteParty(partyId);
+    }
+
+
     @PostMapping("/{partyId}/apply")
     public PartyApplyDto.Response applyParty(@AuthenticationPrincipal Member member, @PathVariable Long partyId){
         return partyApplyService.applyParty(member.getEmail(), partyId);

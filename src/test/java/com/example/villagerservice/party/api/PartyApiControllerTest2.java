@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.service.PartyApplyService;
 import com.example.villagerservice.party.service.PartyQueryService;
+
 import com.example.villagerservice.party.service.PartyService;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +38,10 @@ public class PartyApiControllerTest2 {
     private PartyQueryService partyQueryService;
     @MockBean
     private PartyService partyService;
+
     @Autowired
     private MockMvc mockMvc;
-    
+
     @Test
     @DisplayName("모임 신청 성공")
     @Disabled
@@ -92,4 +94,5 @@ public class PartyApiControllerTest2 {
             .andExpect(status().isOk())
             .andDo(print());
     }
+
 }
