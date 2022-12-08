@@ -36,13 +36,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 @Import({AuthConfig.class})
 class MemberApiControllerIntegratedTest extends BaseDocumentation {
 
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private MemberRepository memberRepository;
-    private RestDocumentationTemplate template = new RestDocumentationTemplate("Member api");
+    private RestDocumentationTemplate template = new RestDocumentationTemplate("회원 API");
 
     @BeforeEach
     void clean() {
@@ -175,23 +169,23 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
         memberRepository.save(member);
     }
 
-    private JwtTokenResponse getJwtTokenResponse() throws JsonProcessingException {
-        createMember();
-        LoginMember.Request login = LoginMember.Request.builder()
-                .email("test@gmail.com")
-                .password("hello11@@nW")
-                .build();
-
-        Response response = given()
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .header("Content-type", "application/json")
-                .body(objectMapper.writeValueAsString(login))
-                .log().all()
-                .post("/api/v1/auth/login");
-
-
-        return objectMapper.readValue(response.asString(), JwtTokenResponse.class);
-    }
+//    private JwtTokenResponse getJwtTokenResponse() throws JsonProcessingException {
+//        createMember();
+//        LoginMember.Request login = LoginMember.Request.builder()
+//                .email("test@gmail.com")
+//                .password("hello11@@nW")
+//                .build();
+//
+//        Response response = given()
+//                .accept(MediaType.APPLICATION_JSON_VALUE)
+//                .header("Content-type", "application/json")
+//                .body(objectMapper.writeValueAsString(login))
+//                .log().all()
+//                .post("/api/v1/auth/login");
+//
+//
+//        return objectMapper.readValue(response.asString(), JwtTokenResponse.class);
+//    }
 
     @NotNull
     private List<FieldDescriptor> getUpdateMemberInfoRequestFields() {

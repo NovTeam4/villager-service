@@ -316,7 +316,7 @@ class AuthApiControllerTest {
         String body = objectMapper.writeValueAsString(request);
 
         // when & then
-        mockMvc.perform(post("/api/v1/auth/valid/nickname")
+        mockMvc.perform(get("/api/v1/auth/valid/nickname")
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -333,7 +333,7 @@ class AuthApiControllerTest {
     void validNicknameTest() throws Exception {
         // given
         ValidMemberNickname.Request request = ValidMemberNickname.Request.builder()
-                .nickname("닉네임_변경")
+                .nickname("닉네임_테스트")
                 .build();
         String body = objectMapper.writeValueAsString(request);
 
@@ -342,7 +342,7 @@ class AuthApiControllerTest {
                 .validNickname(any());
 
         // when & then
-        mockMvc.perform(post("/api/v1/auth/valid/nickname")
+        mockMvc.perform(get("/api/v1/auth/valid/nickname")
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
