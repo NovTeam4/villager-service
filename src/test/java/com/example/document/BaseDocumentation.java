@@ -2,17 +2,28 @@ package com.example.document;
 
 import com.epages.restdocs.apispec.HeaderDescriptorWithType;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.example.villagerservice.common.jwt.JwtTokenResponse;
+import com.example.villagerservice.config.BaseLogin;
+import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.member.domain.MemberRepository;
+import com.example.villagerservice.member.dto.LoginMember;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,10 +36,9 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
-@AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(RestDocumentationExtension.class)
-public abstract class BaseDocumentation {
+public abstract class BaseDocumentation extends BaseLogin {
 
     private static final String DEFAULT_REST_DOC_PATH = "{class_name}/{method_name}/";
 
@@ -41,6 +51,7 @@ public abstract class BaseDocumentation {
     void setUp() {
         RestAssured.port = port;
     }
+
 
     @BeforeEach
     void setUpRestDocs(RestDocumentationContextProvider restDocumentation) {
