@@ -36,10 +36,10 @@ public class AuthApiController {
     @PostMapping("/refresh")
     public JwtTokenResponse reissue(
             @AuthenticationPrincipal Member member,
-            HttpServletRequest request,
-            @RequestHeader("refresh-token") String refreshToken) {
+            HttpServletRequest request) {
 
-        String accessToken = jwtTokenProvider.resolveToken(request);
+        String accessToken = jwtTokenProvider.resolveAccessToken(request);
+        String refreshToken = jwtTokenProvider.resolveRefreshToken(request);
         if (!StringUtils.hasText(accessToken)) {
             throw new JwtTokenException(JWT_ACCESS_TOKEN_NOT_EXIST);
         }

@@ -1,2 +1,5 @@
-INSERT INTO MEMBER (email, is_deleted)
-VALUES('test@gmail.com', false);
+INSERT INTO MEMBER (email, is_deleted, encoded_password)
+VALUES('test@gmail.com', false, '$2a$10$Q4mVM5CMPDWI.ehCzL2wB.KvXVA6sG0UlKyEQPPQFYf1d7GawoyZa');
+
+INSERT INTO MEMBER_DETAIL(member_id, nickname)
+VALUES(1, 'hello')

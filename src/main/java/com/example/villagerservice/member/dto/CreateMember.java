@@ -3,6 +3,8 @@ package com.example.villagerservice.member.dto;
 import com.example.villagerservice.member.domain.Birthday;
 import com.example.villagerservice.member.domain.Gender;
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.member.valid.DigitLength;
+import com.example.villagerservice.member.valid.Genders;
 import com.example.villagerservice.member.valid.Password;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,17 +31,16 @@ public class CreateMember {
         @Password
         private String password;
 
-        private Gender gender;
+        @Genders
+        private String gender;
 
-        @Digits(integer = 4, fraction = 0, message = "년도를 확인해주세요.")
+        @DigitLength(min = 1000, max = 9999, message = "년도를 확인해주세요.")
         private int year;
 
-        @Min(value = 1, message = "1보다 작을 수 없습니다.")
-        @Max(value = 12, message = "12보다 클 수 없습니다.")
+        @DigitLength(min = 1, max = 12, message = "월을 확인해주세요.")
         private int month;
 
-        @Min(value = 1, message = "1보다 작을 수 없습니다.")
-        @Max(value = 31, message = "31보다 클 수 없습니다.")
+        @DigitLength(min = 1, max = 31, message = "일을 확인해주세요.")
         private int day;
 
         public void passwordEncrypt(PasswordEncoder passwordEncoder) {
@@ -51,7 +52,7 @@ public class CreateMember {
                     .nickname(this.nickname)
                     .email(this.email)
                     .encodedPassword(this.password)
-                    .gender(this.gender)
+                    .gender(Gender.valueOf(this.gender))
                     .birthday(new Birthday(year, month, day))
                     .build();
         }

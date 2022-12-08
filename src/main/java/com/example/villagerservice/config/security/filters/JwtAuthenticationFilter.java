@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 JwtTokenResponse.createJwtTokenErrorResponse(response, SC_BAD_REQUEST, JWT_ACCESS_TOKEN_NOT_EXIST);
             } else {
                 try {
-                    String accessToken = jwtTokenProvider.resolveToken(request);
+                    String accessToken = jwtTokenProvider.resolveAccessToken(request);
 
                     Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
                     Member member = (Member) authentication.getPrincipal();

@@ -1,5 +1,6 @@
 package com.example.villagerservice.member.service.impl;
 
+import com.example.villagerservice.member.domain.Birthday;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.domain.Tag;
@@ -203,34 +204,6 @@ class MemberServiceImplTest {
     }
 
     @Test
-    @DisplayName("회원 비밀번호 변경 시 비밀번호가 동일할 경우 테스트")
-    @Disabled
-    void updateMemberPasswordSameTest() {
-        // given
-        String password = "test1234";
-        UpdateMemberPassword.Request passwordUpdate = UpdateMemberPassword.Request.builder()
-                .password(password)
-                .build();
-        given(memberRepository.findByEmail(anyString()))
-                .willReturn(Optional.of(Member.builder().build()));
-
-
-        doReturn(true)
-                .when(passwordEncoder).matches(any(), anyString());
-
-
-        // when
-        MemberException memberException = assertThrows(MemberException.class,
-                () -> memberService.updateMemberPassword("test@gamil.com", passwordUpdate));
-
-        // then
-        verify(memberRepository, times(1)).findByEmail(anyString());
-        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_UPDATE_SAME_PASS);
-        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_UPDATE_SAME_PASS.getErrorCode());
-        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_UPDATE_SAME_PASS.getErrorMessage());
-    }
-
-    @Test
     @DisplayName("회원탈퇴 시 회원이 없을 경우 테스트")
     void deleteMemberNotFoundTest() {
         // given
@@ -331,6 +304,10 @@ class MemberServiceImplTest {
                 .nickname(nickname)
                 .email(email)
                 .password(pass)
+                .gender("MAN")
+                .year(2022)
+                .month(12)
+                .day(7)
                 .build();
     }
 }

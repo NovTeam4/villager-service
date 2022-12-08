@@ -161,7 +161,7 @@ public class JwtTokenProvider {
         }
     }
 
-    public String resolveToken(HttpServletRequest request) {
+    public String resolveAccessToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(JWT_TOKEN_HEADER);
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(JWT_TOKEN_GRANT_TYPE)) {
@@ -169,7 +169,11 @@ public class JwtTokenProvider {
             validateAccessToken(token);
             return token;
         } else {
-            throw new IllegalArgumentException("유효한 JWT 토큰이 없습니다.");
+            throw new JwtTokenException(JWT_ACCESS_TOKEN_NOT_EXIST);
         }
+    }
+
+    public String resolveRefreshToken(HttpServletRequest request) {
+        return request.getHeader("refresh-token");
     }
 }
