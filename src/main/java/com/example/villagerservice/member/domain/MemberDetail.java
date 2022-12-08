@@ -10,6 +10,10 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = @UniqueConstraint(
+        columnNames = {
+                "nickname"
+        }))
 public class MemberDetail {
     @Id
     @Column(name = "member_id")
