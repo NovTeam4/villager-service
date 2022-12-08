@@ -21,7 +21,7 @@ public class CreateMember {
     @AllArgsConstructor
     @Builder
     public static class Request {
-        @NotBlank(message = "닉네임은 필수입력 값입니다.")
+        @NotBlank(message = "닉네임은 필수입력 값이며, 공백은 포함될 수 없습니다.")
         private String nickname;
 
         @Email(message = "유효하지 않은 이메일 형식입니다.",

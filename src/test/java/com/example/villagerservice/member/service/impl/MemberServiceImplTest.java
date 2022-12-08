@@ -1,15 +1,11 @@
 package com.example.villagerservice.member.service.impl;
 
-import com.example.villagerservice.member.domain.Birthday;
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.member.domain.MemberDetailRepository;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.domain.Tag;
+import com.example.villagerservice.member.dto.*;
 import com.example.villagerservice.member.exception.MemberException;
-import com.example.villagerservice.member.dto.CreateMemberAttentionTag;
-import com.example.villagerservice.member.dto.CreateMember;
-import com.example.villagerservice.member.dto.UpdateMemberInfo;
-import com.example.villagerservice.member.dto.UpdateMemberPassword;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static com.example.villagerservice.member.exception.MemberErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,13 +27,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceImplTest {
 
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private MemberDetailRepository memberDetailRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -68,8 +69,43 @@ class MemberServiceImplTest {
         verify(memberRepository, times(1)).findByEmail(captor.capture());
         assertThat(captor.getValue()).isEqualTo(email);
         assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_DUPLICATE_ERROR);
+        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_DUPLICATE_ERROR.getErrorCode());
+        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_DUPLICATE_ERROR.getErrorMessage());
     }
 
+    @Test
+    @DisplayName("회원 가입 시 닉네임 중복된 경우 테스트")
+    void createMemberNicknameDuplicateTest() {
+        // given
+        String nickname = "테스트입니다.";
+        String email = "test@gmail.com";
+        String pass = "123456789";
+
+        CreateMember.Request createMember = createMemberRequest(nickname, email, pass);
+        Member member = createMember(email, nickname, pass);
+        CreateMember.Request createMemberMock = spy(createMember);
+
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.empty());
+        given(memberDetailRepository.existsByNickname(anyString()))
+                .willReturn(true);
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+
+        // when
+        MemberException memberException = assertThrows(MemberException.class, () -> {
+            memberService.createMember(createMember);
+        });
+
+        // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
+        verify(memberDetailRepository, times(1)).existsByNickname(captor.capture());
+        assertThat(captor.getValue()).isEqualTo(nickname);
+        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_NICKNAME_DUPLICATE_ERROR);
+        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_NICKNAME_DUPLICATE_ERROR.getErrorCode());
+        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_NICKNAME_DUPLICATE_ERROR.getErrorMessage());
+    }
+    
     @Test
     @DisplayName("회원 가입 테스트")
     void createMemberTest() {
@@ -272,7 +308,7 @@ class MemberServiceImplTest {
                 .willReturn(Optional.of(mockMember));
 
         Class<ArrayList<Tag>> listClass =
-                (Class<ArrayList<Tag>>)(Class)ArrayList.class;
+                (Class<ArrayList<Tag>>) (Class) ArrayList.class;
         ArgumentCaptor<List<Tag>> captor = ArgumentCaptor.forClass(listClass);
 
         // when
@@ -289,7 +325,44 @@ class MemberServiceImplTest {
         assertThat(captor.getValue().get(3).getName()).isEqualTo("겨울");
     }
 
+    @Test
+    @DisplayName("회원 닉네임 유효성 검사 시 닉네임이 존재할 경우 테스트")
+    void validNicknameExistTest() {
+        // given
+        ValidMemberNickname.Request request = ValidMemberNickname.Request.builder()
+                .nickname("테스트 닉네임")
+                .build();
 
+        given(memberDetailRepository.existsByNickname(anyString()))
+                .willReturn(true);
+
+        // when
+        MemberException memberException
+                = assertThrows(MemberException.class, () -> memberService.validNickname(request));
+
+        // then
+        verify(memberDetailRepository, times(1)).existsByNickname(anyString());
+        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_NICKNAME_DUPLICATE_ERROR);
+        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_NICKNAME_DUPLICATE_ERROR.getErrorCode());
+        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_NICKNAME_DUPLICATE_ERROR.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("회원 닉네임 유효성 검사 통과 테스트")
+    void validNicknameTest() {
+        // given
+        ValidMemberNickname.Request request = ValidMemberNickname.Request.builder()
+                .nickname("테스트 닉네임")
+                .build();
+
+        given(memberDetailRepository.existsByNickname(anyString()))
+                .willReturn(false);
+        // when
+        memberService.validNickname(request);
+
+        // then
+        verify(memberDetailRepository, times(1)).existsByNickname(anyString());
+    }
 
     private Member createMember(String nickname, String email, String pass) {
         return Member.builder()

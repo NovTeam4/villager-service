@@ -66,7 +66,8 @@ class AuthApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
                 .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
-                .andExpect(jsonPath("$.validation.nickname").value("닉네임은 필수입력 값입니다."))
+                .andExpect(jsonPath("$.validation.nickname").value("닉네임은 필수입력 값이며" +
+                        ", 공백은 포함될 수 없습니다."))
                 .andDo(print());
     }
 
