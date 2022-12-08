@@ -30,16 +30,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String servletPath = request.getServletPath();
 
-         if (isPass(servletPath)) {
+        if (isPass(servletPath)) {
             filterChain.doFilter(request, response);
-         }else {
+        } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
 
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer")) {
                 JwtTokenResponse.createJwtTokenErrorResponse(response, SC_BAD_REQUEST, JWT_ACCESS_TOKEN_NOT_EXIST);
             } else {
                 try {
-                    String accessToken = jwtTokenProvider.resolveToken(request);
+                    String accessToken = jwtTokenProvider.resolveAccessToken(request);
 
                     Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
                     Member member = (Member) authentication.getPrincipal();
@@ -54,9 +54,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean isPass(String path) {
-        return path.equals("/api/v1/auth/login") ||
-               path.equals("/api/v1/auth/signup") ||
-               path.equals("/h2-console") || path.contains("/docs")
+        return
+                path.equals("/api/v1/auth/login") ||
+                path.equals("/api/v1/auth/signup") ||
+                path.equals("/api/v1/auth/valid/nickname") ||
+                path.equals("/h2-console") ||
+                path.contains("/docs")
                 ;
     }
 }

@@ -21,6 +21,8 @@ import com.example.villagerservice.party.request.PartyApplyDto.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,6 +79,8 @@ class PartyApplyServiceImplTest {
         // given
         given(partyRepository.findById(anyLong()))
             .willReturn(Optional.of(Party.builder().build()));
+        given(partyApplyRepository.existsByParty_Member_EmailAndParty_Id(anyString(), any()))
+            .willReturn(true);
 
         // when
         PartyApplyException exception = assertThrows(PartyApplyException.class,

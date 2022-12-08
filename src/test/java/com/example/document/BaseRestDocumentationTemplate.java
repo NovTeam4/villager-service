@@ -11,8 +11,12 @@ import static com.example.villagerservice.common.exception.CommonErrorCode.DATA_
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
 public abstract class BaseRestDocumentationTemplate {
-    protected RestDocumentation createRestDocumentation(String tag, String summary, String identifier, String description,
-                                                        String requestSchema, String responseSchema,
+    protected RestDocumentation createRestDocumentation(String tag,
+                                                        String summary,
+                                                        String identifier,
+                                                        String description,
+                                                        String requestSchema,
+                                                        String responseSchema,
                                                         List<FieldDescriptor> requestFieldsSnippet,
                                                         List<ParameterDescriptorWithType> requestParameters,
                                                         List<ParameterDescriptorWithType> pathParameters,

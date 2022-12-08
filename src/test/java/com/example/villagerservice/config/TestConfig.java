@@ -1,4 +1,4 @@
-package com.example.villagerservice;
+package com.example.villagerservice.config;
 
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -9,9 +9,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 @TestConfiguration
 @ActiveProfiles({"test"})
+@Transactional
 public class TestConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

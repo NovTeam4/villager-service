@@ -5,6 +5,7 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.dto.CreateMemberAttentionTag;
 import com.example.villagerservice.member.dto.UpdateMemberInfo;
 import com.example.villagerservice.member.dto.UpdateMemberPassword;
+import com.example.villagerservice.member.dto.ValidMemberNickname;
 import com.example.villagerservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

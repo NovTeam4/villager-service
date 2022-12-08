@@ -6,6 +6,7 @@ import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.common.jwt.JwtTokenResponse;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.dto.CreateMember;
+import com.example.villagerservice.member.dto.ValidMemberNickname;
 import com.example.villagerservice.member.service.AuthTokenService;
 import com.example.villagerservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +34,18 @@ public class AuthApiController {
         memberService.createMember(createMember);
     }
 
+    @PostMapping("/valid/nickname")
+    public void validNickname(@Valid @RequestBody ValidMemberNickname.Request request) {
+        memberService.validNickname(request);
+    }
+
     @PostMapping("/refresh")
     public JwtTokenResponse reissue(
             @AuthenticationPrincipal Member member,
-            HttpServletRequest request,
-            @RequestHeader("refresh-token") String refreshToken) {
+            HttpServletRequest request) {
 
-        String accessToken = jwtTokenProvider.resolveToken(request);
+        String accessToken = jwtTokenProvider.resolveAccessToken(request);
+        String refreshToken = jwtTokenProvider.resolveRefreshToken(request);
         if (!StringUtils.hasText(accessToken)) {
             throw new JwtTokenException(JWT_ACCESS_TOKEN_NOT_EXIST);
         }
