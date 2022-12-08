@@ -7,4 +7,6 @@ public interface PartyService {
 
     public void createParty(Long memberId , PartyDTO.Request partyRequest);
 
+    public void deleteParty(Long partyId);
+
 }

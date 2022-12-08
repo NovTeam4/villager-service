@@ -11,9 +11,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.service.PartyApplyService;
-import com.example.villagerservice.party.service.PartyService;
+import com.example.villagerservice.party.service.PartyQueryService;
+
+
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.villagerservice.party.service.PartyService;
+import com.example.villagerservice.party.service.impl.PartyServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +38,10 @@ public class PartyApiControllerTest2 {
     private PartyApplyService partyApplyService;
     @MockBean
     private PartyService partyService;
+
     @Autowired
     private MockMvc mockMvc;
-    
+
     @Test
     @DisplayName("모임 신청 성공")
     void successApplyParty() throws Exception {
@@ -86,4 +93,5 @@ public class PartyApiControllerTest2 {
             .andExpect(status().isOk())
             .andDo(print());
     }
+
 }
