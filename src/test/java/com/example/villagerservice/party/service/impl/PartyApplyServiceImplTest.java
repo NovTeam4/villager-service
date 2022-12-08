@@ -75,11 +75,12 @@ class PartyApplyServiceImplTest {
 
     @Test
     @DisplayName("모임 신청 실패 - 이미 신청한 모임")
-    @Disabled
     void partyApplyTestFailedPartyNotFound() {
         // given
         given(partyRepository.findById(anyLong()))
             .willReturn(Optional.of(Party.builder().build()));
+        given(partyApplyRepository.existsByParty_Member_EmailAndParty_Id(anyString(), any()))
+            .willReturn(true);
 
         // when
         PartyApplyException exception = assertThrows(PartyApplyException.class,
