@@ -39,7 +39,6 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
                 " where p.party_id = ? ";
     }
 
-
     private RowMapper<PartyDTO.Response> mapRow() {
 
         return ((rs, rowNum) -> new PartyDTO.Response(
