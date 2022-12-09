@@ -99,12 +99,13 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         Party party = saveParty();
+        Long partyId = party.getId();
 
         givenAuth("",
                 template.requestRestDocumentation("모임 조회"))
                 .when()
                 .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
-                .get("/api/v1/parties/" + party.getId())
+                .get("/api/v1/parties/{partyId}",partyId)
                 .then()
                 .statusCode(HttpStatus.OK.value());
 
@@ -116,12 +117,13 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         Party party = saveParty();
+        Long partyId = party.getId();
 
         givenAuth("",
                 template.requestRestDocumentation("모임 삭제"))
                 .when()
                 .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
-                .delete("/api/v1/parties/" + party.getId())
+                .delete("/api/v1/parties/{partyId}",partyId)
                 .then()
                 .statusCode(HttpStatus.OK.value());
 
