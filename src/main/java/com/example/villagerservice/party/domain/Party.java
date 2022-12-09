@@ -2,7 +2,9 @@ package com.example.villagerservice.party.domain;
 
 import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyCreate;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,9 +35,11 @@ public class Party extends BaseTimeEntity {
     private Integer score;
 
     @Column(name = "start_dt")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime startDt;
 
     @Column(name = "end_dt")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime endDt;
 
     private Integer amount;
@@ -54,5 +58,28 @@ public class Party extends BaseTimeEntity {
                 .amount(amount)
                 .member(member)
                 .build();
+    }
+
+    public void updatePartyInfo(UpdatePartyDTO.Request request) {
+
+        if(request.getPartyName() != null) {
+            this.partyName = request.getPartyName();
+        }
+
+        if(request.getScore() != null) {
+            this.score = request.getScore();
+        }
+
+        if(request.getStartDt() != null) {
+            this.startDt = request.getStartDt();
+        }
+
+        if(request.getEndDt() != null) {
+            this.endDt = request.getEndDt();
+        }
+
+        if (request.getAmount() != null) {
+            this.amount = request.getAmount();
+        }
     }
 }

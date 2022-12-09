@@ -2,6 +2,7 @@ package com.example.villagerservice.party.api;
 
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.service.PartyApplyService;
 import com.example.villagerservice.party.service.PartyQueryService;
@@ -34,6 +35,11 @@ public class PartyApiController {
 
         return partyQueryService.getParty(partyId);
 
+    }
+
+    @PatchMapping("/{partyId}")
+    public PartyDTO.Response updateParty(@PathVariable Long partyId , @RequestBody UpdatePartyDTO.Request updatePartyRequest) {
+        return partyService.updateParty(partyId , updatePartyRequest);
     }
 
     @DeleteMapping("/{partyId}")
