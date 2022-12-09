@@ -37,6 +37,10 @@ public class MemberTown {
         this.town = town;
     }
 
+    public void updateMemberTownName(String townName) {
+        this.townName = townName;
+    }
+
     public static MemberTown createMemberTown(Member member, Town town, String townName, TownLocation townLocation) {
         return new MemberTown(townName, townLocation, member, town);
     }
