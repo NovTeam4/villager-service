@@ -54,7 +54,6 @@ public class PartyApiControllerTest {
 
     @Test
     @DisplayName("모임 신청 성공")
-    @Disabled
     void successApplyParty() throws Exception {
         // given
         given(partyApplyService.applyParty(anyString(), anyLong()))
