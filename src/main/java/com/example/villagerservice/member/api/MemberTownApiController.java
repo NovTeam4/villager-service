@@ -2,13 +2,11 @@ package com.example.villagerservice.member.api;
 
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.dto.CreateMemberTown;
+import com.example.villagerservice.member.dto.UpdateMemberTown;
 import com.example.villagerservice.member.service.MemberTownService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -23,5 +21,11 @@ public class MemberTownApiController {
     public void createMemberTown(@AuthenticationPrincipal Member member,
                                  @Valid @RequestBody CreateMemberTown.Request request) {
         memberTownService.addMemberTown(member.getId(), request);
+    }
+
+    @PatchMapping("/{member-town-id}")
+    public void updateMemberTownName(@PathVariable("member-town-id") Long id,
+                                     @Valid @RequestBody UpdateMemberTown.Request request) {
+        memberTownService.updateMemberTownName(id, request);
     }
 }

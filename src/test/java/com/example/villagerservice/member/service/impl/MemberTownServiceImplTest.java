@@ -5,6 +5,7 @@ import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.domain.MemberTown;
 import com.example.villagerservice.member.domain.MemberTownRepository;
 import com.example.villagerservice.member.dto.CreateMemberTown;
+import com.example.villagerservice.member.dto.UpdateMemberTown;
 import com.example.villagerservice.member.exception.MemberException;
 import com.example.villagerservice.town.domain.Town;
 import com.example.villagerservice.town.domain.TownRepository;
@@ -19,16 +20,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
-import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_TOWN_ADD_MAX;
+import static com.example.villagerservice.member.exception.MemberErrorCode.*;
 import static com.example.villagerservice.town.exception.TownErrorCode.TOWN_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MemberTownServiceImplTest {
@@ -159,5 +158,48 @@ class MemberTownServiceImplTest {
         assertThat(captor.getValue().getTownName()).isEqualTo("우리집");
         assertThat(captor.getValue().getTownLocation().getLongitude()).isEqualTo(127.53215);
         assertThat(captor.getValue().getTownLocation().getLatitude()).isEqualTo(32.890);
+    }
+
+    @Test
+    @DisplayName("별칭 변경 시 회원동네가 존재하지 않을경우 테스트")
+    void updateMemberTownNameNotFoundMemberTownTest() {
+        // given
+        given(memberTownRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        // when
+        MemberException memberException =
+                assertThrows(MemberException.class,
+                        () -> memberTownService.updateMemberTownName(1L, any()));
+
+        // then
+        verify(memberTownRepository, times(1)).findById(anyLong());
+        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_TOWN_NOT_FOUND);
+        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_TOWN_NOT_FOUND.getErrorCode());
+        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_TOWN_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("별칭 변경 테스트")
+    void updateMemberTownNameTest() {
+        // given
+        MemberTown memberTown = MemberTown.createMemberTown(null, null, "hello", null);
+        MemberTown memberTownMock = spy(memberTown);
+
+        UpdateMemberTown.Request request = UpdateMemberTown.Request.builder()
+                .townName("동네이름변경")
+                .build();
+        given(memberTownRepository.findById(anyLong()))
+                .willReturn(Optional.of(memberTownMock));
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+
+        // when
+        memberTownService.updateMemberTownName(1L, request);
+
+        // then
+        verify(memberTownRepository, times(1)).findById(anyLong());
+        verify(memberTownMock, times(1)).updateMemberTownName(captor.capture());
+        assertThat(captor.getValue()).isEqualTo("동네이름변경");
     }
 }
