@@ -10,7 +10,9 @@ public class CreatePost {
     @AllArgsConstructor
     public static class Request {
 
-        private Member member;
+
+        private Long  memberid;
+        private Long  categoryid;
         private String title;
         private String contetns;
 
