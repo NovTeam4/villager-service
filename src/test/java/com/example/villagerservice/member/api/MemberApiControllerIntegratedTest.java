@@ -5,30 +5,21 @@ import com.example.document.RestDocumentationTemplate;
 import com.example.villagerservice.common.jwt.JwtTokenResponse;
 import com.example.villagerservice.config.AuthConfig;
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.dto.CreateMemberAttentionTag;
-import com.example.villagerservice.member.dto.LoginMember;
 import com.example.villagerservice.member.dto.UpdateMemberInfo;
 import com.example.villagerservice.member.dto.UpdateMemberPassword;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.response.Response;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -158,15 +149,6 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
     private void defaultAssertThat(List<Member> members) {
         assertThat(members.size()).isEqualTo(1);
         assertThat(members.get(0).getEmail()).isEqualTo("test@gmail.com");
-    }
-
-    private void createMember() {
-        Member member = Member.builder()
-                .email("test@gmail.com")
-                .encodedPassword(passwordEncoder.encode("hello11@@nW"))
-                .nickname("original")
-                .build();
-        memberRepository.save(member);
     }
 
     @NotNull
