@@ -6,6 +6,7 @@ import com.example.villagerservice.common.jwt.JwtTokenResponse;
 import com.example.villagerservice.config.AuthConfig;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
+import com.example.villagerservice.member.domain.MemberTownRepository;
 import com.example.villagerservice.member.dto.LoginMember;
 import com.example.villagerservice.member.dto.UpdateMemberInfo;
 import com.example.villagerservice.town.dto.TownList;
@@ -17,6 +18,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +55,14 @@ class TownApiControllerIntegratedTest extends BaseDocumentation {
     @Autowired
     private TownQueryService townQueryService;
     private RestDocumentationTemplate template = new RestDocumentationTemplate("근처동네 API");
+    @Autowired
+    private MemberTownRepository memberTownRepository;
 
+    @BeforeEach
+    void clean() {
+        memberTownRepository.deleteAll();
+        memberRepository.deleteAll();
+    }
     @Test
     @DisplayName("근처동네 위치 정보로 조회 api 테스트")
     void getTownListWithLocationApiTest() throws JsonProcessingException {
@@ -83,7 +92,7 @@ class TownApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     @Test
-    @DisplayName("근처동네 위치 정보로 조회 api 테스트")
+    @DisplayName("근처동네 이름 정보로 조회 api 테스트")
     void getTownListWithNameApiTest() throws JsonProcessingException {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         TownList.NameRequest request = TownList.NameRequest.builder()
