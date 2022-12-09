@@ -19,14 +19,20 @@ public class Post {
     private String contetns; // 내용
 
     @ManyToOne
+    @JoinColumn(name ="member_id")
     private Member member;   // 회원
+
+    @ManyToOne
+    @JoinColumn(name ="category_id")
+    private Category category; // 카테고리
 
     protected Post() {
     }
 
 
-    public Post(Member member, String title, String contetns) {
+    public Post(Member member, Category category,  String title, String contetns) {
         this.member = member;
+        this.category =category;
         this.title = title;
         this.contetns = contetns;
     }
