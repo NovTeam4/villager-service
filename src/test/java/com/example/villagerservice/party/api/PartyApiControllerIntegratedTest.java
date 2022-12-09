@@ -11,6 +11,7 @@ import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.dto.LoginMember;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -98,7 +99,8 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     void getParty() throws Exception {
 
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
-        Party party = saveParty();
+        Member member = createMember();
+        Party party = saveParty(member);
         Long partyId = party.getId();
 
         givenAuth("",
@@ -116,7 +118,8 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     void deleteParty() throws Exception {
 
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
-        Party party = saveParty();
+        Member member = createMember();
+        Party party = saveParty(member);
         Long partyId = party.getId();
 
         givenAuth("",
@@ -133,16 +136,47 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     }
 
-    private void createMember() {
-        Member member = Member.builder()
-                .email("test@gmail.com")
-                .encodedPassword(passwordEncoder.encode("hello11@@nW"))
-                .nickname("original")
+    @Test
+    @DisplayName("모임 변경 테스트")
+    void updateParty() throws Exception {
+
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
+        Member member = createMember();
+        Party party = saveParty(member);
+        Long partyId = party.getId();
+
+        UpdatePartyDTO.Request request = UpdatePartyDTO.Request.builder()
+                .partyName("updateTest")
                 .build();
-        memberRepository.save(member);
+
+        String value = objectMapper.writeValueAsString(request);
+
+        System.out.println("partyId = " + partyId);
+
+        givenAuth(value,
+                template.requestRestDocumentation("모임 변경"))
+                .when()
+                .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+                .patch("/api/v1/parties/{partId}" , partyId)
+                .then()
+                .statusCode(HttpStatus.OK.value());
+
+        Party findParty = partyRepository.findById(partyId).get();
+        Assertions.assertThat(findParty.getPartyName()).isEqualTo("updateTest");
     }
 
-    private Party saveParty() {
+    private Member createMember() {
+        Member member = Member.builder()
+                .email("testparty@gmail.com")
+                .encodedPassword(passwordEncoder.encode("hello11@@nW"))
+                .nickname("홍길동")
+                .build();
+        memberRepository.save(member);
+
+        return member;
+    }
+
+    private Party saveParty(Member member) {
 
         Party party = Party.createParty(
                 "test-party",
@@ -150,7 +184,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 LocalDateTime.now(),
                 LocalDateTime.now().plusHours(2),
                 1000,
-                null
+                member
         );
 
         partyRepository.save(party);

@@ -7,11 +7,13 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -28,6 +30,14 @@ public class PartyServiceImpl implements PartyService {
         Party party = Party.createParty(partyRequest.getPartyName(), partyRequest.getScore(), partyRequest.getStartDt(), partyRequest.getEndDt(), partyRequest.getAmount(), member);
         partyRepository.save(party);
 
+    }
+
+    @Override
+    @Transactional
+    public PartyDTO.Response updateParty(Long partyId , UpdatePartyDTO.Request updatePartyRequest) {
+        partyCheckedById(partyId);
+        Party party = partyRepository.findById(partyId).get();
+        return updatePartyInfo(party ,updatePartyRequest);
     }
 
     @Override
@@ -49,5 +59,11 @@ public class PartyServiceImpl implements PartyService {
                 () -> new PartyException(PARTY_NOT_FOUND)
         );
 
+    }
+
+    private PartyDTO.Response updatePartyInfo(Party party , UpdatePartyDTO.Request updatePartyRequest) {
+        party.updatePartyInfo(updatePartyRequest);
+
+        return PartyDTO.Response.createPartyResponse(party);
     }
 }

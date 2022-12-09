@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.villagerservice.config.WithMockCustomMember;
 import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.service.PartyApplyService;
 import com.example.villagerservice.party.service.PartyQueryService;
@@ -120,6 +121,7 @@ public class PartyApiControllerTest {
         String value = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/api/v1/parties")
+                        .characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(value))
                 .andExpect(status().isOk())
@@ -144,6 +146,7 @@ public class PartyApiControllerTest {
         String value = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/api/v1/parties")
+                        .characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(value))
                 .andExpect(status().isOk())
@@ -167,12 +170,33 @@ public class PartyApiControllerTest {
         String value = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/api/v1/parties")
+                        .characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(value))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.validation.score").value("모임 점수를 입력해주세요."))
                 .andDo(print());
 
+    }
+
+    @Test
+    @DisplayName("모임 변경 테스트")
+    void updateParty() throws Exception {
+        Long partyId = 1L;
+
+        UpdatePartyDTO.Request request = UpdatePartyDTO.Request.builder()
+                .partyName("updateTest")
+                .build();
+
+        String value = objectMapper.writeValueAsString(request);
+        mockMvc.perform(patch("/api/v1/parties/{partyId}", partyId)
+                        .characterEncoding("UTF-8")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(value))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(partyService,times(1)).updateParty(anyLong() , any());
     }
 
     @Test

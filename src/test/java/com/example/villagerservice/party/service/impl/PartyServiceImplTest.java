@@ -1,9 +1,10 @@
 package com.example.villagerservice.party.service.impl;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -12,12 +13,15 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -144,5 +148,57 @@ public class PartyServiceImplTest {
         List<Party> parties = partyRepository.findAll();
 
         assertEquals(parties.size(),0);
+    }
+
+    @Test
+    @DisplayName("모임 변경 시, 모임이 없을 경우")
+    void updatePartyWithoutParty() {
+
+        Long partyId = 1L;
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.updateParty(partyId , any());
+        });
+
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorMessage());
+
+    }
+
+    @Test
+    @DisplayName("모임 변경 테스트")
+    void updateParty() {
+
+        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDateTime.now())
+                .endDt(LocalDateTime.now())
+                .amount(1000)
+                .build();
+
+        Member member = Member.builder()
+                .email("test@gmail.com")
+                .nickname("홍길동")
+                .build();
+
+        Party party = Party.createParty(
+                partyRequest.getPartyName(),
+                partyRequest.getScore(),
+                partyRequest.getStartDt(),
+                partyRequest.getEndDt(),
+                partyRequest.getAmount(),
+                member
+        );
+
+        UpdatePartyDTO.Request updateRequest = UpdatePartyDTO.Request.builder()
+                .partyName("updateParty")
+                .build();
+
+        given(partyRepository.findById(1L)).willReturn(Optional.of(party));
+
+        PartyDTO.Response response = partyService.updateParty(1L, updateRequest);
+
+        assertThat(response.getPartyName()).isEqualTo("updateParty");
+
     }
 }
