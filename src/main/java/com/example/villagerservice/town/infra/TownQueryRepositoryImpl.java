@@ -34,11 +34,11 @@ public class TownQueryRepositoryImpl implements TownQueryRepository {
                 " from town " +
                 " group by village " +
                 " order by distance " +
-                //" limit " + locationRequest.getLimit();
                 " limit " + DEFAULT_LIMIT;
     }
     private RowMapper<TownListDetail> mapRow() {
         return ((rs, rowNum) -> new TownListDetail(
+                rs.getLong("town_id"),
                 rs.getString("city"),
                 rs.getString("town"),
                 rs.getString("village"),
@@ -53,7 +53,7 @@ public class TownQueryRepositoryImpl implements TownQueryRepository {
 
         List<TownListDetail> result = queryFactory
                 .select(Projections.constructor(TownListDetail.class,
-                        town.city, town.town, town.village,
+                        town.id, town.city, town.town, town.village,
                         town.code, town.latitude, town.longitude))
                 .from(town)
                 .where(town.village.startsWith(nameRequest.getName()))

@@ -114,6 +114,7 @@ class TownApiControllerIntegratedTest extends BaseDocumentation {
         return Arrays.asList(
                 fieldWithPath("totalCount").description("전체수"),
                 fieldWithPath("towns").type(JsonFieldType.ARRAY).description("근처동네 목록"),
+                fieldWithPath("towns[].townId").description("id"),
                 fieldWithPath("towns[].name").type(JsonFieldType.STRING).description("동네이름"),
                 fieldWithPath("towns[].code").description("코드"),
                 fieldWithPath("towns[].latitude").description("위도"),

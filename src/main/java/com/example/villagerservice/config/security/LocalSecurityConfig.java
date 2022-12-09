@@ -26,7 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Profile(value = {"local"})
+@Profile(value = {"local", "town-test"})
 public class LocalSecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
