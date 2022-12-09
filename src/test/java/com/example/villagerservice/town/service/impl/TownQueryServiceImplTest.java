@@ -34,11 +34,11 @@ class TownQueryServiceImplTest {
         given(townQueryRepository.getTownListWithLocation(any()))
                 .willReturn(TownList.Response.builder()
                         .towns(Arrays.asList(
-                                new TownListDetail("city1", "town1", "village1", "code1",
+                                new TownListDetail(1L, "city1", "town1", "village1", "code1",
                                         32.111, 123.155),
-                                new TownListDetail("city2", "town2", "village2", "code2",
+                                new TownListDetail(2L, "city2", "town2", "village2", "code2",
                                         32.123, 125.317),
-                                new TownListDetail("city3", "town3", "village3", "code3",
+                                new TownListDetail(3L, "city3", "town3", "village3", "code3",
                                         32.555, 127.888)
                         ))
                         .build());
@@ -49,16 +49,19 @@ class TownQueryServiceImplTest {
         // then
         verify(townQueryRepository, times(1)).getTownListWithLocation(any());
         assertThat(townListWithLocation.getTotalCount()).isEqualTo(3);
+        assertThat(townListWithLocation.getTowns().get(0).getTownId()).isEqualTo(1L);
         assertThat(townListWithLocation.getTowns().get(0).getName()).isEqualTo("city1 town1 village1");
         assertThat(townListWithLocation.getTowns().get(0).getCode()).isEqualTo("code1");
         assertThat(townListWithLocation.getTowns().get(0).getLatitude()).isEqualTo(32.111);
         assertThat(townListWithLocation.getTowns().get(0).getLongitude()).isEqualTo(123.155);
 
+        assertThat(townListWithLocation.getTowns().get(1).getTownId()).isEqualTo(2L);
         assertThat(townListWithLocation.getTowns().get(1).getName()).isEqualTo("city2 town2 village2");
         assertThat(townListWithLocation.getTowns().get(1).getCode()).isEqualTo("code2");
         assertThat(townListWithLocation.getTowns().get(1).getLatitude()).isEqualTo(32.123);
         assertThat(townListWithLocation.getTowns().get(1).getLongitude()).isEqualTo(125.317);
 
+        assertThat(townListWithLocation.getTowns().get(2).getTownId()).isEqualTo(3L);
         assertThat(townListWithLocation.getTowns().get(2).getName()).isEqualTo("city3 town3 village3");
         assertThat(townListWithLocation.getTowns().get(2).getCode()).isEqualTo("code3");
         assertThat(townListWithLocation.getTowns().get(2).getLatitude()).isEqualTo(32.555);
@@ -72,11 +75,11 @@ class TownQueryServiceImplTest {
         given(townQueryRepository.getTownListWithName(any()))
                 .willReturn(TownList.Response.builder()
                         .towns(Arrays.asList(
-                                new TownListDetail("city1", "town1", "village1", "code1",
+                                new TownListDetail(1L, "city1", "town1", "village1", "code1",
                                         32.111, 123.155),
-                                new TownListDetail("city2", "town2", "village2", "code2",
+                                new TownListDetail(2L, "city2", "town2", "village2", "code2",
                                         32.123, 125.317),
-                                new TownListDetail("city3", "town3", "village3", "code3",
+                                new TownListDetail(3L, "city3", "town3", "village3", "code3",
                                         32.555, 127.888)
                         ))
                         .build());
@@ -87,16 +90,20 @@ class TownQueryServiceImplTest {
         // then
         verify(townQueryRepository, times(1)).getTownListWithName(any());
         assertThat(townListWithLocation.getTotalCount()).isEqualTo(3);
+
+        assertThat(townListWithLocation.getTowns().get(0).getTownId()).isEqualTo(1L);
         assertThat(townListWithLocation.getTowns().get(0).getName()).isEqualTo("city1 town1 village1");
         assertThat(townListWithLocation.getTowns().get(0).getCode()).isEqualTo("code1");
         assertThat(townListWithLocation.getTowns().get(0).getLatitude()).isEqualTo(32.111);
         assertThat(townListWithLocation.getTowns().get(0).getLongitude()).isEqualTo(123.155);
 
+        assertThat(townListWithLocation.getTowns().get(1).getTownId()).isEqualTo(2L);
         assertThat(townListWithLocation.getTowns().get(1).getName()).isEqualTo("city2 town2 village2");
         assertThat(townListWithLocation.getTowns().get(1).getCode()).isEqualTo("code2");
         assertThat(townListWithLocation.getTowns().get(1).getLatitude()).isEqualTo(32.123);
         assertThat(townListWithLocation.getTowns().get(1).getLongitude()).isEqualTo(125.317);
 
+        assertThat(townListWithLocation.getTowns().get(2).getTownId()).isEqualTo(3L);
         assertThat(townListWithLocation.getTowns().get(2).getName()).isEqualTo("city3 town3 village3");
         assertThat(townListWithLocation.getTowns().get(2).getCode()).isEqualTo("code3");
         assertThat(townListWithLocation.getTowns().get(2).getLatitude()).isEqualTo(32.555);
