@@ -2,6 +2,8 @@ package com.example.villagerservice.member.service.impl;
 
 import com.example.villagerservice.member.domain.*;
 import com.example.villagerservice.member.dto.CreateMemberTown;
+import com.example.villagerservice.member.dto.UpdateMemberTown;
+import com.example.villagerservice.member.exception.MemberErrorCode;
 import com.example.villagerservice.member.exception.MemberException;
 import com.example.villagerservice.member.service.MemberTownService;
 import com.example.villagerservice.town.domain.Town;
@@ -9,9 +11,9 @@ import com.example.villagerservice.town.domain.TownRepository;
 import com.example.villagerservice.town.exception.TownException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
-import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_TOWN_ADD_MAX;
+import static com.example.villagerservice.member.exception.MemberErrorCode.*;
 import static com.example.villagerservice.town.exception.TownErrorCode.TOWN_NOT_FOUND;
 
 @Service
@@ -29,6 +31,14 @@ public class MemberTownServiceImpl implements MemberTownService {
         memberTownCountValid(member);
         Town town = findTownById(request);
         memberTownRepository.save(createMemberTown(request, member, town));
+    }
+
+    @Override
+    @Transactional
+    public void updateMemberTownName(Long memberTownId, UpdateMemberTown.Request request) {
+        MemberTown memberTown = memberTownRepository.findById(memberTownId)
+                .orElseThrow(() -> new MemberException(MEMBER_TOWN_NOT_FOUND));
+        memberTown.updateMemberTownName(request.getTownName());
     }
 
     private MemberTown createMemberTown(CreateMemberTown.Request request, Member member, Town town) {
