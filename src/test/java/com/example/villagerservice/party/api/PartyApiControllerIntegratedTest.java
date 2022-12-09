@@ -131,24 +131,6 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     }
 
-    private JwtTokenResponse getJwtTokenResponse() throws JsonProcessingException {
-        createMember();
-        LoginMember.Request login = LoginMember.Request.builder()
-                .email("test@gmail.com")
-                .password("hello11@@nW")
-                .build();
-
-        Response response = given()
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .header("Content-type", "application/json")
-                .body(objectMapper.writeValueAsString(login))
-                .log().all()
-                .post("/api/v1/auth/login");
-
-
-        return objectMapper.readValue(response.asString(), JwtTokenResponse.class);
-    }
-
     private void createMember() {
         Member member = Member.builder()
                 .email("test@gmail.com")

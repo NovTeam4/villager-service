@@ -169,24 +169,6 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
         memberRepository.save(member);
     }
 
-//    private JwtTokenResponse getJwtTokenResponse() throws JsonProcessingException {
-//        createMember();
-//        LoginMember.Request login = LoginMember.Request.builder()
-//                .email("test@gmail.com")
-//                .password("hello11@@nW")
-//                .build();
-//
-//        Response response = given()
-//                .accept(MediaType.APPLICATION_JSON_VALUE)
-//                .header("Content-type", "application/json")
-//                .body(objectMapper.writeValueAsString(login))
-//                .log().all()
-//                .post("/api/v1/auth/login");
-//
-//
-//        return objectMapper.readValue(response.asString(), JwtTokenResponse.class);
-//    }
-
     @NotNull
     private List<FieldDescriptor> getUpdateMemberInfoRequestFields() {
         return List.of(fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"));
