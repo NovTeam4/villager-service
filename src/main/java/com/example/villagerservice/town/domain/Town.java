@@ -1,6 +1,9 @@
 package com.example.villagerservice.town.domain;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -10,6 +13,7 @@ import javax.persistence.*;
         columnNames = {
                 "code"
         }))
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Town {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +32,14 @@ public class Town {
     private Double latitude;
     @Column(nullable = false)
     private Double longitude;
+
+    @Builder
+    private Town(String code, String city, String town, String village, Double latitude, Double longitude) {
+        this.code = code;
+        this.city = city;
+        this.town = town;
+        this.village = village;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }
