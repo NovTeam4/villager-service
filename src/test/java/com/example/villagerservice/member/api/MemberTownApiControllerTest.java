@@ -2,6 +2,7 @@ package com.example.villagerservice.member.api;
 
 import com.example.villagerservice.config.WithMockCustomMember;
 import com.example.villagerservice.member.dto.CreateMemberTown;
+import com.example.villagerservice.member.dto.UpdateMemberTown;
 import com.example.villagerservice.member.service.MemberTownService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -63,7 +64,7 @@ class MemberTownApiControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ",  "일", "가나다라마바사아자"})
+    @ValueSource(strings = {"", " ", "일", "가나다라마바사아자"})
     @WithMockCustomMember
     @DisplayName("동네 추가 시 동네별칭 포맷이 맞지않을 경우 테스트")
     void createMemberTownNameNotFormatTest(String townName) throws Exception {
@@ -194,5 +195,53 @@ class MemberTownApiControllerTest {
 
         verify(memberTownService, times(1))
                 .addMemberTown(anyLong(), any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "일", "가나다라마바사아자"})
+    @WithMockCustomMember
+    @DisplayName("동네 별칭 변경 시 포맷이 맞지 않을경우 테스트")
+    void updateMemberTownNameFormatTest(String townName) throws Exception {
+        // given
+        UpdateMemberTown.Request memberTown = UpdateMemberTown.Request.builder()
+                .townName(townName)
+                .build();
+
+        String body = objectMapper.writeValueAsString(memberTown);
+
+        // when & then
+        mockMvc.perform(patch("/api/v1/members/towns/1")
+                        .contentType(APPLICATION_JSON)
+                        .content(body)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
+                .andExpect(jsonPath("$.validation.townName").value("동네 별칭은 2~8글자 사이로 입력해주세요."))
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockCustomMember
+    @DisplayName("동네 별칭 변경 테스트")
+    void updateMemberTownNameTest() throws Exception {
+        // given
+        UpdateMemberTown.Request updateMemberTown = UpdateMemberTown.Request.builder()
+                .townName("새로운변경")
+                .build();
+
+
+        String body = objectMapper.writeValueAsString(updateMemberTown);
+
+        // when & then
+        mockMvc.perform(patch("/api/v1/members/towns/1")
+                        .contentType(APPLICATION_JSON)
+                        .content(body)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(memberTownService, times(1))
+                .updateMemberTownName(anyLong(), any());
     }
 }
