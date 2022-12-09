@@ -202,4 +202,40 @@ class MemberTownServiceImplTest {
         verify(memberTownMock, times(1)).updateMemberTownName(captor.capture());
         assertThat(captor.getValue()).isEqualTo("동네이름변경");
     }
+
+    @Test
+    @DisplayName("등록된 회원 동네에 대해서 삭제 시 회원동네가 없을 경우 테스트")
+    void deleteMemberTownNotFoundTest() {
+        // given
+        given(memberTownRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        // when
+        MemberException memberException
+                = assertThrows(MemberException.class, () -> memberTownService.deleteMemberTown(anyLong()));
+
+        // then
+        verify(memberTownRepository, times(1)).findById(anyLong());
+        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_TOWN_NOT_FOUND);
+        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_TOWN_NOT_FOUND.getErrorCode());
+        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_TOWN_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("등록된 회원 동네에 대해서 삭제 테스트")
+    void deleteMemberTownTest() {
+        // given
+        MemberTown memberTown = MemberTown.createMemberTown(null, null, "서울", null);
+        given(memberTownRepository.findById(anyLong()))
+                .willReturn(Optional.of(memberTown));
+
+        ArgumentCaptor<MemberTown> captor = ArgumentCaptor.forClass(MemberTown.class);
+        // when
+        memberTownService.deleteMemberTown(anyLong());
+
+        // then
+        verify(memberTownRepository, times(1)).findById(anyLong());
+        verify(memberTownRepository, times(1)).delete(captor.capture());
+        assertThat(captor.getValue().hashCode()).isEqualTo(memberTown.hashCode());
+    }
 }
