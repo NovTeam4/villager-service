@@ -28,4 +28,9 @@ public class MemberTownApiController {
                                      @Valid @RequestBody UpdateMemberTown.Request request) {
         memberTownService.updateMemberTownName(id, request);
     }
+
+    @DeleteMapping("/{member-town-id}")
+    public void deleteMemberTown(@PathVariable("member-town-id") Long id) {
+        memberTownService.deleteMemberTown(id);
+    }
 }

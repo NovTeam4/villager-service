@@ -24,7 +24,6 @@ import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -109,12 +108,35 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
                         getUpdateMemberTownPathParameterFields()))
                 .when()
                 .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
-                .patch("/api/v1/members/towns/{memberTownId}",  memberTownId)
+                .patch("/api/v1/members/towns/{memberTownId}", memberTownId)
                 .then()
                 .statusCode(HttpStatus.OK.value());
 
         MemberTown memberTown = memberTownRepository.findAll().get(0);
         assertThat(memberTown.getTownName()).isEqualTo("변경된별칭");
+    }
+
+    @Test
+    @DisplayName("회원 근처동네 삭제 테스트")
+    void deleteMemberTownApiTest() throws Exception {
+        // given
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
+
+        Long memberTownId = createMemberTown();
+
+        // when & then
+        givenAuth("",
+                template.requestRestDocumentation(
+                        "회원 동네 삭제",
+                        getDeleteMemberTownPathParameterFields()))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .delete("/api/v1/members/towns/{memberTownId}", memberTownId)
+                .then()
+                .statusCode(HttpStatus.OK.value());
+
+        List<MemberTown> memberTowns = memberTownRepository.findAll();
+        assertThat(memberTowns.size()).isEqualTo(0);
     }
 
     private Long createMemberTown() {
@@ -145,6 +167,11 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
 
     @NotNull
     private List<ParameterDescriptorWithType> getUpdateMemberTownPathParameterFields() {
+        return List.of(new ParameterDescriptorWithType("memberTownId").description("회원동네 id"));
+    }
+
+    @NotNull
+    private List<ParameterDescriptorWithType> getDeleteMemberTownPathParameterFields() {
         return List.of(new ParameterDescriptorWithType("memberTownId").description("회원동네 id"));
     }
 }

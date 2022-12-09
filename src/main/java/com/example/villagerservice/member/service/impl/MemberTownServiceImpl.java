@@ -36,9 +36,20 @@ public class MemberTownServiceImpl implements MemberTownService {
     @Override
     @Transactional
     public void updateMemberTownName(Long memberTownId, UpdateMemberTown.Request request) {
-        MemberTown memberTown = memberTownRepository.findById(memberTownId)
-                .orElseThrow(() -> new MemberException(MEMBER_TOWN_NOT_FOUND));
+        MemberTown memberTown = findMemberTownById(memberTownId);
         memberTown.updateMemberTownName(request.getTownName());
+    }
+
+    @Override
+    @Transactional
+    public void deleteMemberTown(Long memberTownId) {
+        MemberTown memberTown = findMemberTownById(memberTownId);
+        memberTownRepository.delete(memberTown);
+    }
+
+    private MemberTown findMemberTownById(Long memberTownId) {
+        return memberTownRepository.findById(memberTownId)
+                .orElseThrow(() -> new MemberException(MEMBER_TOWN_NOT_FOUND));
     }
 
     private MemberTown createMemberTown(CreateMemberTown.Request request, Member member, Town town) {

@@ -16,12 +16,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.example.villagerservice.common.exception.CommonErrorCode.DATA_INVALID_ERROR;
-import static org.mockito.ArgumentMatchers.*;
+import static com.example.villagerservice.common.exception.CommonErrorCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_ERROR;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -243,5 +244,28 @@ class MemberTownApiControllerTest {
 
         verify(memberTownService, times(1))
                 .updateMemberTownName(anyLong(), any());
+    }
+
+    @Test
+    @DisplayName("회원 동네 삭제시 path variable 안넘긴 경우 테스트")
+    void deleteMemberTownNotPathVariableTest() throws Exception {
+        // when & then
+        mockMvc.perform(delete("/api/v1/members/towns"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errorCode").value(HTTP_REQUEST_METHOD_NOT_SUPPORTED_ERROR.getErrorCode()))
+                .andExpect(jsonPath("$.errorMessage").value(HTTP_REQUEST_METHOD_NOT_SUPPORTED_ERROR.getErrorMessage()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("회원 동네 삭제 테스트")
+    void deleteMemberTownTest() throws Exception {
+        // when & then
+        mockMvc.perform(delete("/api/v1/members/towns/{member-town-id}", 1))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(memberTownService, times(1))
+                .deleteMemberTown(anyLong());
     }
 }

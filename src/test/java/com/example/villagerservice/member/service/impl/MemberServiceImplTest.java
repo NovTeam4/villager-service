@@ -105,7 +105,7 @@ class MemberServiceImplTest {
         assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_NICKNAME_DUPLICATE_ERROR.getErrorCode());
         assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_NICKNAME_DUPLICATE_ERROR.getErrorMessage());
     }
-    
+
     @Test
     @DisplayName("회원 가입 테스트")
     void createMemberTest() {
