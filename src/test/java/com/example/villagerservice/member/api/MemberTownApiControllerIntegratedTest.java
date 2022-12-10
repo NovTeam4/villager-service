@@ -10,9 +10,12 @@ import com.example.villagerservice.member.domain.MemberTown;
 import com.example.villagerservice.member.domain.MemberTownRepository;
 import com.example.villagerservice.member.domain.TownLocation;
 import com.example.villagerservice.member.dto.CreateMemberTown;
+import com.example.villagerservice.member.dto.FindMemberTownList;
 import com.example.villagerservice.member.dto.UpdateMemberTown;
 import com.example.villagerservice.town.domain.Town;
 import com.example.villagerservice.town.domain.TownRepository;
+import io.restassured.response.Response;
+import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -139,13 +142,48 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
         assertThat(memberTowns.size()).isEqualTo(0);
     }
 
+    @Test
+    @DisplayName("회원 등록된 동네 조회 테스트")
+    void getMemberTownListApiTest() throws Exception {
+        // given
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
+
+        Long memberTownId1 = createMemberTown();
+        Long memberTownId2 = createMemberTown();
+
+        // when & then
+        Response response = givenAuth("",
+                template.responseRestDocumentation(
+                        "회원 동네 조회",
+                        getMemberTownListResponseFields(),
+                        FindMemberTownList.Response.class.getName()))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/members/towns");
+
+        response
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("towns.size()", Matchers.equalTo(2))
+        ;
+
+        FindMemberTownList.Response findMemberTownList = objectMapper.readValue(response.asString(), FindMemberTownList.Response.class);
+        assertThat(findMemberTownList.getTowns().size()).isEqualTo(2);
+        assertThat(findMemberTownList.getTowns().get(0).getMemberTownId()).isEqualTo(memberTownId1);
+        assertThat(findMemberTownList.getTowns().get(0).getTownName()).isEqualTo("제주특별자치도 서귀포시 표선면");
+        assertThat(findMemberTownList.getTowns().get(0).getName()).isEqualTo("동네명");
+        assertThat(findMemberTownList.getTowns().get(1).getMemberTownId()).isEqualTo(memberTownId2);
+        assertThat(findMemberTownList.getTowns().get(1).getTownName()).isEqualTo("제주특별자치도 서귀포시 표선면");
+        assertThat(findMemberTownList.getTowns().get(1).getName()).isEqualTo("동네명");
+    }
+
     private Long createMemberTown() {
 
         Member member = memberRepository.findAll().get(0);
         Town town = townRepository.findById(1L).get();
 
         MemberTown createMemberTown = MemberTown.createMemberTown(member, town,
-                "변경전동네명", new TownLocation(32D, 127D));
+                "동네명", new TownLocation(32D, 127D));
         memberTownRepository.save(createMemberTown);
         return createMemberTown.getId();
     }
@@ -173,5 +211,17 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
     @NotNull
     private List<ParameterDescriptorWithType> getDeleteMemberTownPathParameterFields() {
         return List.of(new ParameterDescriptorWithType("memberTownId").description("회원동네 id"));
+    }
+
+    @NotNull
+    private List<FieldDescriptor> getMemberTownListResponseFields() {
+        return Arrays.asList(
+                fieldWithPath("towns").type(JsonFieldType.ARRAY).description("등록된 동네 목록"),
+                fieldWithPath("towns[].memberTownId").description("id"),
+                fieldWithPath("towns[].name").type(JsonFieldType.STRING).description("동네 별칭"),
+                fieldWithPath("towns[].townName").description("동네명"),
+                fieldWithPath("towns[].createdAt").description("생성일"),
+                fieldWithPath("towns[].modifiedAt").description("수정일")
+        );
     }
 }

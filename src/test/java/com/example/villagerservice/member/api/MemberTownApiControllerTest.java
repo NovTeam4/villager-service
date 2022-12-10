@@ -2,7 +2,10 @@ package com.example.villagerservice.member.api;
 
 import com.example.villagerservice.config.WithMockCustomMember;
 import com.example.villagerservice.member.dto.CreateMemberTown;
+import com.example.villagerservice.member.dto.FindMemberTownList;
+import com.example.villagerservice.member.dto.MemberTownListItem;
 import com.example.villagerservice.member.dto.UpdateMemberTown;
+import com.example.villagerservice.member.service.MemberTownQueryService;
 import com.example.villagerservice.member.service.MemberTownService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -15,10 +18,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+
 import static com.example.villagerservice.common.exception.CommonErrorCode.DATA_INVALID_ERROR;
 import static com.example.villagerservice.common.exception.CommonErrorCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_ERROR;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -33,6 +40,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MemberTownApiControllerTest {
     @MockBean
     private MemberTownService memberTownService;
+    @MockBean
+    private MemberTownQueryService memberTownQueryService;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -267,5 +276,41 @@ class MemberTownApiControllerTest {
 
         verify(memberTownService, times(1))
                 .deleteMemberTown(anyLong());
+    }
+
+    @Test
+    @WithMockCustomMember
+    @DisplayName("등록된 회원동네 조회 테스트")
+    void getMemberTownListTest() throws Exception {
+
+        // given
+        given(memberTownQueryService.getMemberTownList(anyLong()))
+                .willReturn(FindMemberTownList.Response.builder()
+                        .towns(Arrays.asList(
+                                new MemberTownListItem(1L, "name1", "city1", "town1", "village1",
+                                        LocalDateTime.now(), LocalDateTime.now()),
+                                new MemberTownListItem(2L, "name2", "city2", "town2", "village2",
+                                        LocalDateTime.now(), LocalDateTime.now()),
+                                new MemberTownListItem(3L, "name3", "city3", "town3", "village3",
+                                        LocalDateTime.now(), LocalDateTime.now())
+                        ))
+                        .build());
+
+        // when & then
+        mockMvc.perform(get("/api/v1/members/towns"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.towns[0].id").value(1L))
+                .andExpect(jsonPath("$.towns[0].name").value("name1"))
+                .andExpect(jsonPath("$.towns[0].townName").value("city1 town1 village1"))
+                .andExpect(jsonPath("$.towns[1].id").value(2L))
+                .andExpect(jsonPath("$.towns[1].name").value("name2"))
+                .andExpect(jsonPath("$.towns[1].townName").value("city2 town2 village2"))
+                .andExpect(jsonPath("$.towns[2].id").value(3L))
+                .andExpect(jsonPath("$.towns[2].name").value("name3"))
+                .andExpect(jsonPath("$.towns[2].townName").value("city3 town3 village3"))
+                .andDo(print());
+
+        verify(memberTownQueryService, times(1))
+                .getMemberTownList(anyLong());
     }
 }
