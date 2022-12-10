@@ -1,6 +1,6 @@
 ### 모임 등록
 POST http://localhost:9000/api/v1/parties
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjNAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsIm5pY2tuYW1lIjoiMTIzIiwiaWQiOjEsImVtYWlsIjoiMTIzQG5hdmVyLmNvbSIsImV4cCI6MTY3MDcyMDM1M30.nHrbLevqyu_C2CKWsgEWVtRnU4lK6OfzNkBgYUY-PC8
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjNAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsIm5pY2tuYW1lIjoiMTIzIiwiaWQiOjEsImVtYWlsIjoiMTIzQG5hdmVyLmNvbSIsImV4cCI6MTY3MDk3MTk0Nn0.eakt8-KXkcTZeJEBYyz1-Blo3_TEqJ2GliHAMH7NBoM
 Content-Type: application/json
 
 {
@@ -12,11 +12,16 @@ Content-Type: application/json
 }
 
 ### 모임 신청
-POST http://localhost:9000/api/v1/parties/2/apply
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjNAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsIm5pY2tuYW1lIjoiMTIzIiwiaWQiOjEsImVtYWlsIjoiMTIzQG5hdmVyLmNvbSIsImV4cCI6MTY3MDcyMDM1M30.nHrbLevqyu_C2CKWsgEWVtRnU4lK6OfzNkBgYUY-PC8
+POST http://localhost:9000/api/v1/parties/1/apply
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0QG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJuaWNrbmFtZSI6IjEyMzQiLCJpZCI6MiwiZW1haWwiOiIxMjM0QG5hdmVyLmNvbSIsImV4cCI6MTY3MDk3MjA1NH0.DWhPIR8IycyDWe7IiVAxg_XWMGS12pMOyknUdA4PcQk
 Content-Type: application/json
 
 ### 모임 신청 목록 조회
 GET http://localhost:9000/api/v1/parties/1/apply
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjNAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsIm5pY2tuYW1lIjoiMTIzIiwiaWQiOjEsImVtYWlsIjoiMTIzQG5hdmVyLmNvbSIsImV4cCI6MTY3MDcyMDM1M30.nHrbLevqyu_C2CKWsgEWVtRnU4lK6OfzNkBgYUY-PC8
+Content-Type: application/json
+
+### 모임 허가
+PATCH http://localhost:9000/api/v1/parties/1/permission/1
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjNAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsIm5pY2tuYW1lIjoiMTIzIiwiaWQiOjEsImVtYWlsIjoiMTIzQG5hdmVyLmNvbSIsImV4cCI6MTY3MDcyMDM1M30.nHrbLevqyu_C2CKWsgEWVtRnU4lK6OfzNkBgYUY-PC8
 Content-Type: application/json

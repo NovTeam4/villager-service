@@ -58,4 +58,12 @@ public class PartyApiController {
     public Page<PartyApplyDto.Response> getApplyPartyList(@PathVariable Long partyId, final Pageable pageable){
         return partyApplyService.getApplyPartyList(partyId, pageable);
     }
+
+    @PatchMapping("/{partyId}/permission/{targetMemberId}")
+    public PartyApplyDto.Response partyPermission(@PathVariable Long partyId,
+                                                        @PathVariable Long targetMemberId,
+                                                        @AuthenticationPrincipal Member member){
+
+        return partyApplyService.partyPermission(partyId, targetMemberId, member.getEmail());
+    }
 }

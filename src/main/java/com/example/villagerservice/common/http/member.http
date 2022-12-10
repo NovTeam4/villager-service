@@ -5,8 +5,10 @@ Content-Type: application/json
 {
   "nickname": "123",
   "email": "123@naver.com",
+  "year": 1998,
   "month": 12,
   "day" : 12,
+  "gender" : "MAN",
   "password": "Abc123!!"
 }
 
@@ -15,6 +17,6 @@ POST http://localhost:9000/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "email": "123@naver.com",
+  "email": "1234@naver.com",
   "password": "Abc123!!"
 }
