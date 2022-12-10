@@ -2,7 +2,9 @@ package com.example.villagerservice.member.api;
 
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.dto.CreateMemberTown;
+import com.example.villagerservice.member.dto.FindMemberTownList;
 import com.example.villagerservice.member.dto.UpdateMemberTown;
+import com.example.villagerservice.member.service.MemberTownQueryService;
 import com.example.villagerservice.member.service.MemberTownService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +18,12 @@ import javax.validation.Valid;
 public class MemberTownApiController {
 
     private final MemberTownService memberTownService;
+    private final MemberTownQueryService memberTownQueryService;
 
+    @GetMapping
+    public FindMemberTownList.Response getMemberTownList(@AuthenticationPrincipal Member member) {
+        return memberTownQueryService.getMemberTownList(member.getId());
+    }
     @PostMapping
     public void createMemberTown(@AuthenticationPrincipal Member member,
                                  @Valid @RequestBody CreateMemberTown.Request request) {
