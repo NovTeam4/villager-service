@@ -54,7 +54,7 @@ class TownApiControllerIntegratedTest extends BaseDocumentation {
 
     @Autowired
     private TownQueryService townQueryService;
-    private RestDocumentationTemplate template = new RestDocumentationTemplate("근처동네 API");
+    private RestDocumentationTemplate template = new RestDocumentationTemplate("근처동네 조회 API");
     @Autowired
     private MemberTownRepository memberTownRepository;
 

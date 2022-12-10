@@ -10,9 +10,13 @@ import com.example.villagerservice.member.domain.MemberTown;
 import com.example.villagerservice.member.domain.MemberTownRepository;
 import com.example.villagerservice.member.domain.TownLocation;
 import com.example.villagerservice.member.dto.CreateMemberTown;
+import com.example.villagerservice.member.dto.FindMemberTownDetail;
+import com.example.villagerservice.member.dto.FindMemberTownList;
 import com.example.villagerservice.member.dto.UpdateMemberTown;
 import com.example.villagerservice.town.domain.Town;
 import com.example.villagerservice.town.domain.TownRepository;
+import io.restassured.response.Response;
+import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +39,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 @ActiveProfiles({"town-test"})
 class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
 
-    private RestDocumentationTemplate template = new RestDocumentationTemplate("회원 동네 API");
+    private RestDocumentationTemplate template = new RestDocumentationTemplate("회원동네 API");
     @Autowired
     private MemberTownRepository memberTownRepository;
     @Autowired
@@ -139,13 +143,83 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
         assertThat(memberTowns.size()).isEqualTo(0);
     }
 
+    @Test
+    @DisplayName("회원 등록된 동네 목록 조회 테스트")
+    void getMemberTownListApiTest() throws Exception {
+        // given
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
+
+        Long memberTownId1 = createMemberTown();
+        Long memberTownId2 = createMemberTown();
+
+        // when & then
+        Response response = givenAuth("",
+                template.responseRestDocumentation(
+                        "회원동네 목록 조회",
+                        getMemberTownListResponseFields(),
+                        FindMemberTownList.Response.class.getName()))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/members/towns");
+
+        response
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("towns.size()", Matchers.equalTo(2))
+        ;
+
+        FindMemberTownList.Response findMemberTownList = objectMapper.readValue(response.asString(), FindMemberTownList.Response.class);
+        assertThat(findMemberTownList.getTowns().size()).isEqualTo(2);
+        assertThat(findMemberTownList.getTowns().get(0).getMemberTownId()).isEqualTo(memberTownId1);
+        assertThat(findMemberTownList.getTowns().get(0).getCityName()).isEqualTo("제주특별자치도 서귀포시 표선면");
+        assertThat(findMemberTownList.getTowns().get(0).getTownName()).isEqualTo("동네명");
+        assertThat(findMemberTownList.getTowns().get(1).getMemberTownId()).isEqualTo(memberTownId2);
+        assertThat(findMemberTownList.getTowns().get(1).getCityName()).isEqualTo("제주특별자치도 서귀포시 표선면");
+        assertThat(findMemberTownList.getTowns().get(1).getTownName()).isEqualTo("동네명");
+    }
+
+    @Test
+    @DisplayName("회원 등록된 동네 상세 조회 테스트")
+    void getMemberTownDetailApiTest() throws Exception {
+        // given
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
+        Long memberTownId = createMemberTown();
+
+        // when & then
+        Response response = givenAuth("",
+                template.responseRestDocumentation(
+                        "회원동네 상세 조회",
+                        getMemberTownDetailResponseFields(),
+                        FindMemberTownDetail.Response.class.getName(),
+                        getMemberTownDetailPathParameterFields()))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/members/towns/{memberTownId}", memberTownId);
+
+        response
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("memberTownId", Matchers.equalTo(memberTownId.intValue()))
+                .body("townName", Matchers.equalTo("동네명"))
+                .body("cityName", Matchers.equalTo("제주특별자치도 서귀포시 표선면"))
+                .body("latitude", Matchers.equalTo(32.0F))
+                .body("longitude", Matchers.equalTo(127.0F))
+        ;
+    }
+
+    @NotNull
+    private List<ParameterDescriptorWithType> getMemberTownDetailPathParameterFields() {
+        return List.of(new ParameterDescriptorWithType("memberTownId").description("회원동네 id"));
+    }
+
+
     private Long createMemberTown() {
 
         Member member = memberRepository.findAll().get(0);
         Town town = townRepository.findById(1L).get();
 
         MemberTown createMemberTown = MemberTown.createMemberTown(member, town,
-                "변경전동네명", new TownLocation(32D, 127D));
+                "동네명", new TownLocation(32D, 127D));
         memberTownRepository.save(createMemberTown);
         return createMemberTown.getId();
     }
@@ -173,5 +247,30 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
     @NotNull
     private List<ParameterDescriptorWithType> getDeleteMemberTownPathParameterFields() {
         return List.of(new ParameterDescriptorWithType("memberTownId").description("회원동네 id"));
+    }
+
+    @NotNull
+    private List<FieldDescriptor> getMemberTownListResponseFields() {
+        return Arrays.asList(
+                fieldWithPath("towns").type(JsonFieldType.ARRAY).description("등록된 동네 목록"),
+                fieldWithPath("towns[].memberTownId").description("id"),
+                fieldWithPath("towns[].townName").type(JsonFieldType.STRING).description("동네 별칭"),
+                fieldWithPath("towns[].cityName").description("동네명"),
+                fieldWithPath("towns[].createdAt").description("생성일"),
+                fieldWithPath("towns[].modifiedAt").description("수정일")
+        );
+    }
+
+    @NotNull
+    private List<FieldDescriptor> getMemberTownDetailResponseFields() {
+        return Arrays.asList(
+                fieldWithPath("memberTownId").description("회원동네 id"),
+                fieldWithPath("townName").description("별칭"),
+                fieldWithPath("cityName").description("동네이름"),
+                fieldWithPath("latitude").description("위도"),
+                fieldWithPath("longitude").description("경도"),
+                fieldWithPath("createdAt").description("생성일"),
+                fieldWithPath("modifiedAt").description("수정일")
+        );
     }
 }
