@@ -1,5 +1,6 @@
 package com.example.villagerservice.member.domain;
 
+import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.town.domain.Town;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberTown {
+public class MemberTown extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
