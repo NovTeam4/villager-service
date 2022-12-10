@@ -1,10 +1,7 @@
 package com.example.villagerservice.member.api;
 
 import com.example.villagerservice.config.WithMockCustomMember;
-import com.example.villagerservice.member.dto.CreateMemberTown;
-import com.example.villagerservice.member.dto.FindMemberTownList;
-import com.example.villagerservice.member.dto.MemberTownListItem;
-import com.example.villagerservice.member.dto.UpdateMemberTown;
+import com.example.villagerservice.member.dto.*;
 import com.example.villagerservice.member.service.MemberTownQueryService;
 import com.example.villagerservice.member.service.MemberTownService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -252,7 +249,7 @@ class MemberTownApiControllerTest {
                 .andDo(print());
 
         verify(memberTownService, times(1))
-                .updateMemberTownName(anyLong(), any());
+                .updateMemberTownName(anyLong(), anyLong(), any());
     }
 
     @Test
@@ -267,6 +264,7 @@ class MemberTownApiControllerTest {
     }
 
     @Test
+    @WithMockCustomMember
     @DisplayName("회원 동네 삭제 테스트")
     void deleteMemberTownTest() throws Exception {
         // when & then
@@ -275,7 +273,7 @@ class MemberTownApiControllerTest {
                 .andDo(print());
 
         verify(memberTownService, times(1))
-                .deleteMemberTown(anyLong());
+                .deleteMemberTown(anyLong(), anyLong());
     }
 
     @Test
@@ -300,17 +298,44 @@ class MemberTownApiControllerTest {
         mockMvc.perform(get("/api/v1/members/towns"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.towns[0].memberTownId").value(1L))
-                .andExpect(jsonPath("$.towns[0].name").value("name1"))
-                .andExpect(jsonPath("$.towns[0].townName").value("city1 town1 village1"))
+                .andExpect(jsonPath("$.towns[0].townName").value("name1"))
+                .andExpect(jsonPath("$.towns[0].cityName").value("city1 town1 village1"))
                 .andExpect(jsonPath("$.towns[1].memberTownId").value(2L))
-                .andExpect(jsonPath("$.towns[1].name").value("name2"))
-                .andExpect(jsonPath("$.towns[1].townName").value("city2 town2 village2"))
+                .andExpect(jsonPath("$.towns[1].townName").value("name2"))
+                .andExpect(jsonPath("$.towns[1].cityName").value("city2 town2 village2"))
                 .andExpect(jsonPath("$.towns[2].memberTownId").value(3L))
-                .andExpect(jsonPath("$.towns[2].name").value("name3"))
-                .andExpect(jsonPath("$.towns[2].townName").value("city3 town3 village3"))
+                .andExpect(jsonPath("$.towns[2].townName").value("name3"))
+                .andExpect(jsonPath("$.towns[2].cityName").value("city3 town3 village3"))
                 .andDo(print());
 
         verify(memberTownQueryService, times(1))
                 .getMemberTownList(anyLong());
+    }
+
+    @Test
+    @DisplayName("등록된 회원동네 상세 조회 테스트")
+    void getMemberTownDetailTest() throws Exception {
+        // given
+        given(memberTownQueryService.getMemberTownDetail(anyLong()))
+                .willReturn(FindMemberTownDetail.Response.builder()
+                        .memberTownId(1L)
+                        .townName("별칭")
+                        .cityName("도시명")
+                        .latitude(32.103)
+                        .longitude(127.887)
+                        .build());
+
+        // when & then
+        mockMvc.perform(get("/api/v1/members/towns/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.memberTownId").value(1L))
+                .andExpect(jsonPath("$.townName").value("별칭"))
+                .andExpect(jsonPath("$.cityName").value("도시명"))
+                .andExpect(jsonPath("$.latitude").value(32.103))
+                .andExpect(jsonPath("$.longitude").value(127.887))
+                .andDo(print());
+
+        verify(memberTownQueryService, times(1))
+                .getMemberTownDetail(anyLong());
     }
 }
