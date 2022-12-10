@@ -3,7 +3,6 @@ package com.example.villagerservice.member.service.impl;
 import com.example.villagerservice.member.domain.*;
 import com.example.villagerservice.member.dto.CreateMemberTown;
 import com.example.villagerservice.member.dto.UpdateMemberTown;
-import com.example.villagerservice.member.exception.MemberErrorCode;
 import com.example.villagerservice.member.exception.MemberException;
 import com.example.villagerservice.member.service.MemberTownService;
 import com.example.villagerservice.town.domain.Town;
@@ -29,26 +28,43 @@ public class MemberTownServiceImpl implements MemberTownService {
         Member member = findMemberById(memberId);
         // 회원 동네 개수 체크
         memberTownCountValid(member);
+        // 별칭 중복 검사
+        memberTownNameDuplicateValid(member, request.getTownName());
+
         Town town = findTownById(request);
         memberTownRepository.save(createMemberTown(request, member, town));
     }
 
     @Override
     @Transactional
-    public void updateMemberTownName(Long memberTownId, UpdateMemberTown.Request request) {
-        MemberTown memberTown = findMemberTownById(memberTownId);
+    public void updateMemberTownName(Long memberId, Long memberTownId, UpdateMemberTown.Request request) {
+        MemberTown memberTown = findMemberTownByIdWithMember(memberTownId);
+        memberTownEditAccessValid(memberId, memberTown);
         memberTown.updateMemberTownName(request.getTownName());
     }
 
     @Override
     @Transactional
-    public void deleteMemberTown(Long memberTownId) {
-        MemberTown memberTown = findMemberTownById(memberTownId);
+    public void deleteMemberTown(Long memberId, Long memberTownId) {
+        MemberTown memberTown = findMemberTownByIdWithMember(memberTownId);
+        memberTownEditAccessValid(memberId, memberTown);
         memberTownRepository.delete(memberTown);
     }
 
-    private MemberTown findMemberTownById(Long memberTownId) {
-        return memberTownRepository.findById(memberTownId)
+    private void memberTownEditAccessValid(Long memberId, MemberTown memberTown) {
+        if(!memberTown.getMember().getId().equals(memberId)) {
+            throw new MemberException(MEMBER_NOT_MATCH_REQUEST);
+        }
+    }
+
+    private void memberTownNameDuplicateValid(Member member, String townName) {
+        if(memberTownRepository.existsByMemberAndTownName(member, townName)) {
+            throw new MemberException(MEMBER_TOWN_NAME_DUPLICATE);
+        }
+    }
+
+    private MemberTown findMemberTownByIdWithMember(Long memberTownId) {
+        return memberTownRepository.getMemberTownWithMember(memberTownId)
                 .orElseThrow(() -> new MemberException(MEMBER_TOWN_NOT_FOUND));
     }
 
