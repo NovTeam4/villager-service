@@ -299,13 +299,13 @@ class MemberTownApiControllerTest {
         // when & then
         mockMvc.perform(get("/api/v1/members/towns"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.towns[0].id").value(1L))
+                .andExpect(jsonPath("$.towns[0].memberTownId").value(1L))
                 .andExpect(jsonPath("$.towns[0].name").value("name1"))
                 .andExpect(jsonPath("$.towns[0].townName").value("city1 town1 village1"))
-                .andExpect(jsonPath("$.towns[1].id").value(2L))
+                .andExpect(jsonPath("$.towns[1].memberTownId").value(2L))
                 .andExpect(jsonPath("$.towns[1].name").value("name2"))
                 .andExpect(jsonPath("$.towns[1].townName").value("city2 town2 village2"))
-                .andExpect(jsonPath("$.towns[2].id").value(3L))
+                .andExpect(jsonPath("$.towns[2].memberTownId").value(3L))
                 .andExpect(jsonPath("$.towns[2].name").value("name3"))
                 .andExpect(jsonPath("$.towns[2].townName").value("city3 town3 village3"))
                 .andDo(print());
