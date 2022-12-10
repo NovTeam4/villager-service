@@ -14,20 +14,20 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MemberTownListItem {
     private Long memberTownId;
-    private String name;
     private String townName;
+    private String cityName;
     private String createdAt;
     private String modifiedAt;
 
-    public MemberTownListItem(Long memberTownId, String name, String city, String town, String village,  LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public MemberTownListItem(Long memberTownId, String townName, String city, String town, String village,  LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.memberTownId = memberTownId;
-        this.name = name;
-        this.townName = getTownName(city, town, village);
-        this.createdAt = StringConverter.localDateTimeToLocalDateString(createdAt);
-        this.modifiedAt = StringConverter.localDateTimeToLocalDateString(modifiedAt);
+        this.townName = townName;
+        this.cityName = getCityName(city, town, village);
+        this.createdAt = StringConverter.localDateTimeToLocalDateTimeString(createdAt);
+        this.modifiedAt = StringConverter.localDateTimeToLocalDateTimeString(modifiedAt);
     }
 
-    private String getTownName(String city, String town, String village) {
+    private String getCityName(String city, String town, String village) {
         return String.format("%s %s %s", city, town, village);
     }
 }
