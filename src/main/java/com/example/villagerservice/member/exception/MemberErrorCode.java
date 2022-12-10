@@ -13,7 +13,9 @@ public enum MemberErrorCode {
     MEMBER_TAG_MAX_COUNT("INFO-405", "관심태그는 최대 5개까지 가능합니다."),
     MEMBER_NICKNAME_DUPLICATE_ERROR("INFO-406", "이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요."),
     MEMBER_TOWN_ADD_MAX("INFO-407", "회원 동네는 최대 2개까지 가능합니다."),
-    MEMBER_TOWN_NOT_FOUND("INFO-408", "회원동네가 존재하지 않습니다.")
+    MEMBER_TOWN_NOT_FOUND("INFO-408", "회원동네가 존재하지 않습니다."),
+    MEMBER_TOWN_NAME_DUPLICATE("INFO-409", "회원동네 별칭이 중복되었습니다."),
+    MEMBER_NOT_MATCH_REQUEST("INFO-410", "요청하신 회원은 해당 요청에 대한 권한이 없습니다.")
     ;
 
     private final String errorCode;
