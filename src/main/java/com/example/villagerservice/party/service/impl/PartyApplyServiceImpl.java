@@ -50,7 +50,7 @@ public class PartyApplyServiceImpl implements PartyApplyService {
         Party party = partyRepository.findById(partyId).orElseThrow(
             () -> new PartyApplyException(PARTY_NOT_FOUND)
         );
-        // 가져온 모임이 사용자의 이메일과 다르다면 에러
+        // 가져온 모임이 주최자의 이메일과 다르다면 에러
         if(!party.getMember().getEmail().equals(email)){
             new PartyApplyException(DIFFERENT_HOST);
         }
@@ -60,9 +60,9 @@ public class PartyApplyServiceImpl implements PartyApplyService {
         );
         // 만약 이미 신청된 상태이면 에러 반환
         if(partyApply.isAccept()){
-            throw new PartyApplyException(ALREADY_ACCEPT_APPLY)
+            throw new PartyApplyException(ALREADY_ACCEPT_APPLY);
         }
-        
+
         // 허가 후 저장
         partyApply.setAccept(true);
         return PartyApplyDto.Response.toDto(partyApplyRepository.save(partyApply));

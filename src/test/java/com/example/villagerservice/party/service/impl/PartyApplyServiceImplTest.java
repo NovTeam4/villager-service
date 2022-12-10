@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.Tag;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyApply;
@@ -147,5 +148,127 @@ class PartyApplyServiceImplTest {
 
         // then
         assertEquals(PartyApplyErrorCode.PARTY_NOT_FOUND.getErrorCode(), exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("모임 허락 성공")
+    void 모임_허락_성공() {
+        // given
+        Long partyId = 1L;
+        Long targetMemberId = 2L;
+        String email = "host@123";
+        Party party = Party.builder()
+            .member(Member.builder().email(email).build())
+            .build();
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.ofNullable(party));
+        given(partyApplyRepository.findByParty_IdAndTargetMemberId(anyLong(), anyLong()))
+            .willReturn(Optional.ofNullable(PartyApply.builder()
+                .id(1L)
+                .party(party)
+                .targetMemberId(targetMemberId)
+                .isAccept(false)
+                .build()));
+        given(partyApplyRepository.save(any()))
+            .willReturn(PartyApply.builder()
+                .id(1L)
+                .party(party)
+                .targetMemberId(targetMemberId)
+                .isAccept(true)
+                .build());
+
+        ArgumentCaptor<PartyApply> captor = ArgumentCaptor.forClass(PartyApply.class);
+
+        // when
+        PartyApplyDto.Response response
+            = partyApplyService.partyPermission(partyId, targetMemberId, email);
+
+        // then
+        verify(partyApplyRepository, times(1)).save(captor.capture());
+        assertEquals(true, captor.getValue().isAccept());
+        assertEquals(true, response.isAccept());
+    }
+
+    @Test
+    @DisplayName("모임 허락 실패 - 해당 모임이 없는 경우")
+    void 모임_허락_실패_해당모임이없는경우() {
+        // given
+        // when
+        PartyApplyException exception = assertThrows(PartyApplyException.class,
+            () -> partyApplyService.partyPermission(-1L, 1L, "host@123"));
+
+        // then
+        assertEquals(PartyApplyErrorCode.PARTY_NOT_FOUND.getErrorCode(), exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("모임 허락 실패 - 가져온 모임이 주최자의 이메일과 다름")
+    void 모임_허락_실패_가져온모임이주최자의이메일과다름() {
+        String emailHost = "host@123";
+        String emailFake = "fake@123";
+        // given
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.ofNullable(Party.builder()
+                .member(Member.builder().email(emailFake).build())
+                .build()));
+
+        // when
+        PartyApplyException exception = assertThrows(PartyApplyException.class,
+            () -> partyApplyService.partyPermission(1L, 2L, emailHost));
+
+        // then
+        assertEquals(PartyApplyErrorCode.DIFFERENT_HOST.getErrorCode(), exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("모임 허락 실패 - 등록된 신청이 없음")
+    void 모임_허락_실패_등록된신청이없음() {
+        // given
+        Long partyId = 1L;
+        Long targetMemberId = 2L;
+        String email = "host@123";
+        Party party = Party.builder()
+            .member(Member.builder().email(email).build())
+            .build();
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.ofNullable(party));
+
+        // when
+        PartyApplyException exception = assertThrows(PartyApplyException.class,
+            () -> partyApplyService.partyPermission(1L, -1L, "123"));
+
+        // then
+        assertEquals(PartyApplyErrorCode.PARTY_APPLY_NOT_FOUND.getErrorCode(), exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("모임 허락 실패 - 이미 신청된 상태")
+    void 모임_허락_실패_이미신청된상태() {
+        // given
+        Long partyId = 1L;
+        Long targetMemberId = 2L;
+        String email = "host@123";
+        Party party = Party.builder()
+            .member(Member.builder().email(email).build())
+            .build();
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.ofNullable(party));
+        given(partyApplyRepository.findByParty_IdAndTargetMemberId(anyLong(), anyLong()))
+            .willReturn(Optional.ofNullable(PartyApply.builder()
+                .id(1L)
+                .party(party)
+                .targetMemberId(targetMemberId)
+                .isAccept(true)
+                .build()));
+
+        // when
+        PartyApplyException exception = assertThrows(PartyApplyException.class,
+            () -> partyApplyService.partyPermission(1L, 1L, "123"));
+
+        // then
+        assertEquals(PartyApplyErrorCode.ALREADY_ACCEPT_APPLY.getErrorCode(), exception.getErrorCode());
     }
 }
