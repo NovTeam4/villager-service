@@ -58,7 +58,11 @@ public class PartyApplyServiceImpl implements PartyApplyService {
         PartyApply partyApply = partyApplyRepository.findByParty_IdAndTargetMemberId(partyId, targetMemberId).orElseThrow(
             () -> new PartyApplyException(PARTY_APPLY_NOT_FOUND)
         );
-
+        // 만약 이미 신청된 상태이면 에러 반환
+        if(partyApply.isAccept()){
+            throw new PartyApplyException(ALREADY_ACCEPT_APPLY)
+        }
+        
         // 허가 후 저장
         partyApply.setAccept(true);
         return PartyApplyDto.Response.toDto(partyApplyRepository.save(partyApply));
