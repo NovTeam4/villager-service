@@ -4,6 +4,8 @@ import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.request.PartyApplyDto.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 public interface PartyApplyService {
 
@@ -22,4 +24,13 @@ public interface PartyApplyService {
      * @return
      */
     Page<Response> getApplyPartyList(Long partyId, Pageable pageable);
+
+    /**
+     * 모임 허가
+     * @param partyId
+     * @param targetMemberId
+     * @param email
+     * @return
+     */
+    Response partyPermission(Long partyId, Long targetMemberId, String email);
 }
