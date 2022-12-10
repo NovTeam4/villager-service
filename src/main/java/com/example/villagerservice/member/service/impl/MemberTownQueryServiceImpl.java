@@ -1,6 +1,7 @@
 package com.example.villagerservice.member.service.impl;
 
 import com.example.villagerservice.member.domain.MemberTownQueryRepository;
+import com.example.villagerservice.member.dto.FindMemberTownDetail;
 import com.example.villagerservice.member.dto.FindMemberTownList;
 import com.example.villagerservice.member.service.MemberTownQueryService;
 import lombok.RequiredArgsConstructor;
@@ -17,5 +18,10 @@ public class MemberTownQueryServiceImpl implements MemberTownQueryService {
     @Override
     public FindMemberTownList.Response getMemberTownList(Long memberId) {
         return memberTownQueryRepository.getMemberTownList(memberId);
+    }
+
+    @Override
+    public FindMemberTownDetail.Response getMemberTownDetail(Long memberTownId) {
+        return memberTownQueryRepository.getMemberTownDetail(memberTownId);
     }
 }
