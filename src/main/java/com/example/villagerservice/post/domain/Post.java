@@ -1,5 +1,6 @@
 package com.example.villagerservice.post.domain;
 
+import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.member.domain.Member;
 import lombok.Getter;
 
@@ -7,7 +8,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-public class Post {
+public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
@@ -16,13 +17,13 @@ public class Post {
     @Column(length = 16)
     private String title;    // 제목
     @Lob
-    private String contetns; // 내용
+    private String contents; // 내용
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="member_id")
     private Member member;   // 회원
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="category_id")
     private Category category; // 카테고리
 
@@ -30,11 +31,11 @@ public class Post {
     }
 
 
-    public Post(Member member, Category category,  String title, String contetns) {
+    public Post(Member member, Category category,  String title, String contents) {
         this.member = member;
         this.category =category;
         this.title = title;
-        this.contetns = contetns;
+        this.contents = contents;
     }
 
 }
