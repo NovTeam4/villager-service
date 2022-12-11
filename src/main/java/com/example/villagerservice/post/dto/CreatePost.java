@@ -18,7 +18,7 @@ public class CreatePost {
         @Size(max = 16, message = "게시글 제목은 16글자 이내로 작성해주세요.")
         private String title;
 
-        @Size(max = 20, message = "게시글 제목은 500글자 이내로 작성해주세요.")
+        @Size(max = 500, message = "게시글 제목은 500글자 이내로 작성해주세요.")
         private String contents;
     }
 
