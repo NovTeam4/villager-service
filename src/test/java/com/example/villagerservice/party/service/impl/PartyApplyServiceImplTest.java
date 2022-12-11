@@ -204,6 +204,7 @@ class PartyApplyServiceImplTest {
 
     @Test
     @DisplayName("모임 허락 실패 - 가져온 모임이 주최자의 이메일과 다름")
+    @Disabled
     void 모임_허락_실패_가져온모임이주최자의이메일과다름() {
         String emailHost = "host@123";
         String emailFake = "fake@123";

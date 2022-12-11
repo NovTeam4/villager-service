@@ -14,10 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import static com.example.villagerservice.follow.exception.FollowErrorCode.FOLLOW_ALREADY_STATUS;
+import static com.example.villagerservice.follow.exception.FollowErrorCode.UNFOLLOW_ALREADY_STATUS;
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -70,7 +70,7 @@ class FollowServiceImplTest {
         assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_NOT_FOUND.getErrorCode());
         assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_NOT_FOUND.getErrorMessage());
     }
-    
+
     @Test
     @DisplayName("팔로우가 이미된 상태 테스트")
     void followAlreadyStatusTest() {
@@ -93,7 +93,7 @@ class FollowServiceImplTest {
         assertThat(followException.getErrorCode()).isEqualTo(FOLLOW_ALREADY_STATUS.getErrorCode());
         assertThat(followException.getErrorMessage()).isEqualTo(FOLLOW_ALREADY_STATUS.getErrorMessage());
     }
-    
+
     @Test
     @DisplayName("팔로잉 테스트")
     void followingTest() {
@@ -121,6 +121,108 @@ class FollowServiceImplTest {
         verify(memberRepository, times(2)).findById(anyLong());
         verify(followRepository, times(1)).existsByFromMemberAndToMember(any(), any());
         verify(followRepository, times(1)).save(captor.capture());
+        assertThat(captor.getValue().getFromMember().getEmail())
+                .isEqualTo("fromMember@gamil.com");
+        assertThat(captor.getValue().getToMember().getEmail())
+                .isEqualTo("toMember@gamil.com");
+    }
+
+    @Test
+    @DisplayName("언팔로우 신청 시 언팔로우 신청자가 존재하지 않을 경우")
+    void unFollowFromMemberNotFoundTest() {
+        // given
+        given(memberRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        // when
+        MemberException memberException = assertThrows(MemberException.class,
+                () -> followService.unFollowing(1L, anyLong()));
+
+        // then
+        verify(memberRepository, times(1)).findById(anyLong());
+        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_NOT_FOUND);
+        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_NOT_FOUND.getErrorCode());
+        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("언팔로우 신청 시 언팔로우가 존재하지 않을 경우")
+    void unFollowToMemberNotFoundTest() {
+        // given
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(Member.builder().build()))
+                .thenReturn(Optional.empty());
+
+        // when
+        MemberException memberException = assertThrows(MemberException.class,
+                () -> followService.unFollowing(1L, 1L));
+
+        // then
+        verify(memberRepository, times(2)).findById(anyLong());
+        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_NOT_FOUND);
+        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_NOT_FOUND.getErrorCode());
+        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("언팔로우가 이미된 상태 테스트")
+    void unFollowAlreadyStatusTest() {
+        // given
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(Member.builder().build()))
+                .thenReturn(Optional.of(Member.builder().build()));
+
+        given(followRepository.existsByFromMemberAndToMember(any(), any()))
+                .willReturn(false);
+
+        // when
+        FollowException followException = assertThrows(FollowException.class,
+                () -> followService.unFollowing(1L, 1L));
+
+        // then
+        verify(memberRepository, times(2)).findById(anyLong());
+        verify(followRepository, times(1)).existsByFromMemberAndToMember(any(), any());
+        assertThat(followException.getMemberErrorCode()).isEqualTo(UNFOLLOW_ALREADY_STATUS);
+        assertThat(followException.getErrorCode()).isEqualTo(UNFOLLOW_ALREADY_STATUS.getErrorCode());
+        assertThat(followException.getErrorMessage()).isEqualTo(UNFOLLOW_ALREADY_STATUS.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("언팔로우 테스트")
+    void unFollowingTest() {
+        // given
+        Member fromMember = Member.builder()
+                .email("fromMember@gamil.com")
+                .build();
+        Member toMember = Member.builder()
+                .email("toMember@gamil.com")
+                .build();
+
+        Follow follow = Follow.createFollow(fromMember, toMember);
+
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(fromMember))
+                .thenReturn(Optional.of(toMember));
+
+        given(followRepository.existsByFromMemberAndToMember(fromMember, toMember))
+                .willReturn(true);
+
+        given(followRepository.findByFromMemberAndToMember(fromMember, toMember))
+                .willReturn(Optional.of(follow));
+
+        ArgumentCaptor<Follow> captor = ArgumentCaptor.forClass(Follow.class);
+
+        // when
+        followService.unFollowing(1L, 1L);
+
+        // then
+        verify(memberRepository, times(2)).findById(anyLong());
+        verify(followRepository, times(1)).existsByFromMemberAndToMember(any(), any());
+        verify(followRepository, times(1)).delete(captor.capture());
+        assertThat(captor.getValue().getFromMember().getEmail())
+                .isEqualTo("fromMember@gamil.com");
+        assertThat(captor.getValue().getToMember().getEmail())
+                .isEqualTo("toMember@gamil.com");
         assertThat(captor.getValue().getFromMember().getEmail())
                 .isEqualTo("fromMember@gamil.com");
         assertThat(captor.getValue().getToMember().getEmail())
