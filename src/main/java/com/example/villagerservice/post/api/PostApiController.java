@@ -10,18 +10,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/posts")
+@RequestMapping("/api/v1/posts")
 public class PostApiController {
-
     private final PostService postService;
 
-
     @PostMapping
-    public void createPost(@AuthenticationPrincipal Member member, @RequestBody CreatePost.Request request) {
-
+    public void createPost(@AuthenticationPrincipal Member member,
+                           @Valid @RequestBody CreatePost.Request request) {
         postService.createPost(member.getId(), request);
-
     }
 }
