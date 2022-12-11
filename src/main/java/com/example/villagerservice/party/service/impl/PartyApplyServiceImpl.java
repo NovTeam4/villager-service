@@ -23,15 +23,15 @@ public class PartyApplyServiceImpl implements PartyApplyService {
     private final PartyApplyRepository partyApplyRepository;
 
     @Override
-    public PartyApplyDto.Response applyParty(String email, Long partyId) {
+    public PartyApplyDto.Response applyParty(Long targetMemberId, Long partyId) {
         Party party = partyRepository.findById(partyId).orElseThrow(
             () -> new PartyApplyException(PARTY_NOT_FOUND)
         );
-        if(partyApplyRepository.existsByParty_Member_EmailAndParty_Id(email, partyId)){
+        if(partyApplyRepository.existsByParty_Member_IdAndParty_Id(targetMemberId, partyId)){
             throw new PartyApplyException(ALREADY_BEAN_APPLIED);
         }
 
-        return Response.toDto(partyApplyRepository.save(PartyApply.createPartyList(party)));
+        return Response.toDto(partyApplyRepository.save(PartyApply.createPartyList(party, targetMemberId)));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class PartyApplyServiceImpl implements PartyApplyService {
         );
         // 가져온 모임이 주최자의 이메일과 다르다면 에러
         if(!party.getMember().getEmail().equals(email)){
-            new PartyApplyException(DIFFERENT_HOST);
+            throw new PartyApplyException(DIFFERENT_HOST);
         }
         // 알맞은 모임신청 가져오기
         PartyApply partyApply = partyApplyRepository.findByParty_IdAndTargetMemberId(partyId, targetMemberId).orElseThrow(

@@ -29,9 +29,9 @@ public class PartyApply extends BaseTimeEntity {
     @JoinColumn(name = "party_id")
     private Party party;
 
-    public static PartyApply createPartyList(Party party){
+    public static PartyApply createPartyList(Party party, Long targetMemberId){
         return PartyApply.builder()
-            .targetMemberId(party.getId())
+            .targetMemberId(targetMemberId)
             .party(party)
             .isAccept(false)
             .build();

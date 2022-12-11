@@ -53,7 +53,7 @@ public class PartyApiController {
 
     @PostMapping("/{partyId}/apply")
     public PartyApplyDto.Response applyParty(@AuthenticationPrincipal Member member, @PathVariable Long partyId){
-        return partyApplyService.applyParty(member.getEmail(), partyId);
+        return partyApplyService.applyParty(member.getId(), partyId);
     }
 
     @GetMapping("/{partyId}/apply")

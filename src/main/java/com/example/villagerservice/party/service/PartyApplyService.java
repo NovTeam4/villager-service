@@ -11,11 +11,11 @@ public interface PartyApplyService {
 
     /**
      * 모임 신청
-     * @param email
+     * @param targetMemberId
      * @param partyId
      * @return
      */
-    PartyApplyDto.Response applyParty(String email, Long partyId);
+    PartyApplyDto.Response applyParty(Long targetMemberId, Long partyId);
 
     /**
      * 모임 신청 리스트 반환
