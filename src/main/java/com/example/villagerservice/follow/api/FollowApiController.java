@@ -11,12 +11,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/follows")
+@RequestMapping("/api/v1")
 public class FollowApiController {
     private final FollowService followService;
-    @PostMapping("/{followId}")
+    @PostMapping("/follow/{followId}")
     public void following(@AuthenticationPrincipal Member member,
                           @PathVariable Long followId) {
         followService.following(member.getId(), followId);
+    }
+
+    @PostMapping("/unfollow/{followId}")
+    public void unFollowing(@AuthenticationPrincipal Member member,
+                          @PathVariable Long followId) {
+        followService.unFollowing(member.getId(), followId);
     }
 }
