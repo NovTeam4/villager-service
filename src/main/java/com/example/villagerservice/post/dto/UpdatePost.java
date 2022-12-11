@@ -5,12 +5,13 @@ import lombok.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
-public class CreatePost {
+public class UpdatePost {
 
     @Getter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
+    @Data
     public static class Request {
         @Min(value = 1, message = "카테고리 id는 필수 입력값 입니다.")
         private Long categoryId;
@@ -22,7 +23,8 @@ public class CreatePost {
         private String contents;
     }
 
-    public static class Response{
+    public static class Response {
 
     }
+
 }

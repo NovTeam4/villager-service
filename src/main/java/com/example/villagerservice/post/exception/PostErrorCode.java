@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum PostErrorCode {
-    MEMBER_VALID_NOT("INFO-800", "요청인자가 잘못되었습니다."),
+    POST_VALID_NOT("INFO-800", "요청인자가 잘못되었습니다."),
+    POST_NOT_FOUND("INFO-804", "게시글의 ID가 존재하지않습니다."),
     ;
 
     private final String errorCode;
