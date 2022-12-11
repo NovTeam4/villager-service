@@ -26,6 +26,7 @@ public class PartyLikeServiceImpl implements PartyLikeService {
             () -> new PartyException(PartyErrorCode.PARTY_NOT_FOUND)
         );
 
+        // 좋아요가 존재하는지 검사
         Optional<PartyLike> optionalPartyLike =
             partyLikeRepository.findByParty_IdAndMember_Email(partyId, member.getEmail());
 
