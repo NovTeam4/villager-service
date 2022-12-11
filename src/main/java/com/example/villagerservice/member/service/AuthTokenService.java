@@ -4,4 +4,5 @@ import com.example.villagerservice.common.jwt.JwtTokenInfoDto;
 
 public interface AuthTokenService {
     JwtTokenInfoDto getReissueTokenInfo(Long loginMemberId, String accessToken, String refreshToken);
+    void logout(Long loginMemberId, String accessToken);
 }

@@ -26,7 +26,15 @@ public class RedisRepositoryImpl implements RedisRepository {
         return (String) redisTemplate.opsForValue().get(REDIS_KEY_PREFIX + ((Member) authentication.getPrincipal()).getEmail());
     }
 
+    @Override
+    public void deleteRefreshToken(Authentication authentication) {
+        if (redisTemplate.opsForValue().get(getKey(authentication)) != null) {
+            redisTemplate.delete(getKey(authentication));
+        }
+    }
+
     private String getKey(Authentication authentication) {
         return REDIS_KEY_PREFIX + ((Member) authentication.getPrincipal()).getEmail();
     }
+
 }

@@ -6,28 +6,23 @@ import com.example.villagerservice.common.jwt.JwtTokenResponse;
 import com.example.villagerservice.config.AuthConfig;
 import com.example.villagerservice.config.redis.RedisRepository;
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.dto.CreateMember;
 import com.example.villagerservice.member.dto.LoginMember;
 import com.example.villagerservice.member.dto.ValidMemberNickname;
 import com.example.villagerservice.member.service.MemberService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +40,8 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
     private RedisRepository redisRepository;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Value("${jwt.access-token-validity-in-seconds}")
     private Long accessTokenValiditySeconds;
@@ -172,6 +169,56 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                 .body("grantType", Matchers.equalTo(jwtTokenResponse.getGrantType()))
                 .body("refreshToken", Matchers.equalTo(jwtTokenResponse.getRefreshToken()))
                 .body("accessTokenExpirationTime", Matchers.equalTo(jwtTokenResponse.getAccessTokenExpirationTime().intValue()));
+    }
+
+    @Test
+    @DisplayName("로그아웃 테스트")
+    void logoutTest() throws Exception {
+        // given
+        CreateMember.Request request = CreateMember.Request.builder()
+                .email("test5@gamil.com")
+                .password("hello11@nW")
+                .nickname("testNickname")
+                .gender("MAN")
+                .year(2022)
+                .month(12)
+                .day(8)
+                .build();
+        given()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Content-type", "application/json")
+                .body(objectMapper.writeValueAsString(request))
+                .log().all()
+                .post("/api/v1/auth/signup");
+
+        LoginMember.Request login = LoginMember.Request.builder()
+                .email("test5@gamil.com")
+                .password("hello11@nW")
+                .build();
+
+
+        Response tokenResponse = given()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Content-type", "application/json")
+                .body(objectMapper.writeValueAsString(login))
+                .log().all()
+                .post("/api/v1/auth/login");
+
+        assertThat(redisTemplate.opsForValue().get("VILLAGER:test5@gamil.com")).isNotNull();
+
+        JwtTokenResponse jwtTokenResponse = objectMapper.readValue(tokenResponse.asString(), JwtTokenResponse.class);
+
+        givenAuth("",
+                template.requestRestDocumentation(
+                        "로그아웃"
+                ))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/auth/logout")
+                .then()
+                .statusCode(HttpStatus.OK.value());
+
+        assertThat(redisTemplate.opsForValue().get("VILLAGER:test5@gamil.com")).isNull();
     }
 
     @Test

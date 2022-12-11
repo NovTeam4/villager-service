@@ -305,6 +305,28 @@ class AuthApiControllerTest {
                 .getReissueTokenInfo(anyLong(), anyString(), anyString());
     }
 
+    @Test
+    @WithMockCustomMember
+    @DisplayName("로그아웃 테스트")
+    void logoutTest() throws Exception {
+        // given
+        given(jwtTokenProvider.resolveAccessToken(any()))
+                .willReturn("accessToken");
+
+        doNothing()
+                .when(authTokenService)
+                .logout(anyLong(), anyString());
+
+
+        // when & then
+        mockMvc.perform(get("/api/v1/auth/logout"))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(jwtTokenProvider, times(1)).resolveAccessToken(any());
+        verify(authTokenService, times(1)).logout(anyLong(), anyString());
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "       "})
     @DisplayName("닉네임 유효성 검사 시 닉네임은 전달 안한 경우 테스트")

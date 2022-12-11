@@ -34,6 +34,15 @@ public class AuthApiController {
         memberService.createMember(createMember);
     }
 
+    @GetMapping("/logout")
+    public void logout(@AuthenticationPrincipal Member member,
+                       HttpServletRequest request) {
+        String accessToken = jwtTokenProvider.resolveAccessToken(request);
+        accessTokenValid(accessToken);
+
+        authTokenService.logout(member.getId(), accessToken);
+    }
+
     @GetMapping("/valid/nickname")
     public void validNickname(@Valid @RequestBody ValidMemberNickname.Request request) {
         memberService.validNickname(request);
@@ -46,15 +55,23 @@ public class AuthApiController {
 
         String accessToken = jwtTokenProvider.resolveAccessToken(request);
         String refreshToken = jwtTokenProvider.resolveRefreshToken(request);
-        if (!StringUtils.hasText(accessToken)) {
-            throw new JwtTokenException(JWT_ACCESS_TOKEN_NOT_EXIST);
-        }
-        if (!StringUtils.hasText(refreshToken)) {
-            throw new JwtTokenException(JWT_REFRESH_TOKEN_NOT_EXIST);
-        }
+        accessTokenValid(accessToken);
+        refreshTokenValid(refreshToken);
 
         JwtTokenInfoDto jwtTokenInfoDto = authTokenService.getReissueTokenInfo(
                 member.getId(), accessToken, refreshToken);
         return JwtTokenResponse.createResponseBody(jwtTokenInfoDto);
+    }
+
+    private void refreshTokenValid(String refreshToken) {
+        if (!StringUtils.hasText(refreshToken)) {
+            throw new JwtTokenException(JWT_REFRESH_TOKEN_NOT_EXIST);
+        }
+    }
+
+    private void accessTokenValid(String accessToken) {
+        if (!StringUtils.hasText(accessToken)) {
+            throw new JwtTokenException(JWT_ACCESS_TOKEN_NOT_EXIST);
+        }
     }
 }
