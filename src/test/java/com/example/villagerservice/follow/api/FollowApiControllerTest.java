@@ -39,13 +39,26 @@ class FollowApiControllerTest {
     @Test
     @WithMockCustomMember
     @DisplayName("팔로잉 테스트")
-    void createMemberTownNotIdExistTest() throws Exception {
+    void followingTest() throws Exception {
         // when & then
-        mockMvc.perform(post("/api/v1/follows/1"))
+        mockMvc.perform(post("/api/v1/follow/1"))
                 .andExpect(status().isOk())
                 .andDo(print());
 
         verify(followService, times(1))
                 .following(anyLong(), anyLong());
+    }
+
+    @Test
+    @WithMockCustomMember
+    @DisplayName("언팔로잉 테스트")
+    void unFollowingTest() throws Exception {
+        // when & then
+        mockMvc.perform(post("/api/v1/unfollow/1"))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(followService, times(1))
+                .unFollowing(anyLong(), anyLong());
     }
 }
