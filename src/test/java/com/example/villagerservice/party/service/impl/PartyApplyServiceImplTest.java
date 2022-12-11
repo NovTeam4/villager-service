@@ -48,13 +48,13 @@ class PartyApplyServiceImplTest {
     @DisplayName("모임 신청 성공")
     void partyApplyTestSuccess() {
         // given
-        String email = "test@naver.com";
+        Long memberId = 1L;
         Long partyId = 1L;
         given(partyRepository.findById(anyLong()))
             .willReturn(Optional.of(Party.builder()
                     .id(partyId)
                     .build()));
-        given(partyApplyRepository.existsByParty_Member_EmailAndParty_Id(anyString(), anyLong()))
+        given(partyApplyRepository.existsByParty_Member_IdAndParty_Id(anyLong(), anyLong()))
             .willReturn(false);
         given(partyApplyRepository.save(any()))
             .willReturn(PartyApply.builder()
@@ -65,7 +65,7 @@ class PartyApplyServiceImplTest {
                 .build());
         ArgumentCaptor<PartyApply> captor = ArgumentCaptor.forClass(PartyApply.class);
         // when
-        PartyApplyDto.Response response = partyApplyService.applyParty(email, partyId);
+        PartyApplyDto.Response response = partyApplyService.applyParty(memberId, partyId);
 
         // then
         verify(partyApplyRepository, times(1)).save(captor.capture());
@@ -80,12 +80,12 @@ class PartyApplyServiceImplTest {
         // given
         given(partyRepository.findById(anyLong()))
             .willReturn(Optional.of(Party.builder().build()));
-        given(partyApplyRepository.existsByParty_Member_EmailAndParty_Id(anyString(), any()))
+        given(partyApplyRepository.existsByParty_Member_IdAndParty_Id(anyLong(), any()))
             .willReturn(true);
 
         // when
         PartyApplyException exception = assertThrows(PartyApplyException.class,
-            () -> partyApplyService.applyParty("123", 1L));
+            () -> partyApplyService.applyParty(1L, 1L));
 
         // then
         assertEquals(PartyApplyErrorCode.ALREADY_BEAN_APPLIED.getErrorCode(), exception.getErrorCode());
@@ -96,7 +96,7 @@ class PartyApplyServiceImplTest {
     void partyApplyTestFailedAlreadyApplied() {
         // when
         PartyApplyException exception = assertThrows(PartyApplyException.class,
-            () -> partyApplyService.applyParty("123", -1L));
+            () -> partyApplyService.applyParty(1L, -1L));
 
         // then
         assertEquals(PartyApplyErrorCode.PARTY_NOT_FOUND.getErrorCode(), exception.getErrorCode());
@@ -204,7 +204,6 @@ class PartyApplyServiceImplTest {
 
     @Test
     @DisplayName("모임 허락 실패 - 가져온 모임이 주최자의 이메일과 다름")
-    @Disabled
     void 모임_허락_실패_가져온모임이주최자의이메일과다름() {
         String emailHost = "host@123";
         String emailFake = "fake@123";
@@ -226,8 +225,6 @@ class PartyApplyServiceImplTest {
     @DisplayName("모임 허락 실패 - 등록된 신청이 없음")
     void 모임_허락_실패_등록된신청이없음() {
         // given
-        Long partyId = 1L;
-        Long targetMemberId = 2L;
         String email = "host@123";
         Party party = Party.builder()
             .member(Member.builder().email(email).build())
@@ -238,7 +235,7 @@ class PartyApplyServiceImplTest {
 
         // when
         PartyApplyException exception = assertThrows(PartyApplyException.class,
-            () -> partyApplyService.partyPermission(1L, -1L, "123"));
+            () -> partyApplyService.partyPermission(1L, -1L, email));
 
         // then
         assertEquals(PartyApplyErrorCode.PARTY_APPLY_NOT_FOUND.getErrorCode(), exception.getErrorCode());
@@ -248,7 +245,6 @@ class PartyApplyServiceImplTest {
     @DisplayName("모임 허락 실패 - 이미 신청된 상태")
     void 모임_허락_실패_이미신청된상태() {
         // given
-        Long partyId = 1L;
         Long targetMemberId = 2L;
         String email = "host@123";
         Party party = Party.builder()
@@ -267,7 +263,7 @@ class PartyApplyServiceImplTest {
 
         // when
         PartyApplyException exception = assertThrows(PartyApplyException.class,
-            () -> partyApplyService.partyPermission(1L, 1L, "123"));
+            () -> partyApplyService.partyPermission(1L, 1L, email));
 
         // then
         assertEquals(PartyApplyErrorCode.ALREADY_ACCEPT_APPLY.getErrorCode(), exception.getErrorCode());

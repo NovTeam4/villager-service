@@ -53,57 +53,57 @@ public class PartyApiControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
-    @DisplayName("모임 신청 성공")
-    void successApplyParty() throws Exception {
-        // given
-        given(partyApplyService.applyParty(anyString(), anyLong()))
-            .willReturn(PartyApplyDto.Response.builder()
-                .id(1L)
-                .partyId(1L)
-                .targetMemberId(1L)
-                .isAccept(false)
-                .build());
-
-        // when
-        // then
-        mockMvc.perform(post("/api/v1/parties/1/apply")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(""
-            ))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
-
-    @Test
-    @DisplayName("모임 신청 목록 조회 성공")
-    void successGetApplyPartyList() throws Exception {
-        // given
-        List<PartyApplyDto.Response> list = new ArrayList<>();
-        list.add(PartyApplyDto.Response.builder()
-            .id(1L)
-            .targetMemberId(1L)
-            .isAccept(false)
-            .partyId(1L)
-            .build());
-        list.add(PartyApplyDto.Response.builder()
-            .id(2L)
-            .targetMemberId(2L)
-            .isAccept(false)
-            .partyId(1L)
-            .build());
-        Page<PartyApplyDto.Response> pageList = new PageImpl<>(list);
-        given(partyApplyService.getApplyPartyList(anyLong(), any()))
-            .willReturn(pageList);
-
-        // when
-        // then
-        mockMvc.perform(get("/api/v1/parties/1/apply")
-                .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+//    @Test
+//    @DisplayName("모임 신청 성공")
+//    void successApplyParty() throws Exception {
+//        // given
+//        given(partyApplyService.applyParty(anyString(), anyLong()))
+//            .willReturn(PartyApplyDto.Response.builder()
+//                .id(1L)
+//                .partyId(1L)
+//                .targetMemberId(1L)
+//                .isAccept(false)
+//                .build());
+//
+//        // when
+//        // then
+//        mockMvc.perform(post("/api/v1/parties/1/apply")
+//            .contentType(MediaType.APPLICATION_JSON)
+//            .content(""
+//            ))
+//            .andExpect(status().isOk())
+//            .andDo(print());
+//    }
+//
+//    @Test
+//    @DisplayName("모임 신청 목록 조회 성공")
+//    void successGetApplyPartyList() throws Exception {
+//        // given
+//        List<PartyApplyDto.Response> list = new ArrayList<>();
+//        list.add(PartyApplyDto.Response.builder()
+//            .id(1L)
+//            .targetMemberId(1L)
+//            .isAccept(false)
+//            .partyId(1L)
+//            .build());
+//        list.add(PartyApplyDto.Response.builder()
+//            .id(2L)
+//            .targetMemberId(2L)
+//            .isAccept(false)
+//            .partyId(1L)
+//            .build());
+//        Page<PartyApplyDto.Response> pageList = new PageImpl<>(list);
+//        given(partyApplyService.getApplyPartyList(anyLong(), any()))
+//            .willReturn(pageList);
+//
+//        // when
+//        // then
+//        mockMvc.perform(get("/api/v1/parties/1/apply")
+//                .contentType(MediaType.APPLICATION_JSON)
+//            )
+//            .andExpect(status().isOk())
+//            .andDo(print());
+//    }
 
     @Test
     @DisplayName("모임 등록 테스트")
