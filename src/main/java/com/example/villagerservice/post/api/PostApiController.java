@@ -2,13 +2,11 @@ package com.example.villagerservice.post.api;
 
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.post.dto.CreatePost;
+import com.example.villagerservice.post.dto.UpdatePost;
 import com.example.villagerservice.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -22,5 +20,12 @@ public class PostApiController {
     public void createPost(@AuthenticationPrincipal Member member,
                            @Valid @RequestBody CreatePost.Request request) {
         postService.createPost(member.getId(), request);
+    }
+
+    @PutMapping("/{id}")
+    public void updatePost(@AuthenticationPrincipal  Member member,
+                           @PathVariable("id") Long postId,
+                           @Valid @RequestBody UpdatePost.Request request) {
+        postService.updatePost(member.getId(), postId , request);
     }
 }
