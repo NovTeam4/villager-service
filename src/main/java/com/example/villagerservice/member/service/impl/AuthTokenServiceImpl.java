@@ -45,4 +45,15 @@ public class AuthTokenServiceImpl implements AuthTokenService {
 
         return jwtTokenInfoDto;
     }
+
+    @Override
+    public void logout(Long loginMemberId, String accessToken) {
+        jwtTokenProvider.validateToken(accessToken, ACCESS_TOKEN);
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        if(!loginMemberId.equals(((Member) authentication.getPrincipal()).getId())) {
+            throw new JwtTokenException(JWT_REFRESH_TOKEN_NOT_VALID);
+        }
+        redisRepository.deleteRefreshToken(authentication);
+    }
 }
