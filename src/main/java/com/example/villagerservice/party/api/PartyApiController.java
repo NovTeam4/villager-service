@@ -5,6 +5,7 @@ import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.service.PartyApplyService;
+import com.example.villagerservice.party.service.PartyLikeService;
 import com.example.villagerservice.party.service.PartyQueryService;
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,9 @@ import org.springframework.web.bind.annotation.*;
 public class PartyApiController {
     private final PartyService partyService;
     private final PartyApplyService partyApplyService;
-
     private final PartyQueryService partyQueryService;
+    private final PartyLikeService partyLikeService;
+
 
     @PostMapping()
     public void createParty(@AuthenticationPrincipal Member member , @Validated @RequestBody PartyDTO.Request partyRequest) {
@@ -65,5 +67,13 @@ public class PartyApiController {
                                                         @AuthenticationPrincipal Member member){
 
         return partyApplyService.partyPermission(partyId, targetMemberId, member.getEmail());
+    }
+
+    @PostMapping("/{partyId}/like")
+    public String partyLike(@PathVariable Long partyId, @AuthenticationPrincipal Member member){
+        if(partyLikeService.partyLike(partyId, member)){
+            return "관심 모임 등록";
+        }
+        return "관심 모임 취소";
     }
 }

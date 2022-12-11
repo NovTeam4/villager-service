@@ -1,10 +1,10 @@
 ### 회원 가입
-POST http://localhost:9000/api/v1/auth/signup
+POST http://localhost:8080/api/v1/auth/signup
 Content-Type: application/json
 
 {
-  "nickname": "123",
-  "email": "123@naver.com",
+  "nickname": "12345",
+  "email": "12345@naver.com",
   "year": 1998,
   "month": 12,
   "day" : 12,
@@ -13,10 +13,10 @@ Content-Type: application/json
 }
 
 ### 로그인
-POST http://localhost:9000/api/v1/auth/login
+POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "email": "1234@naver.com",
+  "email": "12345@naver.com",
   "password": "Abc123!!"
 }
