@@ -5,6 +5,6 @@ import org.springframework.security.core.Authentication;
 
 public interface RedisRepository {
     void saveRefreshToken(Authentication authentication, JwtTokenInfoDto value);
-
     String findRefreshToken(Authentication authentication);
+    void deleteRefreshToken(Authentication authentication);
 }
