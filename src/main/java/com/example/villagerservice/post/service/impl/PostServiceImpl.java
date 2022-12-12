@@ -49,13 +49,18 @@ public class PostServiceImpl implements PostService {
         Post post = new Post(member, category, request.getTitle(), request.getContents());
 
         List<String> imagePaths = new ArrayList<>();
-        for (MultipartFile image : images) {
-            String imagePath = UUID.randomUUID() + "-" + image.getOriginalFilename();
-            post.addImages(PostImage.createPostImage(image.getSize(), imagePath));
-            imagePaths.add(imagePath);
+        if(images != null) {
+            for (MultipartFile image : images) {
+                String imagePath = UUID.randomUUID() + "-" + image.getOriginalFilename();
+                post.addImages(PostImage.createPostImage(image.getSize(), imagePath));
+                imagePaths.add(imagePath);
+            }
         }
+
         postRepository.save(post);
-        fileUploadService.fileUpload(images, imagePaths);
+        if(!imagePaths.isEmpty()) {
+            fileUploadService.fileUpload(images, imagePaths);
+        }
     }
 
     @Transactional

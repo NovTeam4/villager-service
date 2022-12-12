@@ -18,12 +18,11 @@ import java.util.List;
 @RequestMapping("/api/v1/posts")
 public class PostApiController {
     private final PostService postService;
-    private final FileUploadService fileUploadService;
 
     @PostMapping
     public void createPost(@AuthenticationPrincipal Member member,
                            @RequestPart(value = "request") CreatePost.Request request,
-                           @RequestPart(value = "files") List<MultipartFile> files) {
+                           @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         postService.createPost(member.getId(), request, files);
     }
 
