@@ -8,8 +8,10 @@ import com.example.villagerservice.config.AuthConfig;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
+import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
+import com.example.villagerservice.party.repository.PartyCommentRepository;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,9 +28,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.print.attribute.standard.Media;
+
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
 
@@ -52,14 +58,19 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private PartyCommentRepository partyCommentRepository;
+
     @BeforeEach
     void clean() {
         partyRepository.deleteAll();
         memberRepository.deleteAll();
+        partyCommentRepository.deleteAll();
     }
 
     @AfterEach
     void afterClean() {
+        partyCommentRepository.deleteAll();
         partyRepository.deleteAll();
         memberRepository.deleteAll();
     }
@@ -189,10 +200,33 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Assertions.assertThat(parties.get(0).getPartyName()).isEqualTo(party.getPartyName());
     }
 
+    @Test
+    @DisplayName("모임 댓글 등록 테스트")
+    void createPartyComment() throws Exception {
+
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
+        Member member = createMember();
+        Party party = saveParty(member);
+
+        String value = "test!";
+
+        givenAuth(value,
+                template.requestRestDocumentation("모임 댓글 작성"))
+                .when()
+                .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+                .contentType(MediaType.TEXT_PLAIN_VALUE)
+                .post("/api/v1/parties/{partyId}/comment" , party.getId())
+                .then()
+                .statusCode(HttpStatus.OK.value());
+
+        PartyComment partyComment = partyCommentRepository.findByParty_id(party.getId());
+        Assertions.assertThat(partyComment.getContents()).isEqualTo("test!");
+    }
+
     private Member createMember() {
         Member member = Member.builder()
                 .email("testparty@gmail.com")
-                .encodedPassword(passwordEncoder.encode("hello11@@nW"))
+                .encodedPassword(passwordEncoder.encode("hello11@naver.com"))
                 .nickname("홍길동")
                 .build();
         memberRepository.save(member);
