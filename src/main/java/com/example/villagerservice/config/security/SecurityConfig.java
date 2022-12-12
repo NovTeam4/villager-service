@@ -1,6 +1,7 @@
 package com.example.villagerservice.config.security;
 
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
+import com.example.villagerservice.config.properties.CorsProperties;
 import com.example.villagerservice.config.redis.RedisRepository;
 import com.example.villagerservice.config.security.filters.CustomAuthenticationFilter;
 import com.example.villagerservice.config.security.filters.JwtAuthenticationFilter;
@@ -37,6 +38,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisRepository redisRepository;
+    private final CorsProperties corsProperties;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -56,6 +58,8 @@ public class SecurityConfig {
         ;
 
         http
+                .cors()
+                .and()
                 .csrf()
                 .disable()
                 .sessionManagement()
@@ -67,26 +71,22 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
         ;
 
-        http
-                .cors(AbstractHttpConfigurer::disable)
-                ;
-
-
         return http.build();
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource corsConfigSource = new UrlBasedCorsConfigurationSource();
 
-        configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedHeaders(Arrays.asList(corsProperties.getAllowedHeaders().split(",")));
+        corsConfig.setAllowedMethods(Arrays.asList(corsProperties.getAllowedMethods().split(",")));
+        corsConfig.setAllowedOrigins(Arrays.asList(corsProperties.getAllowedOrigins().split(",")));
+        corsConfig.setAllowCredentials(true);
+        corsConfig.setMaxAge(corsConfig.getMaxAge());
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+        corsConfigSource.registerCorsConfiguration("/**", corsConfig);
+        return corsConfigSource;
     }
 
     private CustomAuthenticationFilter createCustomAuthenticationFilter(AuthenticationManager authenticationManager) {

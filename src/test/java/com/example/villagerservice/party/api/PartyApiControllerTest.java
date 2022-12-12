@@ -16,6 +16,7 @@ import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.service.PartyApplyService;
+import com.example.villagerservice.party.service.PartyLikeService;
 import com.example.villagerservice.party.service.PartyQueryService;
 
 import com.example.villagerservice.party.service.PartyService;
@@ -42,6 +43,8 @@ import org.springframework.test.web.servlet.MockMvc;
 public class PartyApiControllerTest {
     @MockBean
     private PartyApplyService partyApplyService;
+    @MockBean
+    private PartyLikeService partyLikeService;
     @MockBean
     private PartyQueryService partyQueryService;
     @MockBean
