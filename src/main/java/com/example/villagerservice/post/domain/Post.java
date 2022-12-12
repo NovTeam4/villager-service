@@ -27,6 +27,8 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name ="category_id")
     private Category category; // 카테고리
 
+    private boolean removeTask;
+
     protected Post() {
     }
 
