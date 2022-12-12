@@ -23,6 +23,7 @@ public abstract class BaseLogin {
     protected MemberRepository memberRepository;
     @Autowired
     protected PasswordEncoder passwordEncoder;
+    private final String pass = "hello11@@nW";
 
     @BeforeEach
     void clean() {
@@ -52,5 +53,31 @@ public abstract class BaseLogin {
 
 
         return objectMapper.readValue(response.asString(), JwtTokenResponse.class);
+    }
+
+    protected JwtTokenResponse getJwtTokenResponse(String email, String pass) throws JsonProcessingException {
+        LoginMember.Request login = LoginMember.Request.builder()
+                .email(email)
+                .password(pass)
+                .build();
+
+        Response response = given()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Content-type", "application/json")
+                .body(objectMapper.writeValueAsString(login))
+                .log().all()
+                .post("/api/v1/auth/login");
+
+
+        return objectMapper.readValue(response.asString(), JwtTokenResponse.class);
+    }
+
+    protected Member createToMember(String email, String nickName) {
+        Member member = Member.builder()
+                .email(email)
+                .encodedPassword(passwordEncoder.encode(pass))
+                .nickname(nickName)
+                .build();
+        return memberRepository.save(member);
     }
 }
