@@ -21,6 +21,7 @@ import java.util.List;
 
 import io.restassured.response.Response;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,12 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     @BeforeEach
     void clean() {
+        partyRepository.deleteAll();
+        memberRepository.deleteAll();
+    }
+
+    @AfterEach
+    void afterClean() {
         partyRepository.deleteAll();
         memberRepository.deleteAll();
     }
