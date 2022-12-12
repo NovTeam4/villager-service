@@ -63,6 +63,9 @@ dependencies {
     // Swagger 의존성 추가
     swaggerUI 'org.webjars:swagger-ui:4.11.1'
 
+    // s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -77,6 +80,7 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    systemProperty "jasypt.encryptor.password", System.getProperties().get("jasypt.encryptor.password")
 }
 
 // ===== querydsl start ===== //
