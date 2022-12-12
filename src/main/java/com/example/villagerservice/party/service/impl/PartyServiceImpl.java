@@ -1,8 +1,5 @@
 package com.example.villagerservice.party.service.impl;
 
-import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_FOUND;
-import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_FOUND_MEMBER;
-
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
@@ -12,8 +9,13 @@ import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+
+import static com.example.villagerservice.party.exception.PartyErrorCode.*;
 
 
 @Service
@@ -44,6 +46,17 @@ public class PartyServiceImpl implements PartyService {
     public void deleteParty(Long partyId) {
         partyCheckedById(partyId);
         partyRepository.deleteById(partyId);
+    }
+
+    @Override
+    public Page<PartyDTO.Response> getAllParty(Pageable pageable) {
+
+        if(partyRepository.count() == 0) {
+            throw new PartyException(PARTY_NOT_REGISTERED);
+        }
+
+        return partyRepository.findAll(pageable)
+                .map(PartyDTO.Response::createPartyResponse);
     }
 
     private Member memberCheckedById(Long memberId) {

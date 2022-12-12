@@ -1,6 +1,5 @@
 package com.example.villagerservice.party.api;
 
-import static io.restassured.RestAssured.given;
 
 import com.example.document.BaseDocumentation;
 import com.example.document.RestDocumentationTemplate;
@@ -8,18 +7,15 @@ import com.example.villagerservice.common.jwt.JwtTokenResponse;
 import com.example.villagerservice.config.AuthConfig;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
-import com.example.villagerservice.member.dto.LoginMember;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import io.restassured.response.Response;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -163,6 +158,28 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
         Party findParty = partyRepository.findById(partyId).get();
         Assertions.assertThat(findParty.getPartyName()).isEqualTo("updateTest");
+    }
+
+    @Test
+    @DisplayName("모임 전체 조회 테스트")
+    void getAllParty() throws Exception {
+
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
+        Member member = createMember();
+        Party party = saveParty(member);
+        Party party2 = saveParty(member);
+
+        givenAuth("",
+                template.requestRestDocumentation("모임 전체 조회"))
+                .when()
+                .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/parties")
+                .then()
+                .statusCode(HttpStatus.OK.value());
+
+        List<Party> parties = partyRepository.findAll();
+        Assertions.assertThat(parties.size()).isEqualTo(2);
+        Assertions.assertThat(parties.get(0).getPartyName()).isEqualTo(party.getPartyName());
     }
 
     private Member createMember() {

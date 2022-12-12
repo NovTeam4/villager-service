@@ -16,6 +16,7 @@ import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.service.PartyApplyService;
+import com.example.villagerservice.party.service.PartyLikeService;
 import com.example.villagerservice.party.service.PartyQueryService;
 
 import com.example.villagerservice.party.service.PartyService;
@@ -46,6 +47,9 @@ public class PartyApiControllerTest {
     private PartyQueryService partyQueryService;
     @MockBean
     private PartyService partyService;
+
+    @MockBean
+    private PartyLikeService partyLikeService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -221,6 +225,17 @@ public class PartyApiControllerTest {
                 .andDo(print());
 
         verify(partyQueryService,times(1)).getParty(anyLong());
+    }
+
+    @Test
+    @DisplayName("모임 전체 조회 테스트")
+    void getAllParty() throws Exception {
+
+        mockMvc.perform(get("/api/v1/parties"))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(partyService,times(1)).getAllParty(any());
     }
 
 }
