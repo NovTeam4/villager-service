@@ -11,7 +11,6 @@ public class UpdatePost {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    @Data
     public static class Request {
         @Min(value = 1, message = "카테고리 id는 필수 입력값 입니다.")
         private Long categoryId;
