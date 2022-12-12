@@ -4,10 +4,7 @@ import com.example.villagerservice.post.dto.CreatePost;
 import com.example.villagerservice.post.dto.ListPost;
 import com.example.villagerservice.post.dto.UpdatePost;
 
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 import java.util.List;
 
@@ -18,6 +15,11 @@ public interface PostService {
     void deletePost(Long memberId, Long postId);
 
     List<ListPost.Response> getList();
+
+
+
+
+
 
 
 
