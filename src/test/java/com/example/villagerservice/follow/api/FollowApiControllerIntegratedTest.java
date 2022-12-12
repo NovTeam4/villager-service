@@ -12,7 +12,6 @@ import com.example.villagerservice.follow.exception.FollowException;
 import com.example.villagerservice.follow.service.FollowQueryService;
 import com.example.villagerservice.follow.service.FollowService;
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.member.dto.LoginMember;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
@@ -23,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.example.villagerservice.follow.exception.FollowErrorCode.FOLLOW_APPLICATION_NOT_FOUND;
-import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -60,7 +57,8 @@ class FollowApiControllerIntegratedTest extends BaseDocumentation {
     void followingApiTest() throws JsonProcessingException {
         // given
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
-        Long targetMemberId = createToMember("target@gmail.com", "target");
+        Member member = createToMember("target@gmail.com", "target");
+        Long targetMemberId = member.getId();
 
         // when
         givenAuth("",
@@ -87,9 +85,10 @@ class FollowApiControllerIntegratedTest extends BaseDocumentation {
     @DisplayName("언팔로우 테스트")
     void unFollowingApiTest() throws JsonProcessingException {
         // given
-        Long toMemberId = createToMember("toMember@gmail.com", "toMember");
-        Long targetMemberId = createToMember("targetMember@gmail.com", "targetMember");
-
+        Member toMember = createToMember("toMember@gmail.com", "toMember");
+        Member targetMember = createToMember("targetMember@gmail.com", "targetMember");
+        Long toMemberId = toMember.getId();
+        Long targetMemberId = targetMember.getId();
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse("toMember@gmail.com", "hello11@@nW");
 
         followService.following(toMemberId, targetMemberId);
@@ -116,7 +115,7 @@ class FollowApiControllerIntegratedTest extends BaseDocumentation {
         List<Long> memberIds = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             memberIds.add(createToMember(String.format("%s@gmail.com", i + 1),
-                    String.format("%snickName", i + 1)));
+                    String.format("%snickName", i + 1)).getId());
         }
 
         for (int i = 1; i <= 5; i++) {
@@ -159,32 +158,6 @@ class FollowApiControllerIntegratedTest extends BaseDocumentation {
                 .body("follows.size()", Matchers.equalTo(3));
     }
 
-    private JwtTokenResponse getJwtTokenResponse(String email, String pass) throws JsonProcessingException {
-        LoginMember.Request login = LoginMember.Request.builder()
-                .email(email)
-                .password(pass)
-                .build();
-
-        Response response = given()
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .header("Content-type", "application/json")
-                .body(objectMapper.writeValueAsString(login))
-                .log().all()
-                .post("/api/v1/auth/login");
-
-
-        return objectMapper.readValue(response.asString(), JwtTokenResponse.class);
-    }
-
-    private Long createToMember(String email, String nickName) {
-        Member member = Member.builder()
-                .email(email)
-                .encodedPassword(passwordEncoder.encode("hello11@@nW"))
-                .nickname(nickName)
-                .build();
-        memberRepository.save(member);
-        return member.getId();
-    }
 
     @NotNull
     private List<ParameterDescriptorWithType> getFollowingPathParameterFields() {
