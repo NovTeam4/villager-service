@@ -10,6 +10,7 @@ public enum PartyErrorCode {
 
     PARTY_NOT_FOUND_MEMBER("INFO-600","일치하는 회원이 없습니다"),
     PARTY_NOT_FOUND("INFO-601","일치하는 모임이 없습니다"),
+    PARTY_NOT_REGISTERED("INFO-602" , "모임이 등록되어 있지 않습니다.")
     ;
 
     private final String errorCode;

@@ -6,8 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
@@ -18,6 +17,7 @@ import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +29,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -199,6 +202,59 @@ public class PartyServiceImplTest {
         PartyDTO.Response response = partyService.updateParty(1L, updateRequest);
 
         assertThat(response.getPartyName()).isEqualTo("updateParty");
+
+    }
+
+    @Test
+    @DisplayName("모임 전체 조회 시 , 모임이 없을 경우")
+    void getAllPartyWithoutParty(){
+
+        PartyException partyException = assertThrows(PartyException.class,
+                () -> partyService.getAllParty(null));
+
+        Assertions.assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_REGISTERED.getErrorCode());
+        Assertions.assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_REGISTERED.getErrorMessage());
+
+    }
+
+    @Test
+    @DisplayName("모임 전체 조회 테스트")
+    void getAllParty(){
+
+        Member member = Member.builder()
+                .email("test@gmail.com")
+                .nickname("홍길동")
+                .build();
+
+        List<Party> list = new ArrayList<>();
+
+        list.add(Party.createParty(
+                "test-party",
+                100,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                1000,
+                member
+        ));
+        list.add(Party.createParty(
+                "test-party2",
+                100,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                1000,
+                member
+        ));
+
+        Page<Party> partyPage = new PageImpl<>(list);
+
+        given(partyRepository.count())
+                .willReturn(2L);
+        given(partyRepository.findAll((Pageable) any()))
+                .willReturn(partyPage);
+
+        Page<PartyDTO.Response> parties = partyService.getAllParty(null);
+        Assertions.assertThat(parties.getSize()).isEqualTo(2);
+        Assertions.assertThat(parties.getTotalElements()).isEqualTo(list.size());
 
     }
 }
