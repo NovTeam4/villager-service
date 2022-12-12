@@ -89,8 +89,42 @@ class PostLikeApiControllerIntegratedTest extends BaseDocumentation  {
         assertThat(postLikes.size()).isEqualTo(1);
     }
 
+    @Test
+    @DisplayName("게시글 좋아요 해제 테스트")
+    void postLikeUnCheckApiTest() throws Exception {
+        Member member = createToMember("test@gmail.com", "helloNi");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(member.getEmail(), "hello11@@nW");
+        Category category = Category.builder().name("일반").build();
+        categoryRepository.save(category);
+        Post post = postRepository.save(new Post(member, category, "게시글제목", "타이틀!"));
+
+        postLikeRepository.save(PostLike.createPost(member, post));
+
+        List<PostLike> postLikes = postLikeRepository.findAll();
+        assertThat(postLikes.size()).isEqualTo(1);
+
+        givenAuth("",
+                template.requestRestDocumentation(
+                        "게시글 좋아요 해제",
+                        getPostLikeUnCheckPathParameterFields()
+                ))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .delete("/api/v1/postlike/{postId}", post.getId())
+                .then()
+                .statusCode(HttpStatus.OK.value());
+
+        postLikes = postLikeRepository.findAll();
+        assertThat(postLikes.size()).isEqualTo(0);
+    }
+
     @NotNull
     private List<ParameterDescriptorWithType> getPostLikeCheckPathParameterFields() {
+        return List.of(new ParameterDescriptorWithType("postId").description("게시글 id"));
+    }
+
+    @NotNull
+    private List<ParameterDescriptorWithType> getPostLikeUnCheckPathParameterFields() {
         return List.of(new ParameterDescriptorWithType("postId").description("게시글 id"));
     }
 }

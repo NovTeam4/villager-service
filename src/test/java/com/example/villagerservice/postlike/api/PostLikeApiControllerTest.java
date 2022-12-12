@@ -24,8 +24,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,5 +52,19 @@ class PostLikeApiControllerTest {
 
         verify(postLikeService, times(1))
                 .postLikeCheck(anyLong(), anyLong());
+    }
+
+    @Test
+    @WithMockCustomMember
+    @DisplayName("게시글 좋아요 해제 테스트")
+    void postLikeUnCheckTest() throws Exception {
+
+        // when & then
+        mockMvc.perform(delete("/api/v1/postlike/1"))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(postLikeService, times(1))
+                .postLikeUnCheck(anyLong(), anyLong());
     }
 }
