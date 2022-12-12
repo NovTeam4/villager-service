@@ -12,4 +12,6 @@ public interface PartyApplyRepository extends JpaRepository<PartyApply, Long> {
     Page<PartyApply> findByParty_Id(Long partyId, Pageable pageable);
 
     Optional<PartyApply> findByParty_IdAndTargetMemberId(Long partyId, Long targetMemberId);
+
+    Optional<PartyApply> findFirstByOrderByIdDesc();
 }

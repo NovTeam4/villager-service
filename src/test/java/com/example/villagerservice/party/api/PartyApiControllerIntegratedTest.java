@@ -1,6 +1,10 @@
 package com.example.villagerservice.party.api;
 
 
+import static io.restassured.RestAssured.given;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+
+import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.example.document.BaseDocumentation;
 import com.example.document.RestDocumentationTemplate;
 import com.example.villagerservice.common.jwt.JwtTokenResponse;
@@ -8,28 +12,31 @@ import com.example.villagerservice.config.AuthConfig;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
+import com.example.villagerservice.party.domain.PartyApply;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
+import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
+import com.example.villagerservice.party.request.PartyApplyDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
-
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
 
 @Import({AuthConfig.class})
@@ -52,14 +59,19 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private PartyApplyRepository partyApplyRepository;
+
     @BeforeEach
     void clean() {
+        partyApplyRepository.deleteAll();
         partyRepository.deleteAll();
         memberRepository.deleteAll();
     }
 
     @AfterEach
     void afterClean() {
+        partyApplyRepository.deleteAll();
         partyRepository.deleteAll();
         memberRepository.deleteAll();
     }
@@ -101,7 +113,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     void getParty() throws Exception {
 
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
-        Member member = createMember();
+        Member member = createMember("testparty@gmail.com", "홍길동");
         Party party = saveParty(member);
         Long partyId = party.getId();
 
@@ -120,7 +132,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     void deleteParty() throws Exception {
 
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
-        Member member = createMember();
+        Member member = createMember("testparty@gmail.com", "홍길동");
         Party party = saveParty(member);
         Long partyId = party.getId();
 
@@ -143,7 +155,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     void updateParty() throws Exception {
 
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
-        Member member = createMember();
+        Member member = createMember("testparty@gmail.com", "홍길동");
         Party party = saveParty(member);
         Long partyId = party.getId();
 
@@ -172,7 +184,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     void getAllParty() throws Exception {
 
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
-        Member member = createMember();
+        Member member = createMember("testparty@gmail.com", "홍길동");
         Party party = saveParty(member);
         Party party2 = saveParty(member);
 
@@ -189,11 +201,11 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Assertions.assertThat(parties.get(0).getPartyName()).isEqualTo(party.getPartyName());
     }
 
-    private Member createMember() {
+    private Member createMember(String email, String nickname) {
         Member member = Member.builder()
-                .email("testparty@gmail.com")
+                .email(email)
                 .encodedPassword(passwordEncoder.encode("hello11@@nW"))
-                .nickname("홍길동")
+                .nickname(nickname)
                 .build();
         memberRepository.save(member);
 
@@ -201,7 +213,6 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     private Party saveParty(Member member) {
-
         Party party = Party.createParty(
                 "test-party",
                 100,
@@ -225,5 +236,66 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("amount").type(JsonFieldType.NUMBER).description("모임 금액"));
     }
 
+    @Test
+    @DisplayName("모임 신청 테스트")
+    void applyParty() throws Exception {
+        Member host = createMember("host@gmail.com", "주최자");
+        Member applicant = createMember("applicant@gmail.com", "신청자");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(applicant.getEmail(), "hello11@@nW");// 신청자로 로그인
+        Party party = saveParty(host);// 주최자기준
 
+        givenAuth("",
+            template.allRestDocumentation("모임 신청",
+                getApplyPartyPostPathParameterFields(),
+                getPartyApplyDtoResponseFields(),
+                PartyApplyDto.Response.class.getName()))
+            .when()
+            .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+            .post("/api/v1/parties/{partyId}/apply", party.getId())
+            .then()
+            .statusCode(HttpStatus.OK.value());
+
+        PartyApply partyApply = partyApplyRepository.findFirstByOrderByIdDesc().get();
+        Assertions.assertThat(partyApply.isAccept()).isEqualTo(false);
+        Assertions.assertThat(partyApply.getParty().getId()).isEqualTo(party.getId());
+    }
+
+    @Test
+    @DisplayName("모임 신청 테스트")
+    void applyParty() throws Exception {
+        Member host = createMember("host@gmail.com", "주최자");
+        Member applicant = createMember("applicant@gmail.com", "신청자");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(applicant.getEmail(), "hello11@@nW");// 신청자로 로그인
+        Party party = saveParty(host);// 주최자기준
+
+        givenAuth("",
+            template.allRestDocumentation("모임 신청",
+                getApplyPartyPostPathParameterFields(),
+                getPartyApplyDtoResponseFields(),
+                PartyApplyDto.Response.class.getName()))
+            .when()
+            .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+            .post("/api/v1/parties/{partyId}/apply", party.getId())
+            .then()
+            .statusCode(HttpStatus.OK.value());
+
+        PartyApply partyApply = partyApplyRepository.findFirstByOrderByIdDesc().get();
+        Assertions.assertThat(partyApply.isAccept()).isEqualTo(false);
+        Assertions.assertThat(partyApply.getParty().getId()).isEqualTo(party.getId());
+    }
+
+    @NotNull
+    private List<ParameterDescriptorWithType> getApplyPartyPostPathParameterFields() {
+        return List.of(new ParameterDescriptorWithType("partyId").description("모임 id"));
+    }
+
+    @NotNull
+    private List<FieldDescriptor> getPartyApplyDtoResponseFields() {
+        return Arrays.asList(
+            fieldWithPath("id").type(JsonFieldType.NUMBER).description("id"),
+            fieldWithPath("targetMemberId").type(JsonFieldType.NUMBER).description("신청자id"),
+            fieldWithPath("accept").type(JsonFieldType.BOOLEAN).description("허락여부"),
+            fieldWithPath("partyId").type(JsonFieldType.NUMBER).description("모임id")
+        );
+    }
 }
