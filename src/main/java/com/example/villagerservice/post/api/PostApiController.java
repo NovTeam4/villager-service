@@ -23,9 +23,16 @@ public class PostApiController {
     }
 
     @PutMapping("/{id}")
-    public void updatePost(@AuthenticationPrincipal  Member member,
+    public void updatePost(@AuthenticationPrincipal Member member,
                            @PathVariable("id") Long postId,
                            @Valid @RequestBody UpdatePost.Request request) {
-        postService.updatePost(member.getId(), postId , request);
+        postService.updatePost(member.getId(), postId, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePost(@AuthenticationPrincipal Member member,
+                           @PathVariable("id") Long postId
+                           ) {
+        postService.deletePost(member.getId(), postId);
     }
 }
