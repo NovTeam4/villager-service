@@ -236,4 +236,6 @@ gradle-app.setting
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,jetbrains+iml,gradle,intellij+all
 
 ### CYC ###
-application.yml
+# application.yml
+
+src/test/java/com/example/villagerservice/encode/*
