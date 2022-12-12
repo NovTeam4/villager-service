@@ -35,18 +35,11 @@ import static com.example.villagerservice.post.exception.PostErrorCode.POST_VALI
 
 @Service
 @RequiredArgsConstructor
-
-
 public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final PostRepository postRepository;
     private final FileUploadService fileUploadService;
-
-    private final JPAQueryFactory jpaQueryFactory;
-
-    private final EntityManager em;
-
 
     @Override
     public void createPost(Long memberId, CreatePost.Request request, List<MultipartFile> images) {
@@ -97,33 +90,4 @@ public class PostServiceImpl implements PostService {
     private Post findByPostIdAndMember(Long postId,Member member){
         return postRepository.findByIdAndMember(postId,member).orElseThrow(()->new PostException(POST_VALID_NOT));
     }
-
-
-
-
-
-    @Transactional
-    @Scheduled(cron = "59 59 23 * * *")   //  매일 23시59분59초마다 스케쥴링체크
-    public void removeTaskSchedule() {
-
-        jpaQueryFactory.delete(post)
-                .where(post.removeTask.isTrue())
-                .where(timeMinus())
-                .execute();
-    }
-
-    private BooleanExpression timeMinus() {
-        var date = LocalDateTime.now().minusDays(6);
-//        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh-mm");
-        return post.modifiedAt.loe(date); //    <gt
-
-        // date  = 현재시간을 계속받아올건데 - 2분을뺴고
-        //  최종작성삭제시간이랑 비교를할건데   date
-        // 12: 38            <=     date(  12:41-2 = 12:39)  => 12:38:12:38
-
-        // loe가 작거나 같을떄?
-        //
-    }
-
-
 }
