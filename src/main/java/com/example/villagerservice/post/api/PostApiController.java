@@ -4,10 +4,12 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.post.dto.CreatePost;
 import com.example.villagerservice.post.dto.ListPost;
 import com.example.villagerservice.post.dto.UpdatePost;
+import com.example.villagerservice.post.service.FileUploadService;
 import com.example.villagerservice.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -17,11 +19,13 @@ import java.util.List;
 @RequestMapping("/api/v1/posts")
 public class PostApiController {
     private final PostService postService;
+    private final FileUploadService fileUploadService;
 
     @PostMapping
     public void createPost(@AuthenticationPrincipal Member member,
-                           @Valid @RequestBody CreatePost.Request request) {
-        postService.createPost(member.getId(), request);
+                           @RequestPart(value = "request") CreatePost.Request request,
+                           @RequestPart(value = "files") List<MultipartFile> files) {
+        postService.createPost(member.getId(), request, files);
     }
 
     @PutMapping("/{id}")

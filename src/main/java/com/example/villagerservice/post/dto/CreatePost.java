@@ -1,6 +1,9 @@
 package com.example.villagerservice.post.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
@@ -22,7 +25,7 @@ public class CreatePost {
         private String contents;
     }
 
-    public static class Response{
+    public static class Response {
 
     }
 }
