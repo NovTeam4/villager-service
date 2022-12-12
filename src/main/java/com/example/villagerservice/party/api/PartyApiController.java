@@ -11,6 +11,8 @@ import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,12 @@ public class PartyApiController {
 
         partyService.createParty(member.getId() , partyRequest);
 
+    }
+
+    @GetMapping()
+    public Page<PartyDTO.Response> getAllParty(@PageableDefault(size = 10 , sort = "id" , direction = Sort.Direction.ASC) final Pageable pageable) {
+
+        return partyService.getAllParty(pageable);
     }
 
     @GetMapping("/{partyId}")
