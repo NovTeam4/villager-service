@@ -4,10 +4,7 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyApplyDto;
-import com.example.villagerservice.party.service.PartyApplyService;
-import com.example.villagerservice.party.service.PartyLikeService;
-import com.example.villagerservice.party.service.PartyQueryService;
-import com.example.villagerservice.party.service.PartyService;
+import com.example.villagerservice.party.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotEmpty;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/parties")
@@ -25,6 +24,8 @@ public class PartyApiController {
     private final PartyApplyService partyApplyService;
     private final PartyQueryService partyQueryService;
     private final PartyLikeService partyLikeService;
+
+    private final PartyCommentService partyCommentService;
 
 
     @PostMapping()
@@ -83,5 +84,12 @@ public class PartyApiController {
             return "관심 모임 등록";
         }
         return "관심 모임 취소";
+    }
+
+    @PostMapping("/{partyId}/comment")
+    public void createComment(@PathVariable Long partyId , @RequestBody String contents){
+
+        partyCommentService.createComment(partyId , contents);
+
     }
 }

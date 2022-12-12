@@ -15,11 +15,7 @@ import com.example.villagerservice.config.WithMockCustomMember;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyApplyDto;
-import com.example.villagerservice.party.service.PartyApplyService;
-import com.example.villagerservice.party.service.PartyLikeService;
-import com.example.villagerservice.party.service.PartyQueryService;
-
-import com.example.villagerservice.party.service.PartyService;
+import com.example.villagerservice.party.service.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -51,7 +47,7 @@ public class PartyApiControllerTest {
     private PartyService partyService;
 
     @MockBean
-    private PartyLikeService partyLikeService;
+    private PartyCommentService partyCommentService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -238,6 +234,22 @@ public class PartyApiControllerTest {
                 .andDo(print());
 
         verify(partyService,times(1)).getAllParty(any());
+    }
+
+    @Test
+    @DisplayName("모임 댓글 테스트")
+    void createComment() throws Exception {
+
+        Long partyId = 1L;
+        String value = "test";
+        mockMvc.perform(post("/api/v1/parties/{partyId}/comment",partyId)
+                .characterEncoding("UTF-8")
+                .contentType(MediaType.TEXT_PLAIN_VALUE)
+                .content(value))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(partyCommentService,times(1)).createComment(partyId , value);
     }
 
 }
