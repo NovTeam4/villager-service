@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 
 public class UpdateMemberInfo {
@@ -15,7 +16,8 @@ public class UpdateMemberInfo {
     @AllArgsConstructor
     @Builder
     public static class Request {
-        @NotBlank(message = "닉네임은 필수입력 값입니다.")
         private String nickname;
+        @Size(max = 100, message = "자기소개는 100글자 이내로 입력해주세요.")
+        private String introduce;
     }
 }
