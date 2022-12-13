@@ -8,14 +8,15 @@ import com.example.villagerservice.post.domain.PostCommentRepository;
 import com.example.villagerservice.post.domain.Post;
 import com.example.villagerservice.post.domain.PostRepository;
 import com.example.villagerservice.post.dto.CreatePostComment;
+import com.example.villagerservice.post.dto.UpdatePostComment;
 import com.example.villagerservice.post.exception.PostException;
 import com.example.villagerservice.post.service.PostCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
-import static com.example.villagerservice.post.exception.PostErrorCode.COMMENT_ID_NOT_FOUND;
-import static com.example.villagerservice.post.exception.PostErrorCode.POST_NOT_FOUND;
+import static com.example.villagerservice.post.exception.PostErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,12 +36,23 @@ public class postCommentServiceImpl implements PostCommentService {
     }
 
     @Override
-    public void deleteComment(Long memberId, Long postId, Long commentId) {
+    public void deletePostComment(Long memberId, Long postId, Long commentId) {
 
         Post post = postRepository.findById(postId).orElseThrow();
         Member member = memberRepository.findById(memberId).orElseThrow();// 맴버찾은후에
-        postCommentRepository.findByIdAndPostAndMember(commentId, post, member).orElseThrow();
+        postCommentRepository.findByIdAndPostAndMember(commentId, post, member).orElseThrow(()->new PostException(COMMENT_ROLE_NOT));
         postCommentRepository.deleteById(commentId);
+
+    }
+
+    @Override
+    @Transactional
+    public void updatePostComment(Long memberId, Long postId, Long commentId, UpdatePostComment.Request request) {
+
+        Member member = findByMemberId(memberId);
+        Post post = findByPostId(postId);
+        PostComment postComment = postCommentRepository.findByIdAndPostAndMember(commentId, post, member).orElseThrow(() -> new PostException(COMMENT_ROLE_NOT));
+        postComment.updatePostComment(member,post, request.getComment());
 
     }
 

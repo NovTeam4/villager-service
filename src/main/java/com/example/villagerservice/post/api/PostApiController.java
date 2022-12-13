@@ -1,6 +1,7 @@
 package com.example.villagerservice.post.api;
 
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.post.domain.PostComment;
 import com.example.villagerservice.post.dto.*;
 import com.example.villagerservice.post.service.PostCommentService;
 import com.example.villagerservice.post.service.PostQueryService;
@@ -62,13 +63,22 @@ public class PostApiController {
                                   @PathVariable("id") Long postId,
                                   @Valid @RequestBody CreatePostComment.Request request){
         postCommentService.createPostComment(member.getId(),postId,request);
+
     }
 
     @DeleteMapping("/comments/{postId}/{commentId}")
     public void deleteComment(@AuthenticationPrincipal Member member,
                               @PathVariable("postId") Long postId,
                               @PathVariable("commentId") Long commentId){
-        postCommentService.deleteComment(member.getId(),postId,commentId);
+        postCommentService.deletePostComment(member.getId(),postId,commentId);
+    }
+
+    @PutMapping("/comments/{postId}/{commentId}")
+    public void updatePostComment(@AuthenticationPrincipal Member member,
+                                  @PathVariable("postId") Long postId,
+                                  @PathVariable("commentId") Long commentId,
+                                  @Valid @RequestBody UpdatePostComment.Request request){
+        postCommentService.updatePostComment(member.getId(),postId,commentId,request);
     }
 
 }
