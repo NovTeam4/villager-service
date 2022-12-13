@@ -59,18 +59,12 @@ public class PostApiController {
         postService.deletePost(member.getId(), postId);
     }
 
-    @GetMapping() // 목록조회
-    public List<ListPost.Response> listPost() {
-        return postService.getList();
-    }
-
     @PostMapping("/{id}")
     public void createComment(@AuthenticationPrincipal Member member,
                               @PathVariable("id") Long postId,
                               @Valid @RequestBody CommentPost.Request request){
 
         commentService.createComment(member.getId(),postId,request);
-
     }
 
 }
