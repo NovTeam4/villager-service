@@ -68,4 +68,8 @@ public class Post extends BaseTimeEntity {
             this.isDeleted = true;
         }else throw new PostException(POST_DELETE_NOT_FOUND);
     }
+
+    public void postViewUp() {
+        this.viewCount++;
+    }
 }
