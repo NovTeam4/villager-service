@@ -1,7 +1,6 @@
 package com.example.villagerservice.party.api;
 
 
-import static io.restassured.RestAssured.given;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
@@ -20,7 +19,6 @@ import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyApplyDto;
-import com.example.villagerservice.town.dto.TownList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import java.time.LocalDateTime;
@@ -35,12 +33,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -275,16 +269,11 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Party party = saveParty(host);// 파티생성
         int page = 0;
         int size = 3;
-        Pageable pageable = PageRequest.of(page, size);
 
         // 모임 신청 10개
         int applyCnt = 10;
-        for(long i = 0; i < applyCnt; i++){
-            partyApplyRepository.save(PartyApply.builder()
-                    .isAccept(false)
-                    .targetMemberId(i)
-                    .party(party)
-                    .build());
+        for(long i = 1; i <= applyCnt; i++){
+            savePartyApply(i, party);
         }
 
         Response response = givenAuth("",
@@ -304,11 +293,51 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
             .body("totalElements", Matchers.equalTo(applyCnt));
     }
 
+    @Test
+    @DisplayName("모임 허락 테스트")
+    void partyPermission() throws Exception {
+        Member host = createMember("host@gmail.com", "주최자");
+        Member applicant = createMember("applicant@gmail.com", "신청자");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(host.getEmail(), "hello11@@nW");// 신청자로 로그인
+        Party party = saveParty(host);// 주최자기준
+        savePartyApply(applicant.getId(), party);// 파티신청
+
+        Response response = givenAuth("",
+            template.allRestDocumentation("모임 허락",
+                partyPermissionPathParameterFields(),
+                getPartyApplyDtoResponseFields(),
+                PartyApplyDto.Response.class.getName()))
+            .when()
+            .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+            .patch("/api/v1/parties/{partyId}/permission/{targetMemberId}", party.getId(), applicant.getId());
+
+        response
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("accept", Matchers.equalTo(true));
+    }
+
+    // 파티 신청
+    private void savePartyApply(Long targetMemberId, Party party) {
+        partyApplyRepository.save(PartyApply.builder()
+                .party(party)
+                .isAccept(false)
+                .targetMemberId(targetMemberId)
+                .build());
+    }
 
 
     @NotNull
     private List<ParameterDescriptorWithType> getApplyPartyPathParameterFields() {
         return List.of(new ParameterDescriptorWithType("partyId").description("모임 id"));
+    }
+
+    @NotNull
+    private List<ParameterDescriptorWithType> partyPermissionPathParameterFields() {
+        return Arrays.asList(
+            new ParameterDescriptorWithType("partyId").description("모임 id"),
+            new ParameterDescriptorWithType("targetMemberId").description("신청자 id")
+        );
     }
 
     @NotNull
