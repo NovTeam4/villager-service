@@ -1,4 +1,4 @@
-package com.example.villagerservice.config.properties;
+package com.example.villagerservice.config.security.properties;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -29,8 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String servletPath = request.getServletPath();
+        String httpMethod = request.getMethod();
 
-        if (isPass(servletPath)) {
+        if (isPass(servletPath, httpMethod)) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -53,11 +54,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private boolean isPass(String path) {
+    private boolean isPass(String path, String httpMethod) {
         return
                 path.equals("/api/v1/auth/login") ||
                 path.equals("/api/v1/auth/signup") ||
                 path.equals("/api/v1/auth/valid/nickname") ||
+                (path.equals("/api/v1/posts") && httpMethod.equals("GET")) ||
                 path.equals("/h2-console") ||
                 path.contains("/docs")
                 ;
