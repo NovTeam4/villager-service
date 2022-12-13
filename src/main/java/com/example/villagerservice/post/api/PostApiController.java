@@ -57,14 +57,14 @@ public class PostApiController {
         postService.deletePost(member.getId(), postId);
     }
 
-    @PostMapping("/{id}")
-    public void createComment(@AuthenticationPrincipal Member member,
-                              @PathVariable("id") Long postId,
-                              @Valid @RequestBody CommentPost.Request request){
+    @PostMapping("/comments/{id}")
+    public void createPostComment(@AuthenticationPrincipal Member member,
+                                  @PathVariable("id") Long postId,
+                                  @Valid @RequestBody CreatePostComment.Request request){
         postCommentService.createPostComment(member.getId(),postId,request);
     }
 
-    @DeleteMapping("/{postId}/{commentId}")
+    @DeleteMapping("/comments/{postId}/{commentId}")
     public void deleteComment(@AuthenticationPrincipal Member member,
                               @PathVariable("postId") Long postId,
                               @PathVariable("commentId") Long commentId){

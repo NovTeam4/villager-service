@@ -7,7 +7,7 @@ import com.example.villagerservice.post.domain.PostComment;
 import com.example.villagerservice.post.domain.PostCommentRepository;
 import com.example.villagerservice.post.domain.Post;
 import com.example.villagerservice.post.domain.PostRepository;
-import com.example.villagerservice.post.dto.CommentPost;
+import com.example.villagerservice.post.dto.CreatePostComment;
 import com.example.villagerservice.post.exception.PostException;
 import com.example.villagerservice.post.service.PostCommentService;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +27,10 @@ public class postCommentServiceImpl implements PostCommentService {
     private final PostCommentRepository postCommentRepository;
 
     @Override
-    public void createPostComment(Long memberId, Long postId, CommentPost.Request request) {
+    public void createPostComment(Long memberId, Long postId, CreatePostComment.Request request) {
         Post post = findByPostId(postId);
         Member member = findByMemberId(memberId);
-        PostComment postComment = new PostComment(member, post, request.getContents());
+        PostComment postComment = new PostComment(member, post, request.getComment());
         postCommentRepository.save(postComment);
     }
 

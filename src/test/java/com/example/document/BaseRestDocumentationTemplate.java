@@ -3,6 +3,7 @@ package com.example.document;
 import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.request.RequestPartDescriptor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +33,32 @@ public abstract class BaseRestDocumentationTemplate {
                 .requestParameters(requestParameters)
                 .pathParameters(pathParameters)
                 .responseFields(responseFieldsSnippet)
+                .build();
+    }
+
+    protected RestDocumentation createRestDocumentation(String tag,
+                                                        String summary,
+                                                        String identifier,
+                                                        String description,
+                                                        String requestSchema,
+                                                        String responseSchema,
+                                                        List<FieldDescriptor> requestFieldsSnippet,
+                                                        List<ParameterDescriptorWithType> requestParameters,
+                                                        List<RequestPartDescriptor> requestParts,
+                                                        List<ParameterDescriptorWithType> pathParameters,
+                                                        List<FieldDescriptor> responseFieldsSnippet) {
+        return RestDocumentation.builder()
+                .tag(tag)
+                .summary(summary)
+                .identifier(identifier)
+                .description(description)
+                .requestSchema(requestSchema)
+                .responseSchema(responseSchema)
+                .requestFields(requestFieldsSnippet)
+                .requestParameters(requestParameters)
+                .pathParameters(pathParameters)
+                .responseFields(responseFieldsSnippet)
+                .requestParts(requestParts)
                 .build();
     }
 
