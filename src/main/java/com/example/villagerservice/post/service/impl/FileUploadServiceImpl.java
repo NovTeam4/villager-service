@@ -39,6 +39,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 else if (fileExtension.equals("png")) contentTypeTail = "png";
                 objMeta.setContentType("image/"+contentTypeTail);
 
+
                 try (InputStream inputStream = file.getInputStream()) {
                     amazonS3Client.putObject(new PutObjectRequest(bucket, filePath.get(num++), inputStream, objMeta)
                             .withCannedAcl(CannedAccessControlList.PublicRead));

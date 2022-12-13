@@ -8,4 +8,4 @@ INSERT INTO CATEGORY(name, is_visible)
 VALUES('일반', true);
 
 INSERT INTO CATEGORY(name, is_visible)
-VALUES('이야기', true);
+VALUES('모임 자랑글', true);

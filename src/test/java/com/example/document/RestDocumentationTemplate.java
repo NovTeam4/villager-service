@@ -3,6 +3,7 @@ package com.example.document;
 import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.example.villagerservice.common.exception.ErrorResponse;
 import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.request.RequestPartDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,25 @@ public class RestDocumentationTemplate extends BaseRestDocumentationTemplate {
                 "",
                 requestFieldDescriptor,
                 new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>());
+    }
+
+    public RestDocumentation requestRestPartsDocumentation(String summary,
+                                                      List<RequestPartDescriptor> requestParts,
+                                                      String requestSimpleName) {
+
+        String identifier = summary;
+        return createRestDocumentation(
+                tag,
+                summary,
+                identifier,
+                "",
+                requestSimpleName,
+                "",
+                new ArrayList<>(),
+                new ArrayList<>(),
+                requestParts,
                 new ArrayList<>(),
                 new ArrayList<>());
     }
