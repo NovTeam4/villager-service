@@ -37,6 +37,10 @@ cloud:
     stack:
       auto: false
 
+aws:
+  s3:
+    base-url: ENC(9SFg52vMZB3/L9JIWV4hHioqba7mr/LGrC5/q/cCy7EGunaXOn+ixxCsl1W7ipo1HBv6PEiKDnDlOeaqse8I/w==)
+
 logging:
   level:
     com:
@@ -60,7 +64,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        format_sql: create
+        format_sql: true
     hibernate:
       ddl-auto: create
     defer-datasource-initialization: true
