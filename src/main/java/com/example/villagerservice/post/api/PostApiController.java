@@ -5,7 +5,7 @@ import com.example.villagerservice.post.dto.CommentPost;
 import com.example.villagerservice.post.dto.CreatePost;
 import com.example.villagerservice.post.dto.ListPost;
 import com.example.villagerservice.post.dto.UpdatePost;
-import com.example.villagerservice.post.service.CommentService;
+import com.example.villagerservice.post.service.PostCommentService;
 import com.example.villagerservice.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,7 +21,7 @@ import java.util.List;
 
 public class PostApiController {
     private final PostService postService;
-    private final CommentService commentService;
+    private final PostCommentService postCommentService;
 
 
     @PostMapping
@@ -58,8 +58,16 @@ public class PostApiController {
                               @PathVariable("id") Long postId,
                               @Valid @RequestBody CommentPost.Request request){
 
-        commentService.createComment(member.getId(),postId,request);
+        postCommentService.createComment(member.getId(),postId,request);
 
+    }
+
+    @DeleteMapping("/{postId}/{commentId}")
+    public void deleteComment(@AuthenticationPrincipal Member member,
+                              @PathVariable("postId") Long postId,
+                              @PathVariable("commentId") Long commentId){
+
+        postCommentService.deleteComment(member.getId(),postId,commentId);
     }
 
 }
