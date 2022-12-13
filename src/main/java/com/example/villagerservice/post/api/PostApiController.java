@@ -1,8 +1,16 @@
 package com.example.villagerservice.post.api;
 
 import com.example.villagerservice.member.domain.Member;
+
 import com.example.villagerservice.post.dto.*;
 import com.example.villagerservice.post.service.PostQueryService;
+
+import com.example.villagerservice.post.dto.CommentPost;
+import com.example.villagerservice.post.dto.CreatePost;
+import com.example.villagerservice.post.dto.ListPost;
+import com.example.villagerservice.post.dto.UpdatePost;
+import com.example.villagerservice.post.service.CommentService;
+
 import com.example.villagerservice.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,16 +26,18 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
+
 public class PostApiController {
     private final PostService postService;
     private final PostQueryService postQueryService;
+    private final CommentService commentService;
 
     @GetMapping
     public Page<ListPostItem> getPostList(@ModelAttribute ListPostSearchCond searchCond,
                                           @PageableDefault Pageable pageable) {
         return postQueryService.getPostList(searchCond, pageable);
     }
-
+    
     @PostMapping
     public void createPost(@AuthenticationPrincipal Member member,
                            @RequestPart(value = "request") CreatePost.Request request,
@@ -48,4 +58,19 @@ public class PostApiController {
     ) {
         postService.deletePost(member.getId(), postId);
     }
+
+    @GetMapping() // 목록조회
+    public List<ListPost.Response> listPost() {
+        return postService.getList();
+    }
+
+    @PostMapping("/{id}")
+    public void createComment(@AuthenticationPrincipal Member member,
+                              @PathVariable("id") Long postId,
+                              @Valid @RequestBody CommentPost.Request request){
+
+        commentService.createComment(member.getId(),postId,request);
+
+    }
+
 }
