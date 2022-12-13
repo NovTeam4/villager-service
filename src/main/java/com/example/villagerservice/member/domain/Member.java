@@ -46,28 +46,24 @@ public class Member extends BaseTimeEntity {
     private TagCollection tagCollection = new TagCollection();
 
     @Builder
-    private Member(String nickname, String email, String encodedPassword, Gender gender, Birthday birthday) {
+    private Member(String nickname, String email, String encodedPassword, Gender gender, Birthday birthday, String introduce) {
         this.email = email;
         this.encodedPassword = encodedPassword;
         this.isDeleted = false;
         this.roleType = RoleType.USER;
-        addMemberDetail(nickname, gender, birthday);
+        addMemberDetail(nickname, gender, birthday, introduce);
     }
 
-    private void addMemberDetail(String nickname, Gender gender, Birthday birthday) {
+    private void addMemberDetail(String nickname, Gender gender, Birthday birthday, String introduce) {
         if (this.memberDetail == null) {
             this.memberDetail = new MemberDetail();
         }
-        this.memberDetail.addDetail(this, nickname, gender, birthday);
+        this.memberDetail.addDetail(this, nickname, gender, birthday, introduce);
     }
 
-    public void updateMemberInfo(String nickname) {
-        if (!StringUtils.hasText(nickname)) {
-            throw new MemberException(MEMBER_VALID_NOT);
-        }
-
+    public void updateMemberInfo(String nickname, String introduce) {
         if(this.memberDetail != null) {
-            this.memberDetail.nickNameUpdate(nickname);
+            this.memberDetail.updateMemberInfo(nickname, introduce);
         }
     }
 

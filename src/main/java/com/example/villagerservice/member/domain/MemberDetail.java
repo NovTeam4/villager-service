@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 
@@ -32,17 +33,42 @@ public class MemberDetail {
     @Embedded
     private MannerPoint mannerPoint;
 
-    public void nickNameUpdate(String nickname) {
-        if (!this.nickname.equals(nickname)) {
-            this.nickname = nickname;
-        }
-    }
+    private String introduce;
 
-    public void addDetail(Member member, String nickname, Gender gender, Birthday birthday) {
+    public void addDetail(Member member, String nickname, Gender gender, Birthday birthday, String introduce) {
         this.nickname = nickname;
         this.gender = gender;
         this.birthday = birthday;
         this.mannerPoint = new MannerPoint(50);
         this.member = member;
+        if(introduce == null) {
+            this.introduce = null;
+        } else  {
+            this.introduce = (introduce.isBlank()) ? null : introduce;
+        }
+    }
+
+    public void updateMemberInfo(String nickname, String introduce) {
+        nickNameUpdate(nickname);
+        introduceUpdate(introduce);
+    }
+
+    private void nickNameUpdate(String nickname) {
+        if(StringUtils.hasText(nickname)) {
+            if (!this.nickname.equals(nickname)) {
+                this.nickname = nickname;
+            }
+        }
+    }
+
+    private void introduceUpdate(String introduce) {
+        if(StringUtils.hasText(introduce)) {
+            if(this.introduce == null) {
+                this.introduce = introduce;
+            }
+            if (!this.introduce.equals(introduce)) {
+                this.introduce = introduce;
+            }
+        }
     }
 }
