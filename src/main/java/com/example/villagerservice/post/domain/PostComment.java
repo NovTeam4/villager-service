@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
-public class Comment extends BaseTimeEntity {
+public class PostComment extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name ="comment_id")
@@ -30,10 +30,9 @@ public class Comment extends BaseTimeEntity {
 
 
 
-    public Comment(Member member , Post post, String contents){
+    public PostComment(Member member , Post post, String contents){
         this.member = member;
         this.post = post;
         this.contents = contents;
-
     }
 }

@@ -1,9 +1,9 @@
 package com.example.villagerservice.post.service.impl;
 
-import com.example.villagerservice.post.domain.Comment;
-import com.example.villagerservice.post.domain.CommentRepository;
+import com.example.villagerservice.post.domain.PostComment;
+import com.example.villagerservice.post.domain.PostCommentRepository;
 import com.example.villagerservice.post.dto.CommentPost;
-import com.example.villagerservice.post.service.CommentService;
+import com.example.villagerservice.post.service.PostCommentService;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.exception.MemberException;
@@ -19,24 +19,20 @@ import static com.example.villagerservice.post.exception.PostErrorCode.POST_NOT_
 @Service
 @RequiredArgsConstructor
 
-public class commentServiceImpl implements CommentService {
+public class PostCommentServiceImpl implements PostCommentService {
 
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
-
-    private final CommentRepository commentRepository;
+    private final PostCommentRepository postCommentRepository;
 
     @Override
     public void createComment(Long memberId , Long postId, CommentPost.Request request) {
         Post post = findByPostId(postId);
         Member member = findByMemberId(memberId);
-        Comment comment = new Comment(member,post,request.getContents());
+        PostComment postComment = new PostComment(member,post,request.getContents());
 
-        commentRepository.save(comment);
-
-
+        postCommentRepository.save(postComment);
     }
-
 
     private Post findByPostId(Long postId){
         return postRepository.findById(postId).orElseThrow(()-> new PostException(POST_NOT_FOUND)); // 댓글작성할 게시글찾아서
@@ -46,5 +42,4 @@ public class commentServiceImpl implements CommentService {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
     }
-
 }
