@@ -57,9 +57,7 @@ class AuthApiControllerTest {
                 "test@gamil.com",
                 "Shwi18a78!!",
                 "MAN",
-                2022,
-                12,
-                5);
+                "2022-12-13");
 
         // when & then
         mockMvc.perform(post("/api/v1/auth/signup")
@@ -80,7 +78,7 @@ class AuthApiControllerTest {
     void createMemberApiEmailBlankTest(String email) throws Exception {
         // given
         String memberJson = createMember("nickname1", email, "Shwi18a78!!",
-                "MAN", 2022, 12, 5);
+                "MAN", "2022-12-13");
 
         // when & then
         mockMvc.perform(post("/api/v1/auth/signup")
@@ -99,7 +97,7 @@ class AuthApiControllerTest {
     void createMemberApiPasswordNotFormatTest(String password) throws Exception {
         // given
         String memberJson = createMember("nickname1", "test@gmail.com", password,
-                "MAN", 2022, 12, 5);
+                "MAN", "2022-12-13");
 
         // when & then
         mockMvc.perform(post("/api/v1/auth/signup")
@@ -118,7 +116,7 @@ class AuthApiControllerTest {
     void createMemberApiGenderNotFormatTest(String gender) throws Exception {
         // given
         String memberJson = createMember("nickname1", "test@gmail.com", "Shwi18a78!!",
-                gender, 2022, 12, 5);
+                gender, "2022-12-13");
 
         // when & then
         mockMvc.perform(post("/api/v1/auth/signup")
@@ -137,7 +135,7 @@ class AuthApiControllerTest {
     void createMemberApiGenderTest(String gender) throws Exception {
         // given
         String memberJson = createMember("nickname1", "test@gmail.com", "Shwi18a78!!",
-                gender, 2022, 12, 5);
+                gender, "2022-12-13");
 
         doNothing()
                 .when(memberService)
@@ -154,12 +152,12 @@ class AuthApiControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 12345, 123})
-    @DisplayName("년도 잘못 넘겼을 경우 테스트")
-    void createMemberApiYearNotFormatTest(int year) throws Exception {
+    @ValueSource(strings = {"2022-1-03", "00-12-03", "2022-12-7"})
+    @DisplayName("생년월일 잘못 넘겼을 경우 테스트")
+    void createMemberApiYearNotFormatTest(String birth) throws Exception {
         // given
         String memberJson = createMember("nickname1", "test@gmail.com", "Shwi18a78!!",
-                "MAN", year, 12, 5);
+                "MAN", birth);
 
         doNothing()
                 .when(memberService)
@@ -172,53 +170,7 @@ class AuthApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
                 .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
-                .andExpect(jsonPath("$.validation.year").value("년도를 확인해주세요."))
-                .andDo(print());
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {0, 13})
-    @DisplayName("월을 잘못 넘겼을 경우 테스트")
-    void createMemberApiMonthNotFormatTest(int month) throws Exception {
-        // given
-        String memberJson = createMember("nickname1", "test@gmail.com", "Shwi18a78!!",
-                "MAN", 2022, month, 5);
-
-        doNothing()
-                .when(memberService)
-                .createMember(any());
-
-        // when & then
-        mockMvc.perform(post("/api/v1/auth/signup")
-                        .contentType(APPLICATION_JSON)
-                        .content(memberJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
-                .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
-                .andExpect(jsonPath("$.validation.month").value("월을 확인해주세요."))
-                .andDo(print());
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {0, 32})
-    @DisplayName("일을 잘못 넘겼을 경우 테스트")
-    void createMemberApiDayNotFormatTest(int day) throws Exception {
-        // given
-        String memberJson = createMember("nickname1", "test@gmail.com", "Shwi18a78!!",
-                "MAN", 2022, 5, day);
-
-        doNothing()
-                .when(memberService)
-                .createMember(any());
-
-        // when & then
-        mockMvc.perform(post("/api/v1/auth/signup")
-                        .contentType(APPLICATION_JSON)
-                        .content(memberJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
-                .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
-                .andExpect(jsonPath("$.validation.day").value("일을 확인해주세요."))
+                .andExpect(jsonPath("$.validation.birth").value("생년월일을 확인해주세요."))
                 .andDo(print());
     }
 
@@ -227,7 +179,7 @@ class AuthApiControllerTest {
     void createMemberApiTest() throws Exception {
         // given
         String memberJson = createMember("nickname1", "test@gmail.com", "helloWorld1!!",
-                "MAN", 2022, 12, 5);
+                "MAN", "2022-12-13");
 
         // when & then
         doNothing()
@@ -376,15 +328,15 @@ class AuthApiControllerTest {
 
     @NotNull
     private String createMember(String nickname, String email, String pass, String gender,
-                                int year, int month, int day) throws JsonProcessingException {
+                                String birth) throws JsonProcessingException {
         CreateMember.Request memberCreate = CreateMember.Request.builder()
                 .nickname(nickname)
                 .email(email)
                 .password(pass)
                 .gender(gender)
-                .year(year)
-                .month(month)
-                .day(day)
+                //.birth(String.format("%d-%02d-%02d", year, month, day))
+                .birth(String.format(birth))
+                .introduce("안녕하세요 반갑습니다!")
                 .build();
 
         return objectMapper.writeValueAsString(memberCreate);

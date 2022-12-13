@@ -41,6 +41,7 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         UpdateMemberInfo.Request request = UpdateMemberInfo.Request.builder()
                 .nickname("newNickName")
+                .introduce("자기소개변경!")
                 .build();
 
         String body = objectMapper.writeValueAsString(request);
@@ -61,6 +62,7 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
 
         defaultAssertThat(members);
         assertThat(members.get(0).getMemberDetail().getNickname()).isEqualTo("newNickName");
+        assertThat(members.get(0).getMemberDetail().getIntroduce()).isEqualTo("자기소개변경!");
     }
 
     @Test
@@ -153,7 +155,10 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
 
     @NotNull
     private List<FieldDescriptor> getUpdateMemberInfoRequestFields() {
-        return List.of(fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"));
+        return Arrays.asList(
+                fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+                fieldWithPath("introduce").type(JsonFieldType.STRING).description("자기소개")
+        );
     }
 
     @NotNull

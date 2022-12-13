@@ -154,7 +154,7 @@ public class PostServiceImpl implements PostService {
     public void removeTaskSchedule() {
 
         jpaQueryFactory.delete(post)
-                .where(post.removeTask.isTrue())
+                .where(post.isDeleted.isTrue())
                 .where(timeMinus())
                 .execute();
     }

@@ -44,11 +44,14 @@ class MemberApiControllerTest {
 
     @Test
     @WithMockCustomMember
-    @DisplayName("회원 정보 잘못 넘겼을 경우 테스트")
+    @DisplayName("회원 정보 변경 시 자기소개 100자 초과할 경우 테스트")
     void updateMemberInfoNotFoundMemberTest() throws Exception {
         // given
         UpdateMemberInfo.Request updateMemberInfo = UpdateMemberInfo.Request.builder()
                 .nickname("")
+                .introduce("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" +
+                        "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" +
+                        "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz")
                 .build();
         String jsonMemberInfoUpdate = objectMapper.writeValueAsString(updateMemberInfo);
 
@@ -60,7 +63,7 @@ class MemberApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.errorCode").value(DATA_INVALID_ERROR.getErrorCode()))
                 .andExpect(jsonPath("$.errorMessage").value(DATA_INVALID_ERROR.getErrorMessage()))
-                .andExpect(jsonPath("$.validation.nickname").value("닉네임은 필수입력 값입니다."))
+                .andExpect(jsonPath("$.validation.introduce").value("자기소개는 100글자 이내로 입력해주세요."))
                 .andDo(print());
     }
 

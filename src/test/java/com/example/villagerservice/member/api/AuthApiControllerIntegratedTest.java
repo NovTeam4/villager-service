@@ -57,9 +57,8 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                 .email("hello1@gmail.com")
                 .password("helloWorld1!!")
                 .gender("MAN")
-                .year(2022)
-                .month(12)
-                .day(5)
+                .birth("2022-12-13")
+                .introduce("안녕하세요 반갑습니다!")
                 .build();
         String body = objectMapper.writeValueAsString(memberCreate);
 
@@ -83,7 +82,8 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
         assertThat(members.get(0).getMemberDetail().getGender()).isEqualTo(MAN);
         assertThat(members.get(0).getMemberDetail().getBirthday().getYear()).isEqualTo(2022);
         assertThat(members.get(0).getMemberDetail().getBirthday().getMonth()).isEqualTo(12);
-        assertThat(members.get(0).getMemberDetail().getBirthday().getDay()).isEqualTo(5);
+        assertThat(members.get(0).getMemberDetail().getBirthday().getDay()).isEqualTo(13);
+        assertThat(members.get(0).getMemberDetail().getIntroduce()).isEqualTo("안녕하세요 반갑습니다!");
     }
 
     @NotNull
@@ -93,9 +93,8 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("email").description("이메일"),
                 fieldWithPath("password").description("비밀번호"),
                 fieldWithPath("gender").description("성별"),
-                fieldWithPath("year").description("년"),
-                fieldWithPath("month").description("월"),
-                fieldWithPath("day").description("일")
+                fieldWithPath("birth").description("생년월일"),
+                fieldWithPath("introduce").description("자기소개")
         );
     }
 
@@ -136,9 +135,8 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                 .password("hello11@nW")
                 .nickname("testNickname")
                 .gender("MAN")
-                .year(2022)
-                .month(12)
-                .day(8)
+                .birth("2022-12-13")
+                .introduce("안녕하세요 반갑습니다!")
                 .build();
         given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -180,9 +178,8 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                 .password("hello11@nW")
                 .nickname("testNickname")
                 .gender("MAN")
-                .year(2022)
-                .month(12)
-                .day(8)
+                .birth("2022-12-13")
+                .introduce("안녕하세요 반갑습니다!")
                 .build();
         given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)

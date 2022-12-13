@@ -2,9 +2,9 @@ package com.example.villagerservice.member.service.impl;
 
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberDetailRepository;
+import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.dto.*;
 import com.example.villagerservice.member.exception.MemberException;
-import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,7 +36,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void updateMemberInfo(String email, UpdateMemberInfo.Request updateMemberInfo) {
         Member member = findByMemberEmail(email);
-        member.updateMemberInfo(updateMemberInfo.getNickname());
+        member.updateMemberInfo(updateMemberInfo.getNickname(), updateMemberInfo.getIntroduce());
     }
 
     @Override
@@ -70,7 +70,7 @@ public class MemberServiceImpl implements MemberService {
     private void memberCheckedNicknameDuplicateValid(String nickname) {
         boolean result = memberDetailRepository.existsByNickname(nickname);
 
-        if(result) {
+        if (result) {
             throw new MemberException(MEMBER_NICKNAME_DUPLICATE_ERROR);
         }
     }
