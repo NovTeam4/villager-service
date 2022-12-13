@@ -2,6 +2,7 @@ package com.example.villagerservice.party.api;
 
 
 import static io.restassured.RestAssured.given;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
 import com.epages.restdocs.apispec.ParameterDescriptorWithType;
@@ -19,11 +20,14 @@ import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyApplyDto;
+import com.example.villagerservice.town.dto.TownList;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.response.Response;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import org.assertj.core.api.Assertions;
+import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +35,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -246,7 +253,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
         givenAuth("",
             template.allRestDocumentation("모임 신청",
-                getApplyPartyPostPathParameterFields(),
+                getApplyPartyPathParameterFields(),
                 getPartyApplyDtoResponseFields(),
                 PartyApplyDto.Response.class.getName()))
             .when()
@@ -261,31 +268,46 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     @Test
-    @DisplayName("모임 신청 테스트")
-    void applyParty() throws Exception {
+    @DisplayName("모임 신청 조회 테스트")
+    void getApplyPartyList() throws Exception {
         Member host = createMember("host@gmail.com", "주최자");
-        Member applicant = createMember("applicant@gmail.com", "신청자");
-        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(applicant.getEmail(), "hello11@@nW");// 신청자로 로그인
-        Party party = saveParty(host);// 주최자기준
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(host.getEmail(), "hello11@@nW");// 신청자로 로그인
+        Party party = saveParty(host);// 파티생성
+        int page = 0;
+        int size = 3;
+        Pageable pageable = PageRequest.of(page, size);
 
-        givenAuth("",
-            template.allRestDocumentation("모임 신청",
-                getApplyPartyPostPathParameterFields(),
-                getPartyApplyDtoResponseFields(),
+        // 모임 신청 10개
+        int applyCnt = 10;
+        for(long i = 0; i < applyCnt; i++){
+            partyApplyRepository.save(PartyApply.builder()
+                    .isAccept(false)
+                    .targetMemberId(i)
+                    .party(party)
+                    .build());
+        }
+
+        Response response = givenAuth("",
+            template.responseRestDocumentation(
+                "모임 신청 조회",
+                getPartyApplyDtoListRequestParameterFields(),
+                getApplyPartyPathParameterFields(),
+                getPartyApplyDtoListResponseFields(),
                 PartyApplyDto.Response.class.getName()))
             .when()
-            .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
-            .post("/api/v1/parties/{partyId}/apply", party.getId())
-            .then()
-            .statusCode(HttpStatus.OK.value());
+            .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+            .get("/api/v1/parties/{partyId}/apply?page={page}&size={size}", party.getId(), page, size);
 
-        PartyApply partyApply = partyApplyRepository.findFirstByOrderByIdDesc().get();
-        Assertions.assertThat(partyApply.isAccept()).isEqualTo(false);
-        Assertions.assertThat(partyApply.getParty().getId()).isEqualTo(party.getId());
+        response
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("totalElements", Matchers.equalTo(applyCnt));
     }
 
+
+
     @NotNull
-    private List<ParameterDescriptorWithType> getApplyPartyPostPathParameterFields() {
+    private List<ParameterDescriptorWithType> getApplyPartyPathParameterFields() {
         return List.of(new ParameterDescriptorWithType("partyId").description("모임 id"));
     }
 
@@ -296,6 +318,50 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
             fieldWithPath("targetMemberId").type(JsonFieldType.NUMBER).description("신청자id"),
             fieldWithPath("accept").type(JsonFieldType.BOOLEAN).description("허락여부"),
             fieldWithPath("partyId").type(JsonFieldType.NUMBER).description("모임id")
+        );
+    }
+
+    @NotNull
+    private List<FieldDescriptor> getPartyApplyDtoListResponseFields() {
+        return Arrays.asList(
+            fieldWithPath("content").type(JsonFieldType.ARRAY).description("모임 신청 목록"),
+            fieldWithPath("content[].id").type(JsonFieldType.NUMBER).description("id"),
+            fieldWithPath("content[].targetMemberId").type(JsonFieldType.NUMBER).description("신청자id"),
+            fieldWithPath("content[].partyId").type(JsonFieldType.NUMBER).description("주최자id"),
+            fieldWithPath("content[].accept").type(JsonFieldType.BOOLEAN).description("허락여부"),
+
+            fieldWithPath("pageable").type(JsonFieldType.OBJECT).description("페이지정보").ignored(),
+            fieldWithPath("pageable.sort").type(JsonFieldType.OBJECT).description("정렬정보").ignored(),
+            fieldWithPath("pageable.sort.empty").type(JsonFieldType.BOOLEAN).description("?").ignored(),
+            fieldWithPath("pageable.sort.unsorted").type(JsonFieldType.BOOLEAN).description("?").ignored(),
+            fieldWithPath("pageable.sort.sorted").type(JsonFieldType.BOOLEAN).description("?").ignored(),
+            fieldWithPath("pageable.offset").type(JsonFieldType.NUMBER).description("?").ignored(),
+            fieldWithPath("pageable.pageNumber").type(JsonFieldType.NUMBER).description("?").ignored(),
+            fieldWithPath("pageable.pageSize").type(JsonFieldType.NUMBER).description("?").ignored(),
+            fieldWithPath("pageable.paged").type(JsonFieldType.BOOLEAN).description("?").ignored(),
+            fieldWithPath("pageable.unpaged").type(JsonFieldType.BOOLEAN).description("?").ignored(),
+
+
+            fieldWithPath("last").type(JsonFieldType.BOOLEAN).description("마지막페이지여부"),
+            fieldWithPath("first").type(JsonFieldType.BOOLEAN).description("첫번째페이지여부"),
+            fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("총페이지수"),
+            fieldWithPath("totalElements").type(JsonFieldType.NUMBER).description("총개수"),
+            fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("현재페이지모임신청수"),
+            fieldWithPath("size").type(JsonFieldType.NUMBER).description("?").ignored(),
+            fieldWithPath("number").type(JsonFieldType.NUMBER).description("?").ignored(),
+            fieldWithPath("sort").type(JsonFieldType.OBJECT).description("?").ignored(),
+            fieldWithPath("sort.empty").type(JsonFieldType.BOOLEAN).description("?").ignored(),
+            fieldWithPath("sort.unsorted").type(JsonFieldType.BOOLEAN).description("?").ignored(),
+            fieldWithPath("sort.sorted").type(JsonFieldType.BOOLEAN).description("?").ignored(),
+            fieldWithPath("empty").type(JsonFieldType.BOOLEAN).description("null 여부").ignored()
+            );
+    }
+
+    @NotNull
+    private List<ParameterDescriptorWithType> getPartyApplyDtoListRequestParameterFields() {
+        return Arrays.asList(
+            new ParameterDescriptorWithType("page").description("페이지 번호"),
+            new ParameterDescriptorWithType("size").description("요청 개수")
         );
     }
 }
