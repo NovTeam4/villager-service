@@ -326,6 +326,28 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 .build());
     }
 
+    @Test
+    @DisplayName("모임 좋아요 테스트")
+    void partyLike() throws Exception {
+        Member member = createMember("host@gmail.com", "주최자");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(member.getEmail(), "hello11@@nW");// 신청자로 로그인
+        Party party = saveParty(member);// 주최자기준
+
+        givenAuth("",
+            template.allRestDocumentation("모임 좋아요",
+                getApplyPartyPathParameterFields(),
+                getPartyApplyDtoResponseFields(),
+                PartyApplyDto.Response.class.getName()))
+            .when()
+            .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+            .post("/api/v1/parties/{partyId}/apply", party.getId())
+            .then()
+            .statusCode(HttpStatus.OK.value());
+
+        PartyApply partyApply = partyApplyRepository.findFirstByOrderByIdDesc().get();
+        Assertions.assertThat(partyApply.isAccept()).isEqualTo(false);
+        Assertions.assertThat(partyApply.getParty().getId()).isEqualTo(party.getId());
+    }
 
     @NotNull
     private List<ParameterDescriptorWithType> getApplyPartyPathParameterFields() {

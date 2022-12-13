@@ -4,6 +4,7 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyApplyDto;
+import com.example.villagerservice.party.request.PartyLikeDto;
 import com.example.villagerservice.party.service.PartyApplyService;
 import com.example.villagerservice.party.service.PartyLikeService;
 import com.example.villagerservice.party.service.PartyQueryService;
@@ -78,10 +79,7 @@ public class PartyApiController {
     }
 
     @PostMapping("/{partyId}/like")
-    public String partyLike(@PathVariable Long partyId, @AuthenticationPrincipal Member member){
-        if(partyLikeService.partyLike(partyId, member)){
-            return "관심 모임 등록";
-        }
-        return "관심 모임 취소";
+    public PartyLikeDto.Response partyLike(@PathVariable Long partyId, @AuthenticationPrincipal Member member){
+        return partyLikeService.partyLike(partyId, member);
     }
 }
