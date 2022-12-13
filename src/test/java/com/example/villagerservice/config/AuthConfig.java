@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TestConfiguration
 @ActiveProfiles({"test"})
 @RequiredArgsConstructor
+@Transactional
 public class AuthConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, Object> redisTemplate;

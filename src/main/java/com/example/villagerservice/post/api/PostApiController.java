@@ -1,13 +1,14 @@
 package com.example.villagerservice.post.api;
 
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.post.dto.CommentPost;
-import com.example.villagerservice.post.dto.CreatePost;
-import com.example.villagerservice.post.dto.UpdatePost;
+import com.example.villagerservice.post.dto.*;
 import com.example.villagerservice.post.service.PostCommentService;
 import com.example.villagerservice.post.service.PostQueryService;
 import com.example.villagerservice.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,12 +24,22 @@ public class PostApiController {
     private final PostService postService;
     private final PostCommentService postCommentService;
     private final PostQueryService postQueryService;
-    private final PostCommentService postCommentService;
 
+    @GetMapping
+    public Page<ListPostItem> getPostList(@ModelAttribute ListPostSearchCond searchCond,
+                                          @PageableDefault Pageable pageable) {
+        return postQueryService.getPostList(searchCond, pageable);
+    }
+
+    @GetMapping("/{postId}")
+    public PostItemDetail getPost(@PathVariable Long postId) {
+        postService.postViewCountUp(postId);
+        return postQueryService.getPostItemDetail(postId);
+    }
 
     @PostMapping
     public void createPost(@AuthenticationPrincipal Member member,
-                           @RequestPart(value = "request") CreatePost.Request request,
+                           @RequestPart(value = "post") CreatePost.Request request,
                            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         postService.createPost(member.getId(), request, files);
     }
@@ -42,8 +53,7 @@ public class PostApiController {
 
     @DeleteMapping("/{id}")
     public void deletePost(@AuthenticationPrincipal Member member,
-                           @PathVariable("id") Long postId
-    ) {
+                           @PathVariable("id") Long postId) {
         postService.deletePost(member.getId(), postId);
     }
 
@@ -51,7 +61,7 @@ public class PostApiController {
     public void createComment(@AuthenticationPrincipal Member member,
                               @PathVariable("id") Long postId,
                               @Valid @RequestBody CommentPost.Request request){
-        postCommentService.createComment(member.getId(),postId,request);
+        postCommentService.createPostComment(member.getId(),postId,request);
     }
 
     @DeleteMapping("/{postId}/{commentId}")

@@ -27,7 +27,7 @@ public class postCommentServiceImpl implements PostCommentService {
     private final PostCommentRepository postCommentRepository;
 
     @Override
-    public void createComment(Long memberId, Long postId, CommentPost.Request request) {
+    public void createPostComment(Long memberId, Long postId, CommentPost.Request request) {
         Post post = findByPostId(postId);
         Member member = findByMemberId(memberId);
         PostComment postComment = new PostComment(member, post, request.getContents());

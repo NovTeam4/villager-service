@@ -149,4 +149,33 @@ public abstract class BaseDocumentation extends BaseLogin {
                         )
                 ));
     }
+
+    protected RequestSpecification givenAuthContentType(String contentType, String body, RestDocumentation restDocumentation) {
+        return given(this.spec)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Content-type", contentType)
+                .body(body)
+                .log().all()
+                .filter(document(
+                        restDocumentation.getIdentifier(),
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag(restDocumentation.getTag())
+                                        .summary(restDocumentation.getSummary())
+                                        .description(restDocumentation.getDescription())
+                                        .requestSchema(schema(restDocumentation.getRequestSchema()))
+                                        .responseSchema(schema(restDocumentation.getResponseSchema()))
+                                        .requestFields(restDocumentation.getRequestFields())
+                                        .pathParameters(restDocumentation.getPathParameters())
+                                        .requestParameters(restDocumentation.getRequestParameters())
+                                        .responseFields(restDocumentation.getResponseFields())
+                                        .requestHeaders(List.of(
+                                                new HeaderDescriptorWithType(AUTHORIZATION).description("JWT Access-Token")
+                                        ))
+                                        .build()
+                        )
+                ));
+    }
 }
