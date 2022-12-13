@@ -1,16 +1,15 @@
 package com.example.villagerservice.post.infra;
 
 import com.example.villagerservice.post.domain.PostQueryRepository;
-import com.example.villagerservice.post.dto.ListPostItem;
-import com.example.villagerservice.post.dto.ListPostSearchCond;
+import com.example.villagerservice.post.dto.*;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -22,6 +21,8 @@ import static com.example.villagerservice.member.domain.QMember.member;
 import static com.example.villagerservice.member.domain.QMemberDetail.memberDetail;
 import static com.example.villagerservice.post.domain.QCategory.category;
 import static com.example.villagerservice.post.domain.QPost.post;
+import static com.example.villagerservice.post.domain.QPostComment.postComment;
+import static com.example.villagerservice.post.domain.QPostImage.postImage;
 import static com.example.villagerservice.postlike.domain.QPostLike.postLike;
 import static com.querydsl.core.types.ExpressionUtils.count;
 import static com.querydsl.core.types.dsl.Wildcard.count;
@@ -29,6 +30,9 @@ import static com.querydsl.core.types.dsl.Wildcard.count;
 @Repository
 @RequiredArgsConstructor
 public class PostQueryRepositoryImpl implements PostQueryRepository {
+
+    @Value("${aws.s3.base-url}")
+    private String awsS3Baseurl;
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -71,6 +75,76 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 pageable,
                 countQuery::fetchOne);
     }
+
+    @Override
+    public PostItemDetail getPostItemDetail(Long postId) {
+
+        PostItemDetail postItemDetail = queryFactory
+                .select(Projections.constructor(PostItemDetail.class,
+                        post.id,
+                        category.id,
+                        memberDetail.nickname,
+                        post.viewCount,
+                        post.title,
+                        post.contents,
+                        category.name,
+                        post.createdAt,
+                        ExpressionUtils.as(
+                                JPAExpressions.select(count(postLike.id))
+                                        .from(postLike)
+                                        .where(postLike.post.eq(post)),
+                                "postLikeCount")))
+                .from(post)
+                .innerJoin(post.member, member)
+                .innerJoin(member.memberDetail, memberDetail)
+                .innerJoin(post.category, category)
+                .where(isActivePost(),
+                        post.id.eq(postId)).
+                fetchOne();
+
+        List<PostImageItem> images = queryFactory
+                .select(Projections.constructor(PostImageItem.class,
+                        postImage.id,
+                        postImage.path.prepend(awsS3Baseurl),
+                        postImage.size
+                ))
+                .from(postImage)
+                .innerJoin(postImage.post, post)
+                .where(isActivePost(),
+                        isSamePost(postId))
+                .fetch();
+
+
+        List<PostCommentItem> postComments = queryFactory
+                .select(Projections.constructor(PostCommentItem.class,
+                        postComment.id,
+                        member.id,
+                        memberDetail.nickname,
+                        postComment.createdAt))
+                .from(postComment)
+                .innerJoin(postComment.post, post)
+                .innerJoin(postComment.member, member)
+                .innerJoin(member.memberDetail, memberDetail)
+                .where(isActivePost(),
+                        isSamePost(postId))
+                .orderBy(postComment.createdAt.desc())
+                .fetch();
+
+        if (postItemDetail != null) {
+            postItemDetail.setImages(images);
+        }
+
+        if (postItemDetail != null) {
+            postItemDetail.setComments(postComments);
+        }
+
+        return postItemDetail;
+    }
+
+    private static BooleanExpression isSamePost(Long postId) {
+        return post.id.eq(postId);
+    }
+
     private BooleanExpression isActivePost() {
         return post.isDeleted.eq(false);
     }
