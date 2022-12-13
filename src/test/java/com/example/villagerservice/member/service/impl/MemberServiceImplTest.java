@@ -153,32 +153,12 @@ class MemberServiceImplTest {
     }
 
     @Test
-    @DisplayName("회원 정보 변경 시 변경할 데이터가 비어있을 경우 테스트")
-    void updateMemberInfoEmptyTest() {
-        // given
-        UpdateMemberInfo.Request updateMemberInfo = UpdateMemberInfo.Request.builder()
-                .build();
-
-        given(memberRepository.findByEmail(anyString()))
-                .willReturn(Optional.of(Member.builder().build()));
-
-        // when
-        MemberException memberException = assertThrows(MemberException.class,
-                () -> memberService.updateMemberInfo("test@gamil.com", updateMemberInfo));
-
-        // then
-        verify(memberRepository, times(1)).findByEmail(anyString());
-        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_VALID_NOT);
-        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_VALID_NOT.getErrorCode());
-        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_VALID_NOT.getErrorMessage());
-    }
-
-    @Test
-    @DisplayName("회원정보 변경 테스트")
-    void updateMemberInfoTest() {
+    @DisplayName("회원정보 닉네임만 변경 테스트")
+    void updateMemberInfoNickNameTest() {
         // given
         Member member = Member.builder()
                 .nickname("원래 닉네임")
+                .introduce("자기소개")
                 .build();
 
         Member mockMember = spy(member);
@@ -188,17 +168,85 @@ class MemberServiceImplTest {
 
         UpdateMemberInfo.Request updateMemberInfo = UpdateMemberInfo.Request.builder()
                 .nickname("변경 닉네임")
+                .introduce("ajksld")
                 .build();
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> nickNameCaptor = ArgumentCaptor.forClass(String.class);
 
         // when
         memberService.updateMemberInfo("test@gamil.com", updateMemberInfo);
 
         // then
         verify(memberRepository, times(1)).findByEmail(anyString());
-        verify(mockMember, times(1)).updateMemberInfo(captor.capture());
-        assertThat(captor.getValue()).isEqualTo("변경 닉네임");
+        verify(mockMember, times(1)).updateMemberInfo(
+                nickNameCaptor.capture(), anyString());
+        assertThat(nickNameCaptor.getValue()).isEqualTo("변경 닉네임");
         assertThat(mockMember.getMemberDetail().getNickname()).isEqualTo("변경 닉네임");
+    }
+
+    @Test
+    @DisplayName("회원정보 자기소개만 변경 테스트")
+    void updateMemberInfoIntroduceTest() {
+        // given
+        Member member = Member.builder()
+                .nickname("원래 닉네임")
+                .introduce("자기소개")
+                .build();
+
+        Member mockMember = spy(member);
+
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(mockMember));
+
+        UpdateMemberInfo.Request updateMemberInfo = UpdateMemberInfo.Request.builder()
+                .nickname("nickname")
+                .introduce("안녕하세요 반갑습니다.!")
+                .build();
+        ArgumentCaptor<String> introduceCaptor = ArgumentCaptor.forClass(String.class);
+
+        // when
+        memberService.updateMemberInfo("test@gamil.com", updateMemberInfo);
+
+        // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
+        verify(mockMember, times(1)).updateMemberInfo(
+                anyString(), introduceCaptor.capture());
+        assertThat(introduceCaptor.getValue()).isEqualTo("안녕하세요 반갑습니다.!");
+        assertThat(mockMember.getMemberDetail().getIntroduce()).isEqualTo("안녕하세요 반갑습니다.!");
+    }
+
+    @Test
+    @DisplayName("회원정보 변경 테스트")
+    void updateMemberInfoTest() {
+        // given
+        Member member = Member.builder()
+                .nickname("원래 닉네임")
+                .introduce("자기소개 변경 전")
+                .build();
+
+        Member mockMember = spy(member);
+
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(mockMember));
+
+        UpdateMemberInfo.Request updateMemberInfo = UpdateMemberInfo.Request.builder()
+                .nickname("변경 닉네임")
+                .introduce("자기소개 변경 후")
+                .build();
+
+        ArgumentCaptor<String> nickNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> introduceCaptor = ArgumentCaptor.forClass(String.class);
+
+        // when
+        memberService.updateMemberInfo("test@gamil.com", updateMemberInfo);
+
+        // then
+        verify(memberRepository, times(1)).findByEmail(anyString());
+        verify(mockMember, times(1)).updateMemberInfo(nickNameCaptor.capture(),
+                introduceCaptor.capture());
+        assertThat(nickNameCaptor.getValue()).isEqualTo("변경 닉네임");
+        assertThat(introduceCaptor.getValue()).isEqualTo("자기소개 변경 후");
+        assertThat(mockMember.getMemberDetail().getNickname()).isEqualTo("변경 닉네임");
+        assertThat(mockMember.getMemberDetail().getIntroduce()).isEqualTo("자기소개 변경 후");
     }
 
     @Test
@@ -378,9 +426,8 @@ class MemberServiceImplTest {
                 .email(email)
                 .password(pass)
                 .gender("MAN")
-                .year(2022)
-                .month(12)
-                .day(7)
+                .birth("2022-12-07")
+                .introduce("안녕하세요 반갑습니다!")
                 .build();
     }
 }
