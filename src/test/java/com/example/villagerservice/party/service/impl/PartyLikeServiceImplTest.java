@@ -1,5 +1,6 @@
 package com.example.villagerservice.party.service.impl;
 
+import static com.example.villagerservice.party.type.PartyLikeResponseType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -13,6 +14,8 @@ import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyLikeRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
+import com.example.villagerservice.party.request.PartyLikeDto;
+import com.example.villagerservice.party.type.PartyLikeResponseType;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,10 +45,10 @@ class PartyLikeServiceImplTest {
             .willReturn(Optional.empty());
 
         // when
-        boolean result = partyLikeService.partyLike(1L, Member.builder().email("123").build());
+        PartyLikeDto.Response response = partyLikeService.partyLike(1L, Member.builder().email("123").build());
 
         // then
-        assertEquals(true, result);
+        assertEquals(관심모임등록, response.getResponse());
     }
 
     @Test
@@ -60,10 +63,10 @@ class PartyLikeServiceImplTest {
             .willReturn(Optional.of(PartyLike.builder().build()));
 
         // when
-        boolean result = partyLikeService.partyLike(1L, Member.builder().email("123").build());
+        PartyLikeDto.Response response = partyLikeService.partyLike(1L, Member.builder().email("123").build());
 
         // then
-        assertEquals(false, result);
+        assertEquals(관심모임취소, response.getResponse());
     }
 
     @Test
