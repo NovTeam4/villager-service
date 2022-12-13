@@ -3,20 +3,17 @@ package com.example.villagerservice.post.domain;
 import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.member.domain.Member;
 
+import com.example.villagerservice.postlike.domain.PostLike;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.example.villagerservice.post.exception.PostException;
-import lombok.Getter;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.villagerservice.post.domain.QPost.post;
 import static com.example.villagerservice.post.exception.PostErrorCode.POST_DELETE_NOT_FOUND;
 
 @Getter
@@ -40,18 +37,18 @@ public class Post extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category; // 카테고리
-
+    private long viewCount;
 
     @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<PostImage> images = new ArrayList<>();
-    private boolean removeTask; // 삭제요청시 false->true ( 5일뒤 자동삭제)
-
+    private boolean isDeleted; // 삭제요청시 false->true ( 5일뒤 자동삭제)
 
     public Post(Member member, Category category, String title, String contents) {
         this.member = member;
         this.category = category;
         this.title = title;
         this.contents = contents;
+        this.viewCount = 0;
     }
 
     public void updatePost(Category category, String title, String contents) {
@@ -67,8 +64,8 @@ public class Post extends BaseTimeEntity {
     }
 
     public void deletePost() {
-        if (!removeTask) {
-            this.removeTask = true;
+        if (!isDeleted) {
+            this.isDeleted = true;
         }else throw new PostException(POST_DELETE_NOT_FOUND);
     }
 }
