@@ -1,16 +1,9 @@
 package com.example.villagerservice.post.api;
 
 import com.example.villagerservice.member.domain.Member;
-
 import com.example.villagerservice.post.dto.*;
+import com.example.villagerservice.post.service.PostCommentService;
 import com.example.villagerservice.post.service.PostQueryService;
-
-import com.example.villagerservice.post.dto.CommentPost;
-import com.example.villagerservice.post.dto.CreatePost;
-import com.example.villagerservice.post.dto.ListPost;
-import com.example.villagerservice.post.dto.UpdatePost;
-import com.example.villagerservice.post.service.CommentService;
-
 import com.example.villagerservice.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,14 +23,20 @@ import java.util.List;
 public class PostApiController {
     private final PostService postService;
     private final PostQueryService postQueryService;
-    private final CommentService commentService;
+    private final PostCommentService postCommentService;
 
     @GetMapping
     public Page<ListPostItem> getPostList(@ModelAttribute ListPostSearchCond searchCond,
                                           @PageableDefault Pageable pageable) {
         return postQueryService.getPostList(searchCond, pageable);
     }
-    
+
+    @GetMapping("/{postId}")
+    public PostItemDetail getPost(@PathVariable Long postId) {
+        postService.postViewCountUp(postId);
+        return postQueryService.getPostItemDetail(postId);
+    }
+
     @PostMapping
     public void createPost(@AuthenticationPrincipal Member member,
                            @RequestPart(value = "request") CreatePost.Request request,
@@ -54,17 +53,14 @@ public class PostApiController {
 
     @DeleteMapping("/{id}")
     public void deletePost(@AuthenticationPrincipal Member member,
-                           @PathVariable("id") Long postId
-    ) {
+                           @PathVariable("id") Long postId) {
         postService.deletePost(member.getId(), postId);
     }
 
     @PostMapping("/{id}")
     public void createComment(@AuthenticationPrincipal Member member,
                               @PathVariable("id") Long postId,
-                              @Valid @RequestBody CommentPost.Request request){
-
-        commentService.createComment(member.getId(),postId,request);
+                              @Valid @RequestBody CommentPost.Request request) {
+        postCommentService.createComment(member.getId(), postId, request);
     }
-
 }
