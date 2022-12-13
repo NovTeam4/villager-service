@@ -32,6 +32,12 @@ public class FileUploadServiceImpl implements FileUploadService {
             for (MultipartFile file : multipartFile) {
                 ObjectMetadata objMeta = new ObjectMetadata();
                 objMeta.setContentLength(file.getInputStream().available());
+                String fileExtension = file.getName().substring(file.getName().lastIndexOf(".") + 1)
+                        .toLowerCase();
+                String contentTypeTail = "jpeg";
+                if (fileExtension.equals("gif")) contentTypeTail = "gif";
+                else if (fileExtension.equals("png")) contentTypeTail = "png";
+                objMeta.setContentType("image/"+contentTypeTail);
 
                 try (InputStream inputStream = file.getInputStream()) {
                     amazonS3Client.putObject(new PutObjectRequest(bucket, filePath.get(num++), inputStream, objMeta)
