@@ -1,6 +1,7 @@
 package com.example.villagerservice.party.api;
 
 
+import static com.example.villagerservice.party.type.PartyLikeResponseType.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
@@ -13,12 +14,16 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyApply;
+import com.example.villagerservice.party.domain.PartyLike;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.repository.PartyApplyRepository;
+import com.example.villagerservice.party.repository.PartyLikeRepository;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyApplyDto;
+import com.example.villagerservice.party.request.PartyLikeDto;
+import com.example.villagerservice.party.type.PartyLikeResponseType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import java.time.LocalDateTime;
@@ -63,9 +68,13 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     @Autowired
     private PartyApplyRepository partyApplyRepository;
 
+    @Autowired
+    private PartyLikeRepository partyLikeRepository;
+
     @BeforeEach
     void clean() {
         partyApplyRepository.deleteAll();
+        partyLikeRepository.deleteAll();
         partyRepository.deleteAll();
         memberRepository.deleteAll();
     }
@@ -73,6 +82,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     @AfterEach
     void afterClean() {
         partyApplyRepository.deleteAll();
+        partyLikeRepository.deleteAll();
         partyRepository.deleteAll();
         memberRepository.deleteAll();
     }
@@ -327,26 +337,55 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     @Test
-    @DisplayName("모임 좋아요 테스트")
+    @DisplayName("관심 모임 등록 테스트")
     void partyLike() throws Exception {
         Member member = createMember("host@gmail.com", "주최자");
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(member.getEmail(), "hello11@@nW");// 신청자로 로그인
         Party party = saveParty(member);// 주최자기준
 
-        givenAuth("",
+        Response response = givenAuth("",
             template.allRestDocumentation("모임 좋아요",
                 getApplyPartyPathParameterFields(),
-                getPartyApplyDtoResponseFields(),
-                PartyApplyDto.Response.class.getName()))
+                getPartyLikeDtoResponseFields(),
+                PartyLikeDto.Response.class.getName()))
             .when()
             .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
-            .post("/api/v1/parties/{partyId}/apply", party.getId())
-            .then()
-            .statusCode(HttpStatus.OK.value());
+            .post("/api/v1/parties/{partyId}/like", party.getId());
 
-        PartyApply partyApply = partyApplyRepository.findFirstByOrderByIdDesc().get();
-        Assertions.assertThat(partyApply.isAccept()).isEqualTo(false);
-        Assertions.assertThat(partyApply.getParty().getId()).isEqualTo(party.getId());
+        response
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("response", Matchers.equalTo(관심모임등록.toString()));
+    }
+
+    @Test
+    @DisplayName("관심 모임 취소 테스트")
+    void partyLikeCancel() throws Exception {
+        Member member = createMember("host@gmail.com", "주최자");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(member.getEmail(), "hello11@@nW");// 신청자로 로그인
+        Party party = saveParty(member);// 주최자기준
+        savePartyLike(member, party);// 좋아요 등록
+
+        Response response = givenAuth("",
+            template.allRestDocumentation("모임 좋아요",
+                getApplyPartyPathParameterFields(),
+                getPartyLikeDtoResponseFields(),
+                PartyLikeDto.Response.class.getName()))
+            .when()
+            .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+            .post("/api/v1/parties/{partyId}/like", party.getId());
+
+        response
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("response", Matchers.equalTo(관심모임취소.toString()));
+    }
+
+    private void savePartyLike(Member member, Party party) {
+        partyLikeRepository.save(PartyLike.builder()
+                .member(member)
+                .party(party)
+                .build());
     }
 
     @NotNull
@@ -369,6 +408,13 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
             fieldWithPath("targetMemberId").type(JsonFieldType.NUMBER).description("신청자id"),
             fieldWithPath("accept").type(JsonFieldType.BOOLEAN).description("허락여부"),
             fieldWithPath("partyId").type(JsonFieldType.NUMBER).description("모임id")
+        );
+    }
+
+    @NotNull
+    private List<FieldDescriptor> getPartyLikeDtoResponseFields() {
+        return Arrays.asList(
+            fieldWithPath("response").description("좋아요결과")
         );
     }
 
