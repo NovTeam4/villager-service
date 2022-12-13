@@ -3,6 +3,7 @@ package com.example.villagerservice.member.dto;
 import com.example.villagerservice.member.domain.Birthday;
 import com.example.villagerservice.member.domain.Gender;
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.member.valid.Birth;
 import com.example.villagerservice.member.valid.DigitLength;
 import com.example.villagerservice.member.valid.Genders;
 import com.example.villagerservice.member.valid.Password;
@@ -34,14 +35,11 @@ public class CreateMember {
         @Genders
         private String gender;
 
-        @DigitLength(min = 1000, max = 9999, message = "년도를 확인해주세요.")
-        private int year;
+        @Birth
+        private String birth;
 
-        @DigitLength(min = 1, max = 12, message = "월을 확인해주세요.")
-        private int month;
-
-        @DigitLength(min = 1, max = 31, message = "일을 확인해주세요.")
-        private int day;
+        @Size(max = 100, message = "자기소개는 100글자 이내로 입력해주세요.")
+        private String introduce;
 
         public void passwordEncrypt(PasswordEncoder passwordEncoder) {
             this.password = passwordEncoder.encode(this.password);
@@ -53,8 +51,21 @@ public class CreateMember {
                     .email(this.email)
                     .encodedPassword(this.password)
                     .gender(Gender.valueOf(this.gender))
-                    .birthday(new Birthday(year, month, day))
+                    .birthday(new Birthday(getYear(birth), getMonth(birth), getDay(birth)))
+                    .introduce(this.introduce)
                     .build();
+        }
+
+        private int getYear(String birth) {
+            return Integer.parseInt(birth.substring(0, 4));
+        }
+
+        private int getMonth(String birth) {
+            return Integer.parseInt(birth.substring(5, 7));
+        }
+
+        private int getDay(String birth) {
+            return Integer.parseInt(birth.substring(8, 10));
         }
     }
 }
