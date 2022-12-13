@@ -13,8 +13,9 @@ import javax.persistence.*;
 @Getter
 public class PostComment extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="comment_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
     private Long id;
 
 
@@ -29,8 +30,13 @@ public class PostComment extends BaseTimeEntity {
     private String contents;
 
 
+    public PostComment(Member member, Post post, String contents) {
+        this.member = member;
+        this.post = post;
+        this.contents = contents;
+    }
 
-    public PostComment(Member member , Post post, String contents){
+    public void updatePostComment(Member member, Post post, String contents) {
         this.member = member;
         this.post = post;
         this.contents = contents;
