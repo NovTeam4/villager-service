@@ -8,6 +8,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import static com.example.villagerservice.common.exception.CommonErrorCode.*;
 
@@ -62,6 +63,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.ok().body(ErrorResponse.builder()
                 .errorCode(SERVER_INVALID_ERROR.getErrorCode())
                 .errorMessage(SERVER_INVALID_ERROR.getErrorMessage())
+                .build()
+        );
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    protected ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(
+            MaxUploadSizeExceededException e) {
+        log.info("handleMaxUploadSizeExceededException", e);
+
+        return ResponseEntity.ok().body(ErrorResponse.builder()
+                .errorCode(MAX_UPLOAD_SIZE_EXCEEDED.getErrorCode())
+                .errorMessage(MAX_UPLOAD_SIZE_EXCEEDED.getErrorMessage())
                 .build()
         );
     }

@@ -7,15 +7,15 @@ import java.time.LocalDateTime;
 
 @Getter
 public class PostCommentItem {
-    private Long id;
+    private Long commentId;
     private Long memberId;
     private String nickname;
     private String createdAt;
 
-    public PostCommentItem(Long id, Long memberId, String nickname, LocalDateTime createAt) {
-        this.id = id;
+    public PostCommentItem(Long commentId, Long memberId, String nickname, LocalDateTime createAt) {
+        this.commentId = commentId;
         this.memberId = memberId;
         this.nickname = nickname;
-        this.createdAt = StringConverter.localDateTimeToLocalDateString(createAt);
+        this.createdAt = StringConverter.localDateTimeToLocalDateTimeString(createAt);
     }
 }
