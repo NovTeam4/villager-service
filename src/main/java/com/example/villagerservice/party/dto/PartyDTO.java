@@ -2,12 +2,15 @@ package com.example.villagerservice.party.dto;
 
 import com.example.villagerservice.member.domain.MannerPoint;
 import com.example.villagerservice.party.domain.Party;
+import com.example.villagerservice.party.domain.PartyTag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.constraints.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +38,19 @@ public class PartyDTO {
 
 
         private Integer amount;
+
+        @Min(1)
+        private Integer numberPeople;
+
+        private String location;
+
+        private Double latitude;
+
+        private Double longitude;
+
+        private String content;
+        @Size(min = 1 , max = 4)
+        private List<PartyTag> tagList;
     }
 
     @Getter

@@ -18,7 +18,8 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
 
     @Override
     public Optional<Party> findById(Long partyId) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject("select * from party p where p.party_id = ?" , mapRowParty() , partyId));
+        //return Optional.ofNullable(jdbcTemplate.queryForObject("select * from party p where p.party_id = ?" , mapRowParty() , partyId));
+        return null;
     }
 
 
@@ -51,17 +52,17 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
         ));
     }
 
-    private RowMapper<Party> mapRowParty() {
-
-        return ((rs, rowNum) -> new Party(
-                rs.getLong("party_id"),
-                rs.getString("party_name"),
-                rs.getInt("score"),
-                rs.getDate("start_dt").toLocalDate(),
-                rs.getDate("end_dt").toLocalDate(),
-                rs.getInt("amount"),
-                null
-        ));
-    }
+//    private RowMapper<Party> mapRowParty() {
+//
+//        return ((rs, rowNum) -> new Party(
+//                rs.getLong("party_id"),
+//                rs.getString("party_name"),
+//                rs.getInt("score"),
+//                rs.getDate("start_dt").toLocalDate(),
+//                rs.getDate("end_dt").toLocalDate(),
+//                rs.getInt("amount"),
+//                null
+//        ));
+//    }
 
 }

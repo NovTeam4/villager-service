@@ -27,9 +27,8 @@ public class PartyServiceImpl implements PartyService {
 
     @Override
     public void createParty(Long memberId , PartyDTO.Request partyRequest) {
-
         Member member = memberCheckedById(memberId);
-        Party party = Party.createParty(partyRequest.getPartyName(), partyRequest.getScore(), partyRequest.getStartDt(), partyRequest.getEndDt(), partyRequest.getAmount(), member);
+        Party party = Party.createParty(partyRequest, member);
         partyRepository.save(party);
 
     }

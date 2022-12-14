@@ -2,6 +2,7 @@ package com.example.villagerservice.party.domain;
 
 import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyCreate;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -26,7 +28,7 @@ import java.util.List;
 @Builder
 public class Party extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "party_id")
     private Long id;
 
@@ -42,23 +44,44 @@ public class Party extends BaseTimeEntity {
     @Column(name = "end_dt")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate endDt;
-
     private Integer amount;
+
+    private Integer numberPeople;
+
+    private String location;
+
+    private Double latitude;
+
+    private Double longitude;
+
+    private String content;
 
     //Member와 연결 필요
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public static Party createParty(String partyName , Integer score , LocalDate startDt , LocalDate endDt , Integer amount , Member member) {
-        return Party.builder()
-                .partyName(partyName)
-                .score(score)
-                .startDt(startDt)
-                .endDt(endDt)
-                .amount(amount)
+    @OneToMany(mappedBy = "party" , cascade = CascadeType.ALL)
+    private List<PartyTag> tagList = new ArrayList<>();
+
+    public static Party createParty(PartyDTO.Request request, Member member) {
+        Party party = Party.builder()
+                .partyName(request.getPartyName())
+                .score(request.getScore())
+                .startDt(request.getStartDt())
+                .endDt(request.getEndDt())
+                .amount(request.getAmount())
+                .numberPeople(request.getNumberPeople())
+                .location(request.getLocation())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
+                .content(request.getContent())
+                .tagList(request.getTagList())
                 .member(member)
                 .build();
+
+        party.updateTagInfo();
+        return party;
     }
 
     public void updatePartyInfo(UpdatePartyDTO.Request request) {
@@ -81,6 +104,12 @@ public class Party extends BaseTimeEntity {
 
         if (request.getAmount() != null) {
             this.amount = request.getAmount();
+        }
+    }
+
+    private void updateTagInfo(){
+        for (PartyTag partyTag : tagList) {
+            partyTag.updateParty(this);
         }
     }
 }
