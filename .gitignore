@@ -239,3 +239,5 @@ gradle-app.setting
 # application.yml
 
 src/test/java/com/example/villagerservice/encode/*
+
+spy.log
