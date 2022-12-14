@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -57,8 +58,8 @@ public class PartyQueryServiceImplTest {
         PartyDTO.Request partyRequest = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusHours(2))
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
                 .build();
 

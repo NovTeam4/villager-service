@@ -15,6 +15,8 @@ import com.example.villagerservice.party.repository.PartyCommentRepository;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -83,8 +85,8 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         PartyDTO.Request request = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusHours(2))
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
                 .build();
 
@@ -239,8 +241,8 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Party party = Party.createParty(
                 "test-party",
                 100,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(2),
+                LocalDate.now(),
+                LocalDate.now().plusDays(2),
                 1000,
                 member
         );

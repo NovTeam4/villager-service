@@ -16,6 +16,8 @@ import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyRepository;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +56,8 @@ public class PartyServiceImplTest {
         PartyDTO.Request partyRequest = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now())
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
                 .build();
 
@@ -81,8 +83,8 @@ public class PartyServiceImplTest {
         PartyDTO.Request partyRequest = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now())
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
                 .build();
 
@@ -125,8 +127,8 @@ public class PartyServiceImplTest {
         PartyDTO.Request partyRequest = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now())
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
                 .build();
 
@@ -174,8 +176,8 @@ public class PartyServiceImplTest {
         PartyDTO.Request partyRequest = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now())
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
                 .build();
 
@@ -231,16 +233,16 @@ public class PartyServiceImplTest {
         list.add(Party.createParty(
                 "test-party",
                 100,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(2),
+                LocalDate.now(),
+                LocalDate.now().plusDays(2),
                 1000,
                 member
         ));
         list.add(Party.createParty(
                 "test-party2",
                 100,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(2),
+                LocalDate.now(),
+                LocalDate.now().plusDays(2),
                 1000,
                 member
         ));

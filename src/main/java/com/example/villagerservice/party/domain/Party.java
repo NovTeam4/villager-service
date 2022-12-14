@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +36,12 @@ public class Party extends BaseTimeEntity {
     private Integer score;
 
     @Column(name = "start_dt")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime startDt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private LocalDate startDt;
 
     @Column(name = "end_dt")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime endDt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private LocalDate endDt;
 
     private Integer amount;
 
@@ -49,7 +50,7 @@ public class Party extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public static Party createParty(String partyName , Integer score , LocalDateTime startDt , LocalDateTime endDt , Integer amount , Member member) {
+    public static Party createParty(String partyName , Integer score , LocalDate startDt , LocalDate endDt , Integer amount , Member member) {
         return Party.builder()
                 .partyName(partyName)
                 .score(score)

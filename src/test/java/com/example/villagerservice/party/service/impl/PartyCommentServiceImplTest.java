@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -54,8 +55,8 @@ public class PartyCommentServiceImplTest {
         Party party = Party.createParty(
                 "test-party",
                 100,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(2),
+                LocalDate.now(),
+                LocalDate.now().plusDays(2),
                 1000,
                 member
         );
@@ -86,8 +87,8 @@ public class PartyCommentServiceImplTest {
         Party party = Party.createParty(
                 "test-party",
                 100,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(2),
+                LocalDate.now(),
+                LocalDate.now().plusDays(2),
                 1000,
                 member
         );

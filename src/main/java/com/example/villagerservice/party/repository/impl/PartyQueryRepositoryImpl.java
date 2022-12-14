@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -44,8 +43,8 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
         return ((rs, rowNum) -> new PartyDTO.Response(
                 rs.getString("party_name"),
                 rs.getInt("score"),
-                (LocalDateTime) rs.getObject("start_dt"),
-                (LocalDateTime) rs.getObject("end_dt"),
+                rs.getDate("start_dt").toLocalDate(),
+                rs.getDate("end_dt").toLocalDate(),
                 rs.getInt("amount"),
                 rs.getString("nickname"),
                 rs.getInt("point")
@@ -58,8 +57,8 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
                 rs.getLong("party_id"),
                 rs.getString("party_name"),
                 rs.getInt("score"),
-                (LocalDateTime) rs.getObject("start_dt"),
-                (LocalDateTime) rs.getObject("end_dt"),
+                rs.getDate("start_dt").toLocalDate(),
+                rs.getDate("end_dt").toLocalDate(),
                 rs.getInt("amount"),
                 null
         ));
