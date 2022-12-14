@@ -20,7 +20,7 @@ public class MemberDetail {
     @Column(name = "member_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "member_id")
     private Member member;
