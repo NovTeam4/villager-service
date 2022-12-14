@@ -3,6 +3,7 @@ package com.example.villagerservice.config;
 import com.example.villagerservice.common.jwt.JwtTokenResponse;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
+import com.example.villagerservice.member.domain.Tag;
 import com.example.villagerservice.member.dto.LoginMember;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,7 +86,9 @@ public abstract class BaseLogin {
                 .email(email)
                 .encodedPassword(passwordEncoder.encode(pass))
                 .nickname(nickName)
+                .introduce("안녕하세요! 반갑습니다.")
                 .build();
+        member.addMemberAttentionTag(Arrays.asList(new Tag("#봄"), new Tag("#여름")));
         return memberRepository.save(member);
     }
 

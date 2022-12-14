@@ -2,10 +2,8 @@ package com.example.villagerservice.member.api;
 
 
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.member.dto.CreateMemberAttentionTag;
-import com.example.villagerservice.member.dto.UpdateMemberInfo;
-import com.example.villagerservice.member.dto.UpdateMemberPassword;
-import com.example.villagerservice.member.dto.ValidMemberNickname;
+import com.example.villagerservice.member.dto.*;
+import com.example.villagerservice.member.service.MemberQueryService;
 import com.example.villagerservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +17,7 @@ import javax.validation.Valid;
 public class MemberApiController {
 
     private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
 
     @PatchMapping("/info")
     public void updateMemberInfo(@AuthenticationPrincipal Member member,
@@ -41,5 +40,17 @@ public class MemberApiController {
     public void addMemberAttentionTag(@AuthenticationPrincipal Member member,
                                       @Valid @RequestBody CreateMemberAttentionTag.Request addAttentionTag) {
         memberService.addAttentionTag(member.getEmail(), addAttentionTag);
+    }
+
+    @GetMapping
+    public MemberDetail.Response getMyPage(@AuthenticationPrincipal Member member) {
+        return memberQueryService.getMyPage(member.getId());
+    }
+
+    @GetMapping("/{memberId}")
+    public MemberDetail.Response getOtherMemberPage(
+            @AuthenticationPrincipal Member member,
+            @PathVariable Long memberId) {
+        return memberQueryService.getOtherMyPage(member.getId(), memberId);
     }
 }
