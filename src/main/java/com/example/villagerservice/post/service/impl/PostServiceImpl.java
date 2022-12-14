@@ -4,6 +4,7 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.exception.MemberException;
 import com.example.villagerservice.post.domain.*;
+import com.example.villagerservice.post.dto.CategoryDto;
 import com.example.villagerservice.post.dto.CreatePost;
 import com.example.villagerservice.post.dto.UpdatePost;
 import com.example.villagerservice.post.exception.CategoryException;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.example.villagerservice.post.exception.CategoryErrorCode.CATEGORY_NOT_FOUND;
@@ -78,6 +80,14 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
         post.postViewUp();
+    }
+
+    @Override
+    public List<CategoryDto.Response> getCategoryList() {
+        List<Category> categorys = categoryRepository.getCategoryList();
+        return categorys.stream()
+                .map(category -> new CategoryDto.Response(category.getId(), category.getName()))
+                .collect(Collectors.toList());
     }
 
     private Member findByMemberId(Long memberId) {
