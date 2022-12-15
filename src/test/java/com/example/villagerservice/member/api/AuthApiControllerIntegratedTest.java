@@ -246,7 +246,8 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("accessToken").type(JsonFieldType.STRING).description("access-token"),
                 fieldWithPath("grantType").description("type"),
                 fieldWithPath("refreshToken").description("refresh-token"),
-                fieldWithPath("accessTokenExpirationTime").description("access-token 만료시간")
+                fieldWithPath("accessTokenExpirationTime").description("access-token 만료시간"),
+                fieldWithPath("loginMemberId").description("로그인한 회원 id")
         );
     }
 

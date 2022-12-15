@@ -60,7 +60,7 @@ public class AuthApiController {
 
         JwtTokenInfoDto jwtTokenInfoDto = authTokenService.getReissueTokenInfo(
                 member.getId(), accessToken, refreshToken);
-        return JwtTokenResponse.createResponseBody(jwtTokenInfoDto);
+        return JwtTokenResponse.createResponseBody(jwtTokenInfoDto, member.getId());
     }
 
     private void refreshTokenValid(String refreshToken) {
