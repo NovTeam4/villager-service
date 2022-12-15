@@ -27,14 +27,13 @@ public class TownQueryRepositoryImpl implements TownQueryRepository {
         return TownList.Response.builder().towns(result).build();
     }
     private String getLocationQuery(TownList.LocationRequest locationRequest) {
-        return "select *" +
-                ", format((6371 * acos(cos(radians(latitude)) * cos(radians(" + locationRequest.getLatitude() + ")) " +
-                "* cos(radians(" + locationRequest.getLongitude() + ") - radians(longitude)) " +
-                "+ sin(radians(latitude)) * sin(radians(" + locationRequest.getLatitude() + ")))), 4) as distance " +
-                " from town " +
-                " group by village " +
-                " order by distance " +
-                " limit " + DEFAULT_LIMIT;
+        return "select *, (6371*acos(cos(radians(" + locationRequest.getLatitude() + "))*cos(radians(latitude))*cos(radians(longitude) " +
+                "-radians("+locationRequest.getLongitude() + "))+sin(radians(" + locationRequest.getLatitude() + "))*sin(radians(latitude)))) " +
+                "as distance\n" +
+                "from town\n" +
+                "group by village " +
+                "order by distance " +
+                "limit " + DEFAULT_LIMIT;
     }
     private RowMapper<TownListDetail> mapRow() {
         return ((rs, rowNum) -> new TownListDetail(
