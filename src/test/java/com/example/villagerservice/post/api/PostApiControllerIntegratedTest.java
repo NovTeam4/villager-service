@@ -429,6 +429,7 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("comments[].commentId").description("댓글 id"),
                 fieldWithPath("comments[].memberId").description("댓글 작성자 id"),
                 fieldWithPath("comments[].nickname").description("댓글 작성자 닉네임"),
+                fieldWithPath("comments[].comment").description("댓글 댓글"),
                 fieldWithPath("comments[].createdAt").description("댓글 생성시간")
         );
     }
