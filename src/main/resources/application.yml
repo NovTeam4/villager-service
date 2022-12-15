@@ -19,6 +19,17 @@ spring:
       routing-key: ENC(wLbF0pY7LMiizRg+l0MUi1Kbhl8smMDK)
 
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: villagerservice@gmail.com
+    password: uqyrsuhdldhaflax
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+
 jwt:
   secret: ENC(fkuG48QRwRmKSmFQfVDWnOSxW5d1npLCTx7zoiW2QLqejqEec4nOb5B61ck3xcbUnkRbTRDVwBym4Z4WE7r+Zw==)
   access-token-validity-in-seconds: 600000
