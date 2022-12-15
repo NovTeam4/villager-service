@@ -191,13 +191,15 @@ class MemberTownServiceImplTest {
     @DisplayName("별칭 변경 시 회원동네가 존재하지 않을경우 테스트")
     void updateMemberTownNameNotFoundMemberTownTest() {
         // given
+        given(memberRepository.findById(anyLong()))
+                .willReturn(Optional.of(Member.builder().build()));
         given(memberTownRepository.getMemberTownWithMember(anyLong()))
                 .willReturn(Optional.empty());
 
         // when
         MemberException memberException =
                 assertThrows(MemberException.class,
-                        () -> memberTownService.updateMemberTownName(1L,1L, any()));
+                        () -> memberTownService.updateMemberTown(1L,1L, any()));
 
         // then
         verify(memberTownRepository, times(1)).getMemberTownWithMember(anyLong());
@@ -219,13 +221,16 @@ class MemberTownServiceImplTest {
                 null,
                 null
         );
+        given(memberRepository.findById(anyLong()))
+                .willReturn(Optional.of(originalMember));
+
         given(memberTownRepository.getMemberTownWithMember(anyLong()))
                 .willReturn(Optional.of(memberTown));
 
         // when
         MemberException memberException =
                 assertThrows(MemberException.class,
-                        () -> memberTownService.updateMemberTownName(2L,1L, any()));
+                        () -> memberTownService.updateMemberTown(2L,1L, any()));
         
         // then
         verify(memberTownRepository, times(1)).getMemberTownWithMember(anyLong());
@@ -246,17 +251,19 @@ class MemberTownServiceImplTest {
         UpdateMemberTown.Request request = UpdateMemberTown.Request.builder()
                 .townName("동네이름변경")
                 .build();
+        given(memberRepository.findById(anyLong()))
+                .willReturn(Optional.of(origianlMember));
         given(memberTownRepository.getMemberTownWithMember(anyLong()))
                 .willReturn(Optional.of(memberTownMock));
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
 
         // when
-        memberTownService.updateMemberTownName(1L,1L, request);
+        memberTownService.updateMemberTown(1L,1L, request);
 
         // then
         verify(memberTownRepository, times(1)).getMemberTownWithMember(anyLong());
-        verify(memberTownMock, times(1)).updateMemberTownName(captor.capture());
+        verify(memberTownMock, times(1)).updateMemberTown(captor.capture(), anyBoolean());
         assertThat(captor.getValue()).isEqualTo("동네이름변경");
     }
 

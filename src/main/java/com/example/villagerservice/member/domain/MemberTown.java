@@ -31,6 +31,8 @@ public class MemberTown extends BaseTimeEntity {
     @JoinColumn(name = "town_id")
     private Town town;
 
+    private boolean isMain;
+
     private MemberTown(String townName, TownLocation townLocation, Member member, Town town) {
         this.townName = townName;
         this.townLocation = townLocation;
@@ -38,8 +40,13 @@ public class MemberTown extends BaseTimeEntity {
         this.town = town;
     }
 
-    public void updateMemberTownName(String townName) {
+    public void updateMemberTown(String townName, boolean isMain) {
         this.townName = townName;
+        this.isMain = isMain;
+    }
+
+    public void updateMemberTownMain(boolean isMain) {
+        this.isMain = isMain;
     }
 
     public static MemberTown createMemberTown(Member member, Town town, String townName, TownLocation townLocation) {
