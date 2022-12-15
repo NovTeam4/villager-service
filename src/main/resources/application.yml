@@ -8,6 +8,16 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: ENC(GT084PN4GV150RS3sKFHfg==)
+    password: ENC(EKwp7veBWjJ6DYumFsgXtQ==)
+    template:
+      default-receive-queue: ENC(T7RGsRiCT6AuAF0SvTaaWSyfKomggc6a)
+      exchange: ENC(Szepsb+4rxFhAd8SP4IBaaULlQAjam0ayyHkxV+WAk0=)
+      routing-key: ENC(wLbF0pY7LMiizRg+l0MUi1Kbhl8smMDK)
+
 
 jwt:
   secret: ENC(fkuG48QRwRmKSmFQfVDWnOSxW5d1npLCTx7zoiW2QLqejqEec4nOb5B61ck3xcbUnkRbTRDVwBym4Z4WE7r+Zw==)
