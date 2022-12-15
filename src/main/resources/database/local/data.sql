@@ -9,3 +9,13 @@ VALUES('일반', true);
 
 INSERT INTO CATEGORY(name, is_visible)
 VALUES('모임 자랑글', true);
+
+INSERT INTO comment_template(is_visible, template_content)
+VALUES(TRUE,'너무 즐거웠습니다. 다음에 또 놀아요.');
+
+INSERT INTO comment_template(is_visible, template_content)
+VALUES(TRUE,'저는..별로였어요. 즐겁지 않았습니다.');
+
+INSERT INTO comment_template(is_visible, template_content)
+VALUES(FALSE,'재미게 놀다갑니다.');
+
