@@ -22,11 +22,11 @@ public class CommentTemplateQueryRepositoryImpl implements CommentTemplateQueryR
 
     @Override
     public Long getCommentTemplateTotalCount() {
-        return jdbcTemplate.queryForObject("SELECT count(*) FROM COMMENT_TEMPLATE WHERE is_visible = TRUE", Long.class);
+        return jdbcTemplate.queryForObject("select count(*) from comment_template where is_visible = true", Long.class);
     }
 
     private String getPartyQuery() {
-        return "SELECT * FROM comment_template WHERE is_visible = TRUE";
+        return "select * from comment_template where is_visible = true";
     }
 
     private RowMapper<CommentTemplateItemDto> mapRow() {
