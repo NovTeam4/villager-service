@@ -120,6 +120,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                         postComment.id,
                         member.id,
                         memberDetail.nickname,
+                        postComment.contents,
                         postComment.createdAt))
                 .from(postComment)
                 .innerJoin(postComment.post, post)
