@@ -167,6 +167,8 @@ class PostLikeServiceImplTest {
                 .willReturn(Optional.of(Member.builder().build()));
         given(postRepository.findById(anyLong()))
                 .willReturn(Optional.of(new Post(null, null, null, null)));
+        given(postLikeRepository.existsByMemberAndPost(any(), any()))
+                .willReturn(true);
         given(postLikeRepository.findByMemberAndPost(any(), any()))
                 .willReturn(Optional.empty());
 
@@ -201,6 +203,8 @@ class PostLikeServiceImplTest {
                 .willReturn(Optional.of(member));
         given(postRepository.findById(anyLong()))
                 .willReturn(Optional.of(post));
+        given(postLikeRepository.existsByMemberAndPost(any(), any()))
+                .willReturn(true);
         given(postLikeRepository.findByMemberAndPost(any(), any()))
                 .willReturn(Optional.of(postLike));
 
