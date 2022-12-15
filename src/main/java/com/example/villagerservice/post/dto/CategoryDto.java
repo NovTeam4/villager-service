@@ -10,7 +10,7 @@ public class CategoryDto {
     @AllArgsConstructor
     @Getter
     public static class Response {
-        private Long categoryid;
+        private Long categoryId;
         private String name;
     }
 }

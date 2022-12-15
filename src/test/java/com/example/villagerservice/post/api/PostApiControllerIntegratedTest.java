@@ -375,6 +375,35 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
                 ;
     }
 
+    @Test
+    @DisplayName("게시글 카테고리 목록 조회")
+    void getPostCategoryToList() throws JsonProcessingException {
+        // given
+        Category category1 = createCategory("이야기");
+        Category category2 = createCategory("이야기2");
+        Member member = createToMember("post@gmail.com", "post");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse("post@gmail.com", "hello11@@nW");
+
+        assertThat(categoryRepository.count()).isEqualTo(2);
+
+        // when & then
+        Response response = givenAuth("",
+                template.responseRestDocumentation(
+                        "게시글 카테고리 조회",
+                        getCategoryListResponseFields(),
+                        CategoryDto.Response.class.getName()))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/posts/category");
+
+        response
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("[0].name", Matchers.equalTo("이야기"))
+                .body("[1].name", Matchers.equalTo("이야기2"))
+        ;
+    }
+
     private Category createCategory(String name) {
         return categoryRepository.save(Category.builder()
                 .name(name)
@@ -406,6 +435,14 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("content[].nearCreateAt").description("생성일2")
         );
         return getContentsConcatPageResponseFields(fieldDescriptors);
+    }
+
+    @NotNull
+    private List<FieldDescriptor> getCategoryListResponseFields() {
+        return Arrays.asList(
+                fieldWithPath("[].categoryId").description("카테고리 id"),
+                fieldWithPath("[].name").description("카테고리명")
+        );
     }
 
     @NotNull

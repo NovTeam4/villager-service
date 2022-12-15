@@ -9,15 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
-
-public class commentTemplateController {
+@RequestMapping("/api/v1/comments")
+public class CommentTemplateController {
     private final CommentTemplateQueryService commentTemplateQueryService;
 
     @GetMapping("/template")
     public CommentTemplateDto.Response postCommentTemplateToList() {
         return commentTemplateQueryService.getCommentTemplateList();
     }
-
-
 }

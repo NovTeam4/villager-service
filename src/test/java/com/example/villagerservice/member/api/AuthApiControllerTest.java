@@ -2,6 +2,7 @@ package com.example.villagerservice.member.api;
 
 import com.example.villagerservice.common.jwt.JwtTokenInfoDto;
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
+import com.example.villagerservice.common.service.MailService;
 import com.example.villagerservice.config.WithMockCustomMember;
 import com.example.villagerservice.member.dto.CreateMember;
 import com.example.villagerservice.member.dto.ValidMemberNickname;
@@ -43,6 +44,8 @@ class AuthApiControllerTest {
     private AuthTokenService authTokenService;
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
+    @MockBean
+    private MailService mailService;
     @Autowired
     private MockMvc mockMvc;
     @Autowired

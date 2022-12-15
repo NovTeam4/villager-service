@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CommentTemplateItemDto {
-    private Long id;
-    private String templateContent;
+    private Long commentTemplateId;
+    private String commentTemplateContent;
 }

@@ -19,7 +19,7 @@ public class CommentTemplate {
     private String templateContent;
     private boolean isVisible;
 
-    CommentTemplate(String templateContent) {
+    public CommentTemplate(String templateContent) {
         this.templateContent = templateContent;
         this.isVisible = true;
     }

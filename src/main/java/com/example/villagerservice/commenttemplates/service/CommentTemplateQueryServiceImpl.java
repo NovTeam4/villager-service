@@ -12,12 +12,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentTemplateQueryServiceImpl implements CommentTemplateQueryService {
     private final CommentTemplateQueryRepository commentTemplateQueryRepository;
+
     @Override
     public CommentTemplateDto.Response getCommentTemplateList() {
         List<CommentTemplateItemDto> commentTemplate = commentTemplateQueryRepository.getCommentTemplate();
         Long commentTemplateTotalCount = commentTemplateQueryRepository.getCommentTemplateTotalCount();
 
         return new CommentTemplateDto.Response(commentTemplateTotalCount, commentTemplate);
-
     }
 }
