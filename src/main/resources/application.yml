@@ -11,8 +11,8 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: ENC(GT084PN4GV150RS3sKFHfg==)
-    password: ENC(EKwp7veBWjJ6DYumFsgXtQ==)
+    username: ENC(pp/42mURRq0LfR/mLK2cGw==)
+    password: ENC(iun1uKrWqwmNCepO/c2oPfmdv67jlkp5)
     template:
       default-receive-queue: ENC(T7RGsRiCT6AuAF0SvTaaWSyfKomggc6a)
       exchange: ENC(Szepsb+4rxFhAd8SP4IBaaULlQAjam0ayyHkxV+WAk0=)
