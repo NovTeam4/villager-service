@@ -56,7 +56,7 @@ class PostLikeApiControllerIntegratedTest extends BaseDocumentation  {
     @Autowired
     private PostLikeRepository postLikeRepository;
 
-    private final RestDocumentationTemplate template = new RestDocumentationTemplate("게시글 좋아요 api");
+    private final RestDocumentationTemplate template = new RestDocumentationTemplate("게시글 좋아요 API");
 
     @BeforeEach
     void clean() {
