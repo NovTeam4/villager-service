@@ -9,6 +9,16 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: villagerservice@naver.com
+    password: ENC(pz6rxeMblIbaPCpmEjCW0wfhm5ghcUvn)
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: true
+      mail.smtp.ssl.trust: smtp.naver.com
+
 jwt:
   secret: ENC(fkuG48QRwRmKSmFQfVDWnOSxW5d1npLCTx7zoiW2QLqejqEec4nOb5B61ck3xcbUnkRbTRDVwBym4Z4WE7r+Zw==)
   access-token-validity-in-seconds: 600000
