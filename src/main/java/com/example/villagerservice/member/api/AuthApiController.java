@@ -4,6 +4,7 @@ import com.example.villagerservice.common.jwt.JwtTokenException;
 import com.example.villagerservice.common.jwt.JwtTokenInfoDto;
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.common.jwt.JwtTokenResponse;
+import com.example.villagerservice.common.service.MailService;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.dto.CreateMember;
 import com.example.villagerservice.member.dto.ValidMemberNickname;
@@ -28,6 +29,7 @@ public class AuthApiController {
     private final MemberService memberService;
     private final AuthTokenService authTokenService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final MailService mailService;
 
     @PostMapping("/signup")
     public void createMember(@Valid @RequestBody CreateMember.Request createMember) {
@@ -61,6 +63,11 @@ public class AuthApiController {
         JwtTokenInfoDto jwtTokenInfoDto = authTokenService.getReissueTokenInfo(
                 member.getId(), accessToken, refreshToken);
         return JwtTokenResponse.createResponseBody(jwtTokenInfoDto);
+    }
+
+    @PostMapping("/email-cert/{email}")
+    public String emailCert(@PathVariable String email){
+        return mailService.signupEmailCert(email);
     }
 
     private void refreshTokenValid(String refreshToken) {

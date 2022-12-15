@@ -10,14 +10,15 @@ spring:
       max-request-size: 10MB
 
   mail:
-    host: smtp.naver.com
-    port: 465
-    username: villagerservice@naver.com
-    password: ENC(pz6rxeMblIbaPCpmEjCW0wfhm5ghcUvn)
+    host: smtp.gmail.com
+    port: 587
+    username: villagerservice@gmail.com
+    password: uqyrsuhdldhaflax
     properties:
-      mail.smtp.auth: true
-      mail.smtp.ssl.enable: true
-      mail.smtp.ssl.trust: smtp.naver.com
+      mail:
+        smtp:
+          starttls:
+            enable: true
 
 jwt:
   secret: ENC(fkuG48QRwRmKSmFQfVDWnOSxW5d1npLCTx7zoiW2QLqejqEec4nOb5B61ck3xcbUnkRbTRDVwBym4Z4WE7r+Zw==)

@@ -1,15 +1,15 @@
 package com.example.villagerservice.common.exception;
 
+import com.example.villagerservice.party.exception.PartyApplyErrorCode;
 import lombok.Getter;
-import org.springframework.security.core.AuthenticationException;
 
 @Getter
-public class MailException extends AuthenticationException {
+public class MailException extends VillagerException {
 
     private final MailErrorCode mailErrorCode;
 
     public MailException(MailErrorCode mailErrorCode) {
-        super(mailErrorCode.getErrorCode());
+        super(mailErrorCode.getErrorCode(), mailErrorCode.getErrorMessage());
         this.mailErrorCode = mailErrorCode;
     }
 }
