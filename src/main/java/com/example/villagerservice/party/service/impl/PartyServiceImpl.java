@@ -1,10 +1,12 @@
 package com.example.villagerservice.party.service.impl;
 
+import com.example.villagerservice.config.events.Events;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
+import com.example.villagerservice.party.domain.PartyCreatedEvent;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.service.PartyService;
@@ -14,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.List;
 
 import static com.example.villagerservice.party.exception.PartyErrorCode.*;
 
@@ -26,12 +30,14 @@ public class PartyServiceImpl implements PartyService {
     private final MemberRepository memberRepository;
 
     @Override
+    @Transactional
     public void createParty(Long memberId , PartyDTO.Request partyRequest) {
 
         Member member = memberCheckedById(memberId);
         Party party = Party.createParty(partyRequest.getPartyName(), partyRequest.getScore(), partyRequest.getStartDt(), partyRequest.getEndDt(), partyRequest.getAmount(), member);
         partyRepository.save(party);
 
+        Events.raise(PartyCreatedEvent.createEvent(List.of("#겨울")));
     }
 
     @Override
