@@ -1,9 +1,10 @@
 package com.example.villagerservice.config.security.handler;
 
+import com.example.villagerservice.common.jwt.JwtTokenInfoDto;
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
 import com.example.villagerservice.common.jwt.JwtTokenResponse;
-import com.example.villagerservice.common.jwt.JwtTokenInfoDto;
 import com.example.villagerservice.config.redis.RedisRepository;
+import com.example.villagerservice.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,9 +29,13 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
             JwtTokenInfoDto jwtTokenInfoDto = jwtTokenProvider.generateToken(authentication);
 
             redisRepository.saveRefreshToken(authentication, jwtTokenInfoDto);
-            JwtTokenResponse.createJwtTokenResponse(response, jwtTokenInfoDto);
+            JwtTokenResponse.createJwtTokenResponse(response, jwtTokenInfoDto, getLoginMemberId(authentication));
         } catch (Exception e) {
             log.error("error : ", e);
         }
+    }
+
+    private Long getLoginMemberId(Authentication authentication) {
+        return ((Member) authentication.getPrincipal()).getId();
     }
 }

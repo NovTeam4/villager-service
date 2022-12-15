@@ -23,11 +23,12 @@ public class JwtTokenResponse {
     private String grantType;
     private String refreshToken;
     private Long accessTokenExpirationTime;
+    private Long loginMemberId;
 
-    public static void createJwtTokenResponse(HttpServletResponse response, JwtTokenInfoDto jwtTokenInfoDto) throws IOException {
+    public static void createJwtTokenResponse(HttpServletResponse response, JwtTokenInfoDto jwtTokenInfoDto, Long loginMemberId) throws IOException {
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
-        new ObjectMapper().writeValue(response.getWriter(), createResponseBody(jwtTokenInfoDto));
+        new ObjectMapper().writeValue(response.getWriter(), createResponseBody(jwtTokenInfoDto, loginMemberId));
     }
 
     public static void createJwtTokenErrorResponse(HttpServletResponse response, int status, JwtTokenErrorCode jwtTokenErrorCode) throws IOException {
@@ -37,12 +38,13 @@ public class JwtTokenResponse {
         new ObjectMapper().writeValue(response.getWriter(), createErrorResponse(jwtTokenErrorCode));
     }
 
-    public static JwtTokenResponse createResponseBody(JwtTokenInfoDto jwtTokenInfoDto) {
+    public static JwtTokenResponse createResponseBody(JwtTokenInfoDto jwtTokenInfoDto, Long loginMemberId) {
         return JwtTokenResponse.builder()
                 .accessToken(jwtTokenInfoDto.getAccessToken())
                 .grantType(jwtTokenInfoDto.getGrantType())
                 .refreshToken(jwtTokenInfoDto.getRefreshToken())
                 .accessTokenExpirationTime(jwtTokenInfoDto.getAccessTokenValidTime())
+                .loginMemberId(loginMemberId)
                 .build();
     }
 }
