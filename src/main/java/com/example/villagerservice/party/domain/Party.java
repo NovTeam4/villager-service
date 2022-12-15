@@ -105,6 +105,31 @@ public class Party extends BaseTimeEntity {
         if (request.getAmount() != null) {
             this.amount = request.getAmount();
         }
+
+        if (request.getNumberPeople() != null) {
+            this.numberPeople = request.getNumberPeople();
+        }
+
+        if (request.getLocation() != null) {
+            this.location = request.getLocation();
+        }
+
+        if (request.getLatitude() != null) {
+            this.latitude = request.getLatitude();
+        }
+
+        if (request.getLongitude() != null) {
+            this.longitude = request.getLongitude();
+        }
+
+        if (request.getContent() != null) {
+            this.content = request.getContent();
+        }
+
+        if (request.getTagList() != null) {
+            this.tagList = request.getTagList();
+            updateTagInfo();
+        }
     }
 
     private void updateTagInfo(){

@@ -124,12 +124,18 @@ public class PartyServiceImplTest {
     @DisplayName("모임 삭제 테스트")
     void deleteParty() {
 
-        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+        PartyDTO.Request request = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
                 .startDt(LocalDate.now())
                 .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(null)
                 .build();
 
         Member member = Member.builder()
@@ -137,14 +143,7 @@ public class PartyServiceImplTest {
                 .nickname("홍길동")
                 .build();
 
-        Party party = Party.createParty(
-                partyRequest.getPartyName(),
-                partyRequest.getScore(),
-                partyRequest.getStartDt(),
-                partyRequest.getEndDt(),
-                partyRequest.getAmount(),
-                member
-        );
+        Party party = Party.createParty(request, member);
 
         given(partyRepository.findById(1L)).willReturn(Optional.of(party));
 
@@ -173,12 +172,18 @@ public class PartyServiceImplTest {
     @DisplayName("모임 변경 테스트")
     void updateParty() {
 
-        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+        PartyDTO.Request request = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
                 .startDt(LocalDate.now())
                 .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(null)
                 .build();
 
         Member member = Member.builder()
@@ -186,14 +191,7 @@ public class PartyServiceImplTest {
                 .nickname("홍길동")
                 .build();
 
-        Party party = Party.createParty(
-                partyRequest.getPartyName(),
-                partyRequest.getScore(),
-                partyRequest.getStartDt(),
-                partyRequest.getEndDt(),
-                partyRequest.getAmount(),
-                member
-        );
+        Party party = Party.createParty(request , member);
 
         UpdatePartyDTO.Request updateRequest = UpdatePartyDTO.Request.builder()
                 .partyName("updateParty")
@@ -223,29 +221,31 @@ public class PartyServiceImplTest {
     @DisplayName("모임 전체 조회 테스트")
     void getAllParty(){
 
+        PartyDTO.Request request = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
+                .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(null)
+                .build();
+
         Member member = Member.builder()
                 .email("test@gmail.com")
                 .nickname("홍길동")
                 .build();
 
+        Party party = Party.createParty(request , member);
+
         List<Party> list = new ArrayList<>();
 
-        list.add(Party.createParty(
-                "test-party",
-                100,
-                LocalDate.now(),
-                LocalDate.now().plusDays(2),
-                1000,
-                member
-        ));
-        list.add(Party.createParty(
-                "test-party2",
-                100,
-                LocalDate.now(),
-                LocalDate.now().plusDays(2),
-                1000,
-                member
-        ));
+        list.add(Party.createParty(request , member));
+        list.add(Party.createParty(request , member));
 
         Page<Party> partyPage = new PageImpl<>(list);
 

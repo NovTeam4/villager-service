@@ -1,12 +1,10 @@
 package com.example.villagerservice.party.dto;
 
-import com.example.villagerservice.member.domain.MannerPoint;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyTag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.*;
@@ -70,20 +68,38 @@ public class PartyDTO {
 
         private Integer amount;
 
+        private Integer numberPeople;
+
+        private String location;
+
+        private String content;
+
+        private List<String> tagNameList;
+
         private String nickname;
 
         private Integer mannerPoint;
 
         public static PartyDTO.Response createPartyResponse(Party party) {
-            return PartyDTO.Response.builder()
+            Response response = Response.builder()
                     .partyName(party.getPartyName())
                     .score(party.getScore())
                     .startDt(party.getStartDt())
                     .endDt(party.getEndDt())
                     .amount(party.getAmount())
+                    .numberPeople(party.getNumberPeople())
+                    .location(party.getLocation())
+                    .content(party.getContent())
+                    .tagNameList(new ArrayList<>())
                     .nickname(party.getMember().getMemberDetail().getNickname())
                     .mannerPoint(party.getMember().getMemberDetail().getMannerPoint().getPoint())
                     .build();
+
+            for (PartyTag partyTag : party.getTagList()) {
+                response.tagNameList.add(partyTag.getTagName());
+            }
+
+            return response;
         }
     }
 

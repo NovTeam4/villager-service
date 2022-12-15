@@ -4,6 +4,7 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyComment;
+import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.exception.PartyCommentErrorCode;
 import com.example.villagerservice.party.exception.PartyCommentException;
 import com.example.villagerservice.party.repository.PartyCommentRepository;
@@ -47,19 +48,26 @@ public class PartyCommentServiceImplTest {
     @DisplayName("모임 댓글 등록 시 , 내용이 없을 경우")
     void createCommentWithoutContent() {
 
+        PartyDTO.Request request = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
+                .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(null)
+                .build();
+
         Member member = Member.builder()
-                .email("testparty@gmail.com")
+                .email("test@gmail.com")
                 .nickname("홍길동")
                 .build();
 
-        Party party = Party.createParty(
-                "test-party",
-                100,
-                LocalDate.now(),
-                LocalDate.now().plusDays(2),
-                1000,
-                member
-        );
+        Party party = Party.createParty(request , member);
 
         given(partyRepository.findById(anyLong()))
                 .willReturn(Optional.of(party));
@@ -79,19 +87,26 @@ public class PartyCommentServiceImplTest {
 
         Long partyId = 1L;
 
+        PartyDTO.Request request = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
+                .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(null)
+                .build();
+
         Member member = Member.builder()
-                .email("testparty@gmail.com")
+                .email("test@gmail.com")
                 .nickname("홍길동")
                 .build();
 
-        Party party = Party.createParty(
-                "test-party",
-                100,
-                LocalDate.now(),
-                LocalDate.now().plusDays(2),
-                1000,
-                member
-        );
+        Party party = Party.createParty(request , member);
 
         given(partyRepository.findById(anyLong()))
                 .willReturn(Optional.of(party));

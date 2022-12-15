@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 public class PartyTag {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "party_tag_id")
     private Long id;
 

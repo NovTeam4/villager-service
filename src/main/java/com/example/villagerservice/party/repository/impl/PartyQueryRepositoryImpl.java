@@ -25,11 +25,11 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
 
     @Override
     public Optional<PartyDTO.Response> getParty(Long partyId) {
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(getPartyQuery(), mapRow(), partyId));
-        }catch (Exception e) {
-
-        }
+//        try {
+//            return Optional.ofNullable(jdbcTemplate.queryForObject(getPartyQuery(), mapRow(), partyId));
+//        }catch (Exception e) {
+//
+//        }
         return Optional.empty();
     }
 
@@ -39,18 +39,18 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
                 " where p.party_id = ? ";
     }
 
-    private RowMapper<PartyDTO.Response> mapRow() {
-
-        return ((rs, rowNum) -> new PartyDTO.Response(
-                rs.getString("party_name"),
-                rs.getInt("score"),
-                rs.getDate("start_dt").toLocalDate(),
-                rs.getDate("end_dt").toLocalDate(),
-                rs.getInt("amount"),
-                rs.getString("nickname"),
-                rs.getInt("point")
-        ));
-    }
+//    private RowMapper<PartyDTO.Response> mapRow() {
+//
+//        return ((rs, rowNum) -> new PartyDTO.Response(
+//                rs.getString("party_name"),
+//                rs.getInt("score"),
+//                rs.getDate("start_dt").toLocalDate(),
+//                rs.getDate("end_dt").toLocalDate(),
+//                rs.getInt("amount"),
+//                rs.getString("nickname"),
+//                rs.getInt("point")
+//        ));
+//    }
 
 //    private RowMapper<Party> mapRowParty() {
 //

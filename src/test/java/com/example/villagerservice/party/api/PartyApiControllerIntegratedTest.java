@@ -238,14 +238,21 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     private Party saveParty(Member member) {
 
-        Party party = Party.createParty(
-                "test-party",
-                100,
-                LocalDate.now(),
-                LocalDate.now().plusDays(2),
-                1000,
-                member
-        );
+        PartyDTO.Request request = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
+                .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(null)
+                .build();
+
+        Party party = Party.createParty(request , member);
 
         partyRepository.save(party);
 
