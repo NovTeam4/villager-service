@@ -15,5 +15,6 @@ public class UpdateMemberTown {
     public static class Request {
         @Size(min = 2, max = 8, message = "동네 별칭은 2~8글자 사이로 입력해주세요.")
         private String townName;
+        private boolean main;
     }
 }

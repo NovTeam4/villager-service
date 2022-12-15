@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.example.villagerservice.member.exception.MemberErrorCode.*;
 import static com.example.villagerservice.town.exception.TownErrorCode.TOWN_NOT_FOUND;
 
@@ -27,20 +29,30 @@ public class MemberTownServiceImpl implements MemberTownService {
     public void addMemberTown(Long memberId, CreateMemberTown.Request request) {
         Member member = findMemberById(memberId);
         // 회원 동네 개수 체크
-        memberTownCountValid(member);
+        Long count = memberTownCountValid(member);
         // 별칭 중복 검사
         memberTownNameDuplicateValid(member, request.getTownName());
 
         Town town = findTownById(request);
-        memberTownRepository.save(createMemberTown(request, member, town));
+        MemberTown memberTown = createMemberTown(request, member, town);
+        memberTownMainCheck(count, memberTown);
+        memberTownRepository.save(memberTown);
     }
 
     @Override
     @Transactional
-    public void updateMemberTownName(Long memberId, Long memberTownId, UpdateMemberTown.Request request) {
+    public void updateMemberTown(Long memberId, Long memberTownId, UpdateMemberTown.Request request) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MEMBER_TOWN_NOT_FOUND));
         MemberTown memberTown = findMemberTownByIdWithMember(memberTownId);
         memberTownEditAccessValid(memberId, memberTown);
-        memberTown.updateMemberTownName(request.getTownName());
+
+        List<MemberTown> memberTownList = memberTownRepository.findByMember(member);
+        if(request.isMain()) {
+            memberTownList.forEach(mt -> mt.updateMemberTownMain(false));
+        }
+        memberTown.updateMemberTown(request.getTownName(), request.isMain());
     }
 
     @Override
@@ -51,14 +63,20 @@ public class MemberTownServiceImpl implements MemberTownService {
         memberTownRepository.delete(memberTown);
     }
 
+    private void memberTownMainCheck(Long count, MemberTown memberTown) {
+        if (count == 0) {
+            memberTown.updateMemberTownMain(true);
+        }
+    }
+
     private void memberTownEditAccessValid(Long memberId, MemberTown memberTown) {
-        if(!memberTown.getMember().getId().equals(memberId)) {
+        if (!memberTown.getMember().getId().equals(memberId)) {
             throw new MemberException(MEMBER_NOT_MATCH_REQUEST);
         }
     }
 
     private void memberTownNameDuplicateValid(Member member, String townName) {
-        if(memberTownRepository.existsByMemberAndTownName(member, townName)) {
+        if (memberTownRepository.existsByMemberAndTownName(member, townName)) {
             throw new MemberException(MEMBER_TOWN_NAME_DUPLICATE);
         }
     }
@@ -83,10 +101,11 @@ public class MemberTownServiceImpl implements MemberTownService {
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
     }
 
-    private void memberTownCountValid(Member member) {
+    private Long memberTownCountValid(Member member) {
         Long count = memberTownRepository.countByMember(member);
-        if(count >= MEMBER_TOWN_ADD_MAX_COUNT) {
+        if (count >= MEMBER_TOWN_ADD_MAX_COUNT) {
             throw new MemberException(MEMBER_TOWN_ADD_MAX);
         }
+        return count;
     }
 }

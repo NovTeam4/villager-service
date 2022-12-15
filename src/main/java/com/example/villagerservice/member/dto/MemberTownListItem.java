@@ -18,13 +18,15 @@ public class MemberTownListItem {
     private String cityName;
     private String createdAt;
     private String modifiedAt;
+    private boolean isMain;
 
-    public MemberTownListItem(Long memberTownId, String townName, String city, String town, String village,  LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public MemberTownListItem(Long memberTownId, String townName, String city, String town, String village,  LocalDateTime createdAt, LocalDateTime modifiedAt, boolean isMain) {
         this.memberTownId = memberTownId;
         this.townName = townName;
         this.cityName = getCityName(city, town, village);
         this.createdAt = StringConverter.localDateTimeToLocalDateTimeString(createdAt);
         this.modifiedAt = StringConverter.localDateTimeToLocalDateTimeString(modifiedAt);
+        this.isMain = isMain;
     }
 
     private String getCityName(String city, String town, String village) {

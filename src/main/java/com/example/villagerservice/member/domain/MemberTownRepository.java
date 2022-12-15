@@ -22,4 +22,5 @@ public interface MemberTownRepository extends JpaRepository<MemberTown, Long> {
             " join fetch mt.member " +
             " where mt.id = :memberTownId")
     Optional<MemberTown> getMemberTownWithMember(@Param("memberTownId") Long memberTownId);
+    List<MemberTown> findByMember(Member member);
 }
