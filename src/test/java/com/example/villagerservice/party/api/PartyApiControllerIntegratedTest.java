@@ -21,18 +21,17 @@ import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyLikeRepository;
 import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.repository.PartyCommentRepository;
-import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.request.PartyLikeDto;
-import com.example.villagerservice.party.type.PartyLikeResponseType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+import io.restassured.response.Response;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
@@ -48,8 +47,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import javax.print.attribute.standard.Media;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
 @Import({AuthConfig.class})
 public class PartyApiControllerIntegratedTest extends BaseDocumentation {

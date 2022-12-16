@@ -55,6 +55,14 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
+    public PartyDTO.Response getParty(Long partyId) {
+        Party party = partyCheckedById(partyId);
+        List<PartyComment> commentList = partyCommentService.getAllComment(partyId);
+
+        return PartyDTO.Response.createPartyResponse(party , commentList);
+    }
+
+    @Override
     public void deleteParty(Long partyId) {
         partyCheckedById(partyId);
         partyRepository.deleteById(partyId);

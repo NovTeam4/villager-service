@@ -22,9 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class PartyApiController {
     private final PartyService partyService;
     private final PartyApplyService partyApplyService;
-    private final PartyQueryService partyQueryService;
     private final PartyLikeService partyLikeService;
-
     private final PartyCommentService partyCommentService;
 
 
@@ -44,7 +42,7 @@ public class PartyApiController {
     @GetMapping("/{partyId}")
     public PartyDTO.Response getParty(@PathVariable Long partyId) {
 
-        return partyQueryService.getParty(partyId);
+        return partyService.getParty(partyId);
 
     }
 

@@ -1,16 +1,10 @@
 package com.example.villagerservice.party.service.impl;
 
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.dto.PartyDTO;
-import com.example.villagerservice.party.exception.PartyApplyErrorCode;
-import com.example.villagerservice.party.exception.PartyApplyException;
 import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
-import com.example.villagerservice.party.repository.PartyQueryRepository;
-import com.example.villagerservice.party.repository.PartyRepository;
-import com.example.villagerservice.party.service.impl.PartyQueryServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

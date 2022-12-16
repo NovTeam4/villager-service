@@ -14,4 +14,6 @@ public interface PartyService {
     public PartyDTO.Response updateParty(Long partyId , UpdatePartyDTO.Request updatePartyRequest);
 
     public Page<PartyDTO.Response> getAllParty(Pageable pageable);
+
+    PartyDTO.Response getParty(Long partyId);
 }
