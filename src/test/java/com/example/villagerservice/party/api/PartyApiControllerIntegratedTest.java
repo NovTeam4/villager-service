@@ -28,6 +28,7 @@ import com.example.villagerservice.party.request.PartyLikeDto;
 import com.example.villagerservice.party.type.PartyLikeResponseType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.restassured.response.Response;
 import java.time.LocalDate;
 
 import java.time.LocalDateTime;
