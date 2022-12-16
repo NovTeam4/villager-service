@@ -80,4 +80,6 @@ class PartyLikeServiceImplTest {
         // then
         assertEquals(PartyErrorCode.PARTY_NOT_FOUND.getErrorCode(), exception.getErrorCode());
     }
+
+   
 }
