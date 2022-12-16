@@ -188,6 +188,8 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
                 .body("nickName", Matchers.equalTo("member"))
                 .body("email", Matchers.equalTo("member@gmail.com"))
                 .body("introduce", Matchers.equalTo("안녕하세요! 반갑습니다."))
+                .body("gender", Matchers.equalTo("남성"))
+                .body("birth", Matchers.equalTo("2022-07-07"))
                 .body("mannerPoint", Matchers.equalTo(50))
                 .body("partyRegisterCount", Matchers.equalTo(0))
                 .body("postRegisterCount", Matchers.equalTo(0))
@@ -228,6 +230,8 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
                 .body("nickName", Matchers.equalTo("fromMember"))
                 .body("email", Matchers.equalTo("fromMember@gmail.com"))
                 .body("introduce", Matchers.equalTo("안녕하세요! 반갑습니다."))
+                .body("gender", Matchers.equalTo("남성"))
+                .body("birth", Matchers.equalTo("2022-07-07"))
                 .body("mannerPoint", Matchers.equalTo(50))
                 .body("partyRegisterCount", Matchers.equalTo(0))
                 .body("postRegisterCount", Matchers.equalTo(0))
@@ -247,6 +251,8 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("nickName").description("닉네임"),
                 fieldWithPath("email").description("이메일"),
                 fieldWithPath("introduce").description("자기소개"),
+                fieldWithPath("gender").description("성별"),
+                fieldWithPath("birth").description("생년월일"),
                 fieldWithPath("mannerPoint").description("매너점수"),
                 fieldWithPath("partyRegisterCount").description("모임 등록 수"),
                 fieldWithPath("postRegisterCount").description("게시글 등록 수"),

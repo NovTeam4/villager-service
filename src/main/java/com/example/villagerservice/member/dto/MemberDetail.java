@@ -16,6 +16,8 @@ public class MemberDetail {
         private String nickName;
         private String email;
         private String introduce;
+        private String gender;
+        private String birth;
         private Integer mannerPoint;
         private Long partyRegisterCount;
         private Long postRegisterCount;
