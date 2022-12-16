@@ -3,11 +3,15 @@ package com.example.villagerservice.party.service.impl;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
+import com.example.villagerservice.party.domain.PartyComment;
+import com.example.villagerservice.party.dto.PartyCommentDTO;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyException;
+import com.example.villagerservice.party.repository.PartyCommentRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.repository.PartyTagRepository;
+import com.example.villagerservice.party.service.PartyCommentService;
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.List;
 
 import static com.example.villagerservice.party.exception.PartyErrorCode.*;
 
@@ -25,8 +31,9 @@ public class PartyServiceImpl implements PartyService {
 
     private final PartyRepository partyRepository;
     private final MemberRepository memberRepository;
-
     private final PartyTagRepository partyTagRepository;
+
+    private final PartyCommentService partyCommentService;
 
     @Override
     public void createParty(Long memberId , PartyDTO.Request partyRequest) {
@@ -52,12 +59,13 @@ public class PartyServiceImpl implements PartyService {
     @Override
     public Page<PartyDTO.Response> getAllParty(Pageable pageable) {
 
-        if(partyRepository.count() == 0) {
-            throw new PartyException(PARTY_NOT_REGISTERED);
-        }
-
-        return partyRepository.findAll(pageable)
-                .map(PartyDTO.Response::createPartyResponse);
+//        if(partyRepository.count() == 0) {
+//            throw new PartyException(PARTY_NOT_REGISTERED);
+//        }
+//
+//        return partyRepository.findAll(pageable)
+//                .map(PartyDTO.Response::createPartyResponse);
+        return null;
     }
 
     private Member memberCheckedById(Long memberId) {
@@ -77,7 +85,9 @@ public class PartyServiceImpl implements PartyService {
 
     private PartyDTO.Response updatePartyInfo(Party party , UpdatePartyDTO.Request updatePartyRequest) {
         partyTagRepository.deleteAllByParty_id(party.getId());
+        List<PartyComment> commentList = partyCommentService.getAllComment(party.getId());
         party.updatePartyInfo(updatePartyRequest);
-        return PartyDTO.Response.createPartyResponse(party);
+        return PartyDTO.Response.createPartyResponse(party , commentList);
     }
+
 }

@@ -1,6 +1,7 @@
 package com.example.villagerservice.party.dto;
 
 import com.example.villagerservice.party.domain.Party;
+import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.domain.PartyTag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -76,11 +77,13 @@ public class PartyDTO {
 
         private List<String> tagNameList;
 
+        private List<PartyCommentDTO.Response> commentList;
+
         private String nickname;
 
         private Integer mannerPoint;
 
-        public static PartyDTO.Response createPartyResponse(Party party) {
+        public static PartyDTO.Response createPartyResponse(Party party , List<PartyComment> partyCommentList) {
             Response response = Response.builder()
                     .partyName(party.getPartyName())
                     .score(party.getScore())
@@ -91,12 +94,19 @@ public class PartyDTO {
                     .location(party.getLocation())
                     .content(party.getContent())
                     .tagNameList(new ArrayList<>())
+                    .commentList(new ArrayList<>())
                     .nickname(party.getMember().getMemberDetail().getNickname())
                     .mannerPoint(party.getMember().getMemberDetail().getMannerPoint().getPoint())
                     .build();
 
             for (PartyTag partyTag : party.getTagList()) {
                 response.tagNameList.add(partyTag.getTagName());
+            }
+
+            for (PartyComment partyComment : partyCommentList) {
+                response.commentList.add(PartyCommentDTO.Response.builder()
+                                .contents(partyComment.getContents())
+                                .partyCommentId(partyComment.getParty().getId()).build());
             }
 
             return response;

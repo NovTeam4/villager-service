@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_FOUND;
 
 @Service
@@ -41,4 +43,8 @@ public class PartyCommentServiceImpl implements PartyCommentService {
         );
     }
 
+    @Override
+    public List<PartyComment> getAllComment(Long partyId) {
+        return partyCommentRepository.findAllByParty_id(partyId);
+    }
 }
