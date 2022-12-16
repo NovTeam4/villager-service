@@ -88,6 +88,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
             response.setEmail(findMember.getEmail());
             response.setIntroduce(findMember.getMemberDetail().getIntroduce());
             response.setMannerPoint(findMember.getMemberDetail().getMannerPoint().getPoint());
+            response.setGender(findMember.getMemberDetail().getGender().getDescription());
+            response.setBirth(findMember.getMemberDetail().getBirthday().getBirth());
             response.addTags(findMember.getTagCollection().getTags().stream().map(Tag::getName)
                     .collect(Collectors.toList()));
         }
