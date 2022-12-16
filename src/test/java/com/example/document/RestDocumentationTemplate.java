@@ -197,6 +197,23 @@ public class RestDocumentationTemplate extends BaseRestDocumentationTemplate {
             responseFieldDescriptor);
     }
 
+    public RestDocumentation allRestDocumentation(String summary,
+        List<ParameterDescriptorWithType> pathParameters
+    ) {
+        String identifier = summary;
+        return createRestDocumentation(
+            tag,
+            summary,
+            identifier,
+            "",
+            "",
+            "",
+            new ArrayList<>(),
+            new ArrayList<>(),
+            pathParameters,
+            new ArrayList<>());
+    }
+
     public RestDocumentation responseRestDocumentation(String summary,
         List<ParameterDescriptorWithType> requestParameters,
         List<ParameterDescriptorWithType> pathParameters,
