@@ -5,6 +5,7 @@ import com.example.villagerservice.member.dto.*;
 public interface MemberService {
     void createMember(CreateMember.Request createMember);
     void updateMemberInfo(String email, UpdateMemberInfo.Request updateMemberInfo);
+    boolean passwordCheckValid(Long memberId, PasswordValid.Request request);
     void updateMemberPassword(String email, UpdateMemberPassword.Request pass);
     void deleteMember(String email);
     void addAttentionTag(String email, CreateMemberAttentionTag.Request addAttentionTag);
