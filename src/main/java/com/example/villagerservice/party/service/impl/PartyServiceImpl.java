@@ -7,6 +7,7 @@ import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.dto.PartyCommentDTO;
 import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.domain.PartyCreatedEvent;
 import com.example.villagerservice.party.exception.PartyException;
@@ -66,18 +67,6 @@ public class PartyServiceImpl implements PartyService {
     public void deleteParty(Long partyId) {
         partyCheckedById(partyId);
         partyRepository.deleteById(partyId);
-    }
-
-    @Override
-    public Page<PartyDTO.Response> getAllParty(Pageable pageable) {
-
-//        if(partyRepository.count() == 0) {
-//            throw new PartyException(PARTY_NOT_REGISTERED);
-//        }
-//
-//        return partyRepository.findAll(pageable)
-//                .map(PartyDTO.Response::createPartyResponse);
-        return null;
     }
 
     private Member memberCheckedById(Long memberId) {

@@ -1,12 +1,18 @@
 package com.example.villagerservice.party.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class PartyTag {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

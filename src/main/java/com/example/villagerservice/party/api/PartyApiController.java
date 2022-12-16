@@ -2,6 +2,7 @@ package com.example.villagerservice.party.api;
 
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.request.PartyLikeDto;
@@ -9,11 +10,11 @@ import com.example.villagerservice.party.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/parties")
 public class PartyApiController {
     private final PartyService partyService;
+    private final PartyQueryService partyQueryService;
     private final PartyApplyService partyApplyService;
     private final PartyLikeService partyLikeService;
     private final PartyCommentService partyCommentService;
@@ -34,9 +36,10 @@ public class PartyApiController {
     }
 
     @GetMapping()
-    public Page<PartyDTO.Response> getAllParty(@PageableDefault(size = 10 , sort = "id" , direction = Sort.Direction.ASC) final Pageable pageable) {
+    public List<PartyListDTO> getAllParty(@RequestParam("LAT") Double LAT , @RequestParam("LNT") Double LNT) {
 
-        return partyService.getAllParty(pageable);
+        return partyQueryService.getPartyList(LAT, LNT);
+
     }
 
     @GetMapping("/{partyId}")

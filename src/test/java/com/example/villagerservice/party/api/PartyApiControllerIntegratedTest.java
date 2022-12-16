@@ -60,9 +60,6 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     @Autowired
     private PartyRepository partyRepository;
 
-    @Autowired
-    private PartyQueryRepository partyQueryRepository;
-
     private RestDocumentationTemplate template = new RestDocumentationTemplate("모임 API");
 
     @Autowired
