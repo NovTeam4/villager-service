@@ -40,6 +40,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public boolean passwordCheckValid(Long memberId, PasswordValid.Request request) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+        return member.checkPasswordValid(passwordEncoder, request.getPassword());
+    }
+
+    @Override
     @Transactional
     public void updateMemberPassword(String email, UpdateMemberPassword.Request passwordUpdate) {
         Member member = findByMemberEmail(email);

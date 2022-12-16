@@ -8,6 +8,27 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: ENC(pp/42mURRq0LfR/mLK2cGw==)
+    password: ENC(iun1uKrWqwmNCepO/c2oPfmdv67jlkp5)
+    template:
+      default-receive-queue: ENC(T7RGsRiCT6AuAF0SvTaaWSyfKomggc6a)
+      exchange: ENC(Szepsb+4rxFhAd8SP4IBaaULlQAjam0ayyHkxV+WAk0=)
+      routing-key: ENC(wLbF0pY7LMiizRg+l0MUi1Kbhl8smMDK)
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: villagerservice@gmail.com
+    password: uqyrsuhdldhaflax
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
 
 jwt:
   secret: ENC(fkuG48QRwRmKSmFQfVDWnOSxW5d1npLCTx7zoiW2QLqejqEec4nOb5B61ck3xcbUnkRbTRDVwBym4Z4WE7r+Zw==)

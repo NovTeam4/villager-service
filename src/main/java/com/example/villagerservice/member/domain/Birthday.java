@@ -22,4 +22,8 @@ public class Birthday {
         this.month = month;
         this.day = day;
     }
+
+    public String getBirth() {
+        return String.format("%d-%02d-%02d", this.year, this.month, this.day);
+    }
 }

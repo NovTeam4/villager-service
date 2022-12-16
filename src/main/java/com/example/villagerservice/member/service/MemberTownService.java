@@ -5,6 +5,6 @@ import com.example.villagerservice.member.dto.UpdateMemberTown;
 
 public interface MemberTownService {
     void addMemberTown(Long memberId, CreateMemberTown.Request request);
-    void updateMemberTownName(Long memberId, Long memberTownId, UpdateMemberTown.Request request);
+    void updateMemberTown(Long memberId, Long memberTownId, UpdateMemberTown.Request request);
     void deleteMemberTown(Long memberId, Long memberTownId);
 }

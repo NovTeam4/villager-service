@@ -1,6 +1,7 @@
 package com.example.villagerservice.party.service;
 
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.party.request.PartyLikeDto;
 
 public interface PartyLikeService {
 
@@ -10,5 +11,5 @@ public interface PartyLikeService {
      * @param member
      * @return
      */
-    boolean partyLike(Long partyId, Member member);
+    PartyLikeDto.Response partyLike(Long partyId, Member member);
 }

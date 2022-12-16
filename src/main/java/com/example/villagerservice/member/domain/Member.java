@@ -67,6 +67,13 @@ public class Member extends BaseTimeEntity {
         }
     }
 
+    public boolean checkPasswordValid(PasswordEncoder passwordEncoder, String rawPassword) {
+        if (!StringUtils.hasText(rawPassword)) {
+            throw new MemberException(MEMBER_VALID_NOT);
+        }
+        return passwordEncoder.matches(rawPassword, this.encodedPassword);
+    }
+
     public void changePassword(PasswordEncoder passwordEncoder, String rawPassword) {
         if (!StringUtils.hasText(rawPassword)) {
             throw new MemberException(MEMBER_VALID_NOT);

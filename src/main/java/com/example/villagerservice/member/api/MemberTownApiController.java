@@ -41,7 +41,7 @@ public class MemberTownApiController {
     public void updateMemberTownName(@AuthenticationPrincipal Member member,
                                      @PathVariable("member-town-id") Long id,
                                      @Valid @RequestBody UpdateMemberTown.Request request) {
-        memberTownService.updateMemberTownName(member.getId(), id, request);
+        memberTownService.updateMemberTown(member.getId(), id, request);
     }
 
     @DeleteMapping("/{member-town-id}")

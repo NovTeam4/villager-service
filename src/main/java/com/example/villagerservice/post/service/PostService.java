@@ -1,5 +1,6 @@
 package com.example.villagerservice.post.service;
 
+import com.example.villagerservice.post.dto.CategoryDto;
 import com.example.villagerservice.post.dto.CreatePost;
 import com.example.villagerservice.post.dto.UpdatePost;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,4 +16,6 @@ public interface PostService {
     void deletePost(Long memberId, Long postId);
 
     void postViewCountUp(Long postId);
+
+    List<CategoryDto.Response> getCategoryList();
 }

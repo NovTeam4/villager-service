@@ -7,6 +7,7 @@ import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyLikeRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
+import com.example.villagerservice.party.request.PartyLikeDto;
 import com.example.villagerservice.party.service.PartyLikeService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class PartyLikeServiceImpl implements PartyLikeService {
     private final PartyRepository partyRepository;
 
     @Override
-    public boolean partyLike(Long partyId, Member member) {
+    public PartyLikeDto.Response partyLike(Long partyId, Member member) {
         // 모임이 존재하는지 검사
         Party party = partyRepository.findById(partyId).orElseThrow(
             () -> new PartyException(PartyErrorCode.PARTY_NOT_FOUND)
@@ -33,7 +34,7 @@ public class PartyLikeServiceImpl implements PartyLikeService {
         // 이미 좋아요 존재하면 삭제 후, false 리턴
         if(optionalPartyLike.isPresent()){
             partyLikeRepository.delete(optionalPartyLike.get());
-            return false;
+            return PartyLikeDto.Response.toDto(false);
         }
 
         // 존재하지 않으면 추가 후, true 리턴
@@ -41,6 +42,6 @@ public class PartyLikeServiceImpl implements PartyLikeService {
                 .party(party)
                 .member(member)
                 .build());
-        return true;
+        return PartyLikeDto.Response.toDto(true);
     }
 }

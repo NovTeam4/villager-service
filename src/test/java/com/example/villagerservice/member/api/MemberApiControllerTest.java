@@ -1,12 +1,9 @@
 package com.example.villagerservice.member.api;
 
 import com.example.villagerservice.config.WithMockCustomMember;
-import com.example.villagerservice.member.dto.CreateMemberAttentionTag;
-import com.example.villagerservice.member.dto.UpdateMemberInfo;
-import com.example.villagerservice.member.dto.UpdateMemberPassword;
-import com.example.villagerservice.member.dto.ValidMemberNickname;
+import com.example.villagerservice.member.dto.*;
+import com.example.villagerservice.member.service.MemberQueryService;
 import com.example.villagerservice.member.service.MemberService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +20,9 @@ import java.util.Arrays;
 
 import static com.example.villagerservice.common.exception.CommonErrorCode.DATA_INVALID_ERROR;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -37,6 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MemberApiControllerTest {
     @MockBean
     private MemberService memberService;
+    @MockBean
+    private MemberQueryService memberQueryService;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -201,4 +202,88 @@ class MemberApiControllerTest {
 
         verify(memberService, times(1)).addAttentionTag(anyString(), any());
     }
+
+    @Test
+    @WithMockCustomMember
+    @DisplayName("마이페이지 조회 테스트")
+    void getMyPageTest() throws Exception {
+        // given
+        MemberDetail.Response mockResponse = MemberDetail.Response.builder()
+                .memberId(1L)
+                .nickName("별칭")
+                .email("test@gmail.com")
+                .introduce("자기소개")
+                .mannerPoint(50)
+                .partyRegisterCount(0L)
+                .postRegisterCount(0L)
+                .follow(0L)
+                .follower(0L)
+                .tags(Arrays.asList("#봄", "#여름"))
+                .build();
+
+        given(memberQueryService.getMyPage(anyLong()))
+                .willReturn(mockResponse);
+
+
+        // when & then
+        mockMvc.perform(get("/api/v1/members"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.memberId").value(1))
+                .andExpect(jsonPath("$.nickName").value("별칭"))
+                .andExpect(jsonPath("$.email").value("test@gmail.com"))
+                .andExpect(jsonPath("$.introduce").value("자기소개"))
+                .andExpect(jsonPath("$.mannerPoint").value(50))
+                .andExpect(jsonPath("$.partyRegisterCount").value(0))
+                .andExpect(jsonPath("$.postRegisterCount").value(0))
+                .andExpect(jsonPath("$.follow").value(0))
+                .andExpect(jsonPath("$.follower").value(0))
+                .andExpect(jsonPath("$.followState").value(false))
+                .andExpect(jsonPath("$.tags[0]").value("#봄"))
+                .andExpect(jsonPath("$.tags[1]").value("#여름"))
+                .andDo(print());
+
+        verify(memberQueryService, times(1)).getMyPage(anyLong());
+    }
+
+    @Test
+    @WithMockCustomMember
+    @DisplayName("상대방 마이페이지 조회 테스트")
+    void getOtherMemberPage() throws Exception {
+        // given
+        MemberDetail.Response mockResponse = MemberDetail.Response.builder()
+                .memberId(1L)
+                .nickName("별칭")
+                .email("test@gmail.com")
+                .introduce("자기소개")
+                .mannerPoint(50)
+                .partyRegisterCount(0L)
+                .postRegisterCount(0L)
+                .follow(0L)
+                .follower(0L)
+                .tags(Arrays.asList("#봄", "#여름"))
+                .followState(true)
+                .build();
+
+        given(memberQueryService.getOtherMyPage(anyLong(), anyLong()))
+                .willReturn(mockResponse);
+
+
+        // when & then
+        mockMvc.perform(get("/api/v1/members/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.memberId").value(1))
+                .andExpect(jsonPath("$.nickName").value("별칭"))
+                .andExpect(jsonPath("$.email").value("test@gmail.com"))
+                .andExpect(jsonPath("$.introduce").value("자기소개"))
+                .andExpect(jsonPath("$.mannerPoint").value(50))
+                .andExpect(jsonPath("$.partyRegisterCount").value(0))
+                .andExpect(jsonPath("$.postRegisterCount").value(0))
+                .andExpect(jsonPath("$.follow").value(0))
+                .andExpect(jsonPath("$.follower").value(0))
+                .andExpect(jsonPath("$.followState").value(true))
+                .andExpect(jsonPath("$.tags[0]").value("#봄"))
+                .andExpect(jsonPath("$.tags[1]").value("#여름"))
+                .andDo(print());
+
+        verify(memberQueryService, times(1)).getOtherMyPage(anyLong(), anyLong());    }
 }

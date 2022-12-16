@@ -33,8 +33,10 @@ public class PostLikeServiceImpl implements PostLikeService {
         Member member = findMemberById(memberId);
         Post post = findPostById(postId);
 
-        PostLike postLike = PostLike.createPost(member, post);
-        postLikeRepository.save(postLike);
+        if(!postLikeRepository.existsByMemberAndPost(member, post)) {
+            PostLike postLike = PostLike.createPost(member, post);
+            postLikeRepository.save(postLike);
+        }
     }
 
     @Override
@@ -42,9 +44,11 @@ public class PostLikeServiceImpl implements PostLikeService {
         Member member = findMemberById(memberId);
         Post post = findPostById(postId);
 
-        PostLike postLike = postLikeRepository.findByMemberAndPost(member, post)
-                .orElseThrow(() -> new PostLikeException(POST_LIKE_NOT_FOUND));
-        postLikeRepository.delete(postLike);
+        if(postLikeRepository.existsByMemberAndPost(member, post)) {
+            PostLike postLike = postLikeRepository.findByMemberAndPost(member, post)
+                    .orElseThrow(() -> new PostLikeException(POST_LIKE_NOT_FOUND));
+            postLikeRepository.delete(postLike);
+        }
     }
 
     private Post findPostById(Long postId) {

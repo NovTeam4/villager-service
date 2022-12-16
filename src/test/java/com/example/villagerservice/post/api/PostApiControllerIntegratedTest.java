@@ -35,7 +35,6 @@ import org.springframework.restdocs.request.RequestPartDescriptor;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -221,6 +220,43 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     @Test
+    @DisplayName("게시글 댓글 변경 테스트")
+    void updatePostCommentApiTest() throws JsonProcessingException {
+        // given
+        Category category = createCategory("이야기");
+        Member member = createToMember("post@gmail.com", "post");
+        Post post = new Post(member, category, "제목입니다", "본문입니다.");
+        postRepository.save(post);
+
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse("post@gmail.com", "hello11@@nW");
+        PostComment comment = postCommentRepository.save(new PostComment(member, post, "댓글 기존2"));
+        assertThat(postCommentRepository.count()).isEqualTo(1);
+
+        UpdatePostComment.Request updatePost = UpdatePostComment.Request.builder()
+                .comment("안녕하세요 댓글 2입니다.")
+                .build();
+        String body = objectMapper.writeValueAsString(updatePost);
+
+        // when & then
+        givenAuth(
+                body,
+                template.requestRestDocumentation(
+                        "게시글 댓글 변경",
+                        getCreatePostCommentRequestFields(),
+                        UpdatePostComment.Request.class.getName(),
+                        getCommentPathParameterFields()))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .put("/api/v1/posts/comments/{postId}/{commentId}", post.getId(), comment.getId())
+                .then()
+                .statusCode(HttpStatus.OK.value());
+
+        List<PostComment> comments = postCommentRepository.findByPost(post);
+        assertThat(comments.size()).isEqualTo(1);
+        assertThat(comments.get(0).getContents()).isEqualTo("안녕하세요 댓글 2입니다.");
+    }
+    
+    @Test
     @DisplayName("게시글 댓글 삭제 테스트")
     void deleteCommentApiTest() throws JsonProcessingException {
         // given
@@ -239,7 +275,7 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
                 "",
                 template.requestRestDocumentation(
                         "게시글 댓글 삭제",
-                        getDeleteCommentPathParameterFields()))
+                        getCommentPathParameterFields()))
                 .when()
                 .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
                 .delete("/api/v1/posts/comments/{postId}/{commentId}", post.getId(), comment2.getId())
@@ -339,6 +375,35 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
                 ;
     }
 
+    @Test
+    @DisplayName("게시글 카테고리 목록 조회")
+    void getPostCategoryToList() throws JsonProcessingException {
+        // given
+        Category category1 = createCategory("이야기");
+        Category category2 = createCategory("이야기2");
+        Member member = createToMember("post@gmail.com", "post");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse("post@gmail.com", "hello11@@nW");
+
+        assertThat(categoryRepository.count()).isEqualTo(2);
+
+        // when & then
+        Response response = givenAuth("",
+                template.responseRestDocumentation(
+                        "게시글 카테고리 조회",
+                        getCategoryListResponseFields(),
+                        CategoryDto.Response.class.getName()))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/posts/category");
+
+        response
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("[0].name", Matchers.equalTo("이야기"))
+                .body("[1].name", Matchers.equalTo("이야기2"))
+        ;
+    }
+
     private Category createCategory(String name) {
         return categoryRepository.save(Category.builder()
                 .name(name)
@@ -373,6 +438,14 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     @NotNull
+    private List<FieldDescriptor> getCategoryListResponseFields() {
+        return Arrays.asList(
+                fieldWithPath("[].categoryId").description("카테고리 id"),
+                fieldWithPath("[].name").description("카테고리명")
+        );
+    }
+
+    @NotNull
     private List<FieldDescriptor> getPostDetailResponseFields() {
         return Arrays.asList(
                 fieldWithPath("postId").description("게시글 id"),
@@ -393,6 +466,7 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("comments[].commentId").description("댓글 id"),
                 fieldWithPath("comments[].memberId").description("댓글 작성자 id"),
                 fieldWithPath("comments[].nickname").description("댓글 작성자 닉네임"),
+                fieldWithPath("comments[].comment").description("댓글 댓글"),
                 fieldWithPath("comments[].createdAt").description("댓글 생성시간")
         );
     }
@@ -428,7 +502,7 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     @NotNull
-    private List<ParameterDescriptorWithType> getDeleteCommentPathParameterFields() {
+    private List<ParameterDescriptorWithType> getCommentPathParameterFields() {
         return List.of(
                 new ParameterDescriptorWithType("postId").description("게시글 id"),
                 new ParameterDescriptorWithType("commentId").description("댓글 id")

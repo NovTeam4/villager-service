@@ -98,6 +98,7 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         UpdateMemberTown.Request request = UpdateMemberTown.Request.builder()
                 .townName("변경된별칭")
+                .main(false)
                 .build();
 
         String body = objectMapper.writeValueAsString(request);
@@ -236,7 +237,9 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
 
     @NotNull
     private List<FieldDescriptor> getUpdateMemberTownRequestFields() {
-        return List.of(fieldWithPath("townName").type(JsonFieldType.STRING).description("동네별칭"));
+        return List.of(
+                fieldWithPath("townName").type(JsonFieldType.STRING).description("동네별칭"),
+                fieldWithPath("main").description("메인동네 상태"));
     }
 
     @NotNull
@@ -257,7 +260,8 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("towns[].townName").type(JsonFieldType.STRING).description("동네 별칭"),
                 fieldWithPath("towns[].cityName").description("동네명"),
                 fieldWithPath("towns[].createdAt").description("생성일"),
-                fieldWithPath("towns[].modifiedAt").description("수정일")
+                fieldWithPath("towns[].modifiedAt").description("수정일"),
+                fieldWithPath("towns[].main").description("메인동네 여부")
         );
     }
 
