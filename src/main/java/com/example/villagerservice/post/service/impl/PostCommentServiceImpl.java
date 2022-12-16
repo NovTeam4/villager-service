@@ -21,7 +21,7 @@ import static com.example.villagerservice.post.exception.PostErrorCode.*;
 @Service
 @RequiredArgsConstructor
 
-public class postCommentServiceImpl implements PostCommentService {
+public class PostCommentServiceImpl implements PostCommentService {
 
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
