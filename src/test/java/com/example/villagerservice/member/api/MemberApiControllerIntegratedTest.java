@@ -8,10 +8,8 @@ import com.example.villagerservice.config.AuthConfig;
 import com.example.villagerservice.follow.domain.Follow;
 import com.example.villagerservice.follow.domain.FollowRepository;
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.member.dto.CreateMemberAttentionTag;
-import com.example.villagerservice.member.dto.MemberDetail;
-import com.example.villagerservice.member.dto.UpdateMemberInfo;
-import com.example.villagerservice.member.dto.UpdateMemberPassword;
+import com.example.villagerservice.member.dto.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
@@ -244,6 +242,66 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
         ;
     }
 
+    @Test
+    @DisplayName("비밀번호 검증 테스트")
+    void passwordValidApiTest() throws JsonProcessingException {
+        // given
+        Member loginMember = createToMember("member@gmail.com", "member");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse("member@gmail.com", "hello11@@nW");
+
+        PasswordValid.Request request = PasswordValid.Request.builder()
+                .password("hello11@@nW")
+                .build();
+
+        String body = objectMapper.writeValueAsString(request);
+
+        // when & then
+        givenAuth(body,
+                template.responseRestDocumentation(
+                        "비밀번호 검증",
+                        getPasswordValidResponseFields(),
+                        PasswordValid.Response.class.getName()
+                ))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/members/password/valid")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("result", Matchers.equalTo(true))
+                .body("message", Matchers.equalTo("비밀번호가 일치합니다."))
+        ;
+    }
+
+    @Test
+    @DisplayName("비밀번호 검증 실패 테스트")
+    void passwordValidApiFailTest() throws JsonProcessingException {
+        // given
+        Member loginMember = createToMember("member@gmail.com", "member");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse("member@gmail.com", "hello11@@nW");
+
+        PasswordValid.Request request = PasswordValid.Request.builder()
+                .password("hello211@@nW")
+                .build();
+
+        String body = objectMapper.writeValueAsString(request);
+
+        // when & then
+        givenAuth(body,
+                template.responseRestDocumentation(
+                        "비밀번호 검증",
+                        getPasswordValidResponseFields(),
+                        PasswordValid.Response.class.getName()
+                ))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/members/password/valid")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("result", Matchers.equalTo(false))
+                .body("message", Matchers.equalTo("비밀번호가 일치하지 않습니다."))
+        ;
+    }
+
     @NotNull
     private List<FieldDescriptor> getMyPageResponseFields() {
         return Arrays.asList(
@@ -260,6 +318,14 @@ class MemberApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("follower").description("팔로워 수"),
                 fieldWithPath("followState").description("팔로우 상태"),
                 fieldWithPath("tags").type(JsonFieldType.ARRAY).description("태그 목록")
+        );
+    }
+
+    @NotNull
+    private List<FieldDescriptor> getPasswordValidResponseFields() {
+        return Arrays.asList(
+                fieldWithPath("result").description("결과"),
+                fieldWithPath("message").description("message")
         );
     }
 

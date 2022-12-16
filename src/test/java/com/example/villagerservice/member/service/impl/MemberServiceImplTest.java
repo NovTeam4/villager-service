@@ -412,6 +412,24 @@ class MemberServiceImplTest {
         verify(memberDetailRepository, times(1)).existsByNickname(anyString());
     }
 
+    @Test
+    @DisplayName("비밀번호 변경 시 회원이 없을경우 테스트")
+    void passwordCheckValidMemberNotFoundTest() {
+        // given
+        given(memberRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        // when
+        MemberException memberException = assertThrows(MemberException.class,
+                () -> memberService.passwordCheckValid(1L, any()));
+
+        // then
+        verify(memberRepository, times(1)).findById(anyLong());
+        assertThat(memberException.getMemberErrorCode()).isEqualTo(MEMBER_NOT_FOUND);
+        assertThat(memberException.getErrorCode()).isEqualTo(MEMBER_NOT_FOUND.getErrorCode());
+        assertThat(memberException.getErrorMessage()).isEqualTo(MEMBER_NOT_FOUND.getErrorMessage());
+    }
+
     private Member createMember(String nickname, String email, String pass) {
         return Member.builder()
                 .nickname(nickname)
