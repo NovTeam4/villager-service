@@ -1,6 +1,5 @@
 package com.example.villagerservice.party.dto;
 
-import com.example.villagerservice.party.domain.Party;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,8 +18,6 @@ public class PartyCommentDTO {
 
         @NotEmpty
         private String contents;
-
-        private Party party;
     }
 
     @Getter
@@ -32,7 +29,7 @@ public class PartyCommentDTO {
         @NotEmpty
         private String contents;
 
-        private Party party;
+        private Long partyCommentId;
 
     }
 }

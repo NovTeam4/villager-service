@@ -17,6 +17,7 @@ import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.service.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,8 +116,8 @@ public class PartyApiControllerTest {
         PartyDTO.Request request = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusHours(2))
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
                 .build();
 
@@ -140,8 +141,8 @@ public class PartyApiControllerTest {
 
         PartyDTO.Request request = PartyDTO.Request.builder()
                 .score(100)
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusHours(2))
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
                 .build();
 
@@ -164,8 +165,8 @@ public class PartyApiControllerTest {
 
         PartyDTO.Request request = PartyDTO.Request.builder()
                 .partyName("test-party")
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusHours(2))
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
                 .build();
 

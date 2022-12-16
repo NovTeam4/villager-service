@@ -27,7 +27,9 @@ import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.request.PartyLikeDto;
 import com.example.villagerservice.party.type.PartyLikeResponseType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.response.Response;
+
+import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -104,8 +106,8 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         PartyDTO.Request request = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusHours(2))
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
                 .build();
 
@@ -256,14 +258,23 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     private Party saveParty(Member member) {
-        Party party = Party.createParty(
-                "test-party",
-                100,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(2),
-                1000,
-                member
-        );
+
+        PartyDTO.Request request = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
+                .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(null)
+                .build();
+
+        Party party = Party.createParty(request , member);
+
 
         partyRepository.save(party);
 

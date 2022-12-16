@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -54,28 +55,26 @@ public class PartyQueryServiceImplTest {
 
         Long partyId = 1L;
 
-        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+        PartyDTO.Request request = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
-                .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusHours(2))
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(null)
                 .build();
 
         Member member = Member.builder()
-                .nickname("홍길동")
-                .encodedPassword("1234")
                 .email("test@gmail.com")
+                .nickname("홍길동")
                 .build();
 
-        Party party = Party.createParty(
-                partyRequest.getPartyName(),
-                partyRequest.getScore(),
-                partyRequest.getStartDt(),
-                partyRequest.getEndDt(),
-                partyRequest.getAmount(),
-                member
-        );
+        Party party = Party.createParty(request , member);
 
         PartyDTO.Response partyResponse = PartyDTO.Response.createPartyResponse(party);
 

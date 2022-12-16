@@ -4,11 +4,16 @@ import com.example.villagerservice.config.events.Events;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
+import com.example.villagerservice.party.domain.PartyComment;
+import com.example.villagerservice.party.dto.PartyCommentDTO;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.domain.PartyCreatedEvent;
 import com.example.villagerservice.party.exception.PartyException;
+import com.example.villagerservice.party.repository.PartyCommentRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
+import com.example.villagerservice.party.repository.PartyTagRepository;
+import com.example.villagerservice.party.service.PartyCommentService;
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,13 +33,15 @@ public class PartyServiceImpl implements PartyService {
 
     private final PartyRepository partyRepository;
     private final MemberRepository memberRepository;
+    private final PartyTagRepository partyTagRepository;
+
+    private final PartyCommentService partyCommentService;
 
     @Override
     @Transactional
     public void createParty(Long memberId , PartyDTO.Request partyRequest) {
-
         Member member = memberCheckedById(memberId);
-        Party party = Party.createParty(partyRequest.getPartyName(), partyRequest.getScore(), partyRequest.getStartDt(), partyRequest.getEndDt(), partyRequest.getAmount(), member);
+        Party party = Party.createParty(partyRequest, member);
         partyRepository.save(party);
 
         Events.raise(PartyCreatedEvent.createEvent(List.of("#겨울")));
@@ -43,8 +50,7 @@ public class PartyServiceImpl implements PartyService {
     @Override
     @Transactional
     public PartyDTO.Response updateParty(Long partyId , UpdatePartyDTO.Request updatePartyRequest) {
-        partyCheckedById(partyId);
-        Party party = partyRepository.findById(partyId).get();
+        Party party = partyCheckedById(partyId);
         return updatePartyInfo(party ,updatePartyRequest);
     }
 
@@ -57,12 +63,13 @@ public class PartyServiceImpl implements PartyService {
     @Override
     public Page<PartyDTO.Response> getAllParty(Pageable pageable) {
 
-        if(partyRepository.count() == 0) {
-            throw new PartyException(PARTY_NOT_REGISTERED);
-        }
-
-        return partyRepository.findAll(pageable)
-                .map(PartyDTO.Response::createPartyResponse);
+//        if(partyRepository.count() == 0) {
+//            throw new PartyException(PARTY_NOT_REGISTERED);
+//        }
+//
+//        return partyRepository.findAll(pageable)
+//                .map(PartyDTO.Response::createPartyResponse);
+        return null;
     }
 
     private Member memberCheckedById(Long memberId) {
@@ -72,17 +79,19 @@ public class PartyServiceImpl implements PartyService {
         );
     }
 
-    private void partyCheckedById(Long partyId) {
+    private Party partyCheckedById(Long partyId) {
 
-        partyRepository.findById(partyId).orElseThrow(
+        return partyRepository.findById(partyId).orElseThrow(
                 () -> new PartyException(PARTY_NOT_FOUND)
         );
 
     }
 
     private PartyDTO.Response updatePartyInfo(Party party , UpdatePartyDTO.Request updatePartyRequest) {
+        partyTagRepository.deleteAllByParty_id(party.getId());
+        List<PartyComment> commentList = partyCommentService.getAllComment(party.getId());
         party.updatePartyInfo(updatePartyRequest);
-
-        return PartyDTO.Response.createPartyResponse(party);
+        return PartyDTO.Response.createPartyResponse(party , commentList);
     }
+
 }
