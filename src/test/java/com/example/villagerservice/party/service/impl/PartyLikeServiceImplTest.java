@@ -3,6 +3,7 @@ package com.example.villagerservice.party.service.impl;
 import static com.example.villagerservice.party.type.PartyLikeResponseType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -79,5 +80,33 @@ class PartyLikeServiceImplTest {
 
         // then
         assertEquals(PartyErrorCode.PARTY_NOT_FOUND.getErrorCode(), exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("좋아요 조회 - 존재")
+    void 좋아요_조회_존재() {
+        // given
+        given(partyLikeRepository.existByParty_IdAndMember_Email(anyLong(), any()))
+            .willReturn(true);
+
+        // when
+        boolean result = partyLikeService.isPartyLike(1L, "test@naver.com");
+
+        // then
+        assertEquals(true, result);
+    }
+
+    @Test
+    @DisplayName("좋아요 조회 - 존재하지않음")
+    void 좋아요_조회_존재하지않음() {
+        // given
+        given(partyLikeRepository.existByParty_IdAndMember_Email(anyLong(), any()))
+            .willReturn(false);
+
+        // when
+        boolean result = partyLikeService.isPartyLike(1L, "test@naver.com");
+
+        // then
+        assertEquals(false, result);
     }
 }
