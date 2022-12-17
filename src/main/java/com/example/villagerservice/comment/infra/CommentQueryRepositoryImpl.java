@@ -42,6 +42,14 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
         return jdbcTemplate.queryForObject("select count(*) from comment where content like '%" + comment + "%'", Long.class);
     }
 
+
+    public List<CommentContentsItemDto> findPagingComment(Long page, int size) {
+        Long realPage = size * (page - 1);
+        String sql = "select * from comment order by comment_id asc limit " + realPage + "," + size + "";
+        return jdbcTemplate.query(sql, mapRow());
+    }
+
+
     private String save() {
         return "insert into comment(content,other_id,score,member_id) " +
                 "values(?,?,?,?)";
@@ -66,4 +74,6 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                 rs.getLong("other_id")
         ));
     }
+
+
 }
