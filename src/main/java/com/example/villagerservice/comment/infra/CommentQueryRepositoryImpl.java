@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -17,9 +18,10 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
     private final JdbcTemplate jdbcTemplate;
     private final static int DEFAULT_LIMIT = 5;
 
-    public void create(Long memberId, CommentDto.CommentRequest request) {
-        jdbcTemplate.update(save(), request.getContents(), request.getOtherId(), request.getScore(), memberId);
+    public void create(Long memberId,  CommentDto.CommentRequest request) {
+        jdbcTemplate.update(save(),LocalDateTime.now(),LocalDateTime.now(),request.getContents(), request.getOtherId(), request.getScore(), memberId);
     }
+
 
     @Override
     public List<CommentContentsItemDto> getCommentList() {   // 모든 후기 가져오기.
@@ -45,23 +47,23 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
 
     public List<CommentContentsItemDto> findPagingComment(Long page, int size) {
         Long realPage = size * (page - 1);
-        String sql = "select * from comment order by comment_id asc limit " + realPage + "," + size + "";
+        String sql = "select * from comment order by created_at desc limit " + realPage + "," + size + "";
         return jdbcTemplate.query(sql, mapRow());
     }
 
 
     private String save() {
-        return "insert into comment(content,other_id,score,member_id) " +
-                "values(?,?,?,?)";
+        return "insert into comment(created_at,modified_at,content,other_id,score,member_id) " +
+                "values(?,?,?,?,?,?)";
     }
 
     private String getCommentQuery() {
-        return "select * from comment order by comment_id desc limit " + DEFAULT_LIMIT;
+        return "select * from comment order by created_at desc limit " + DEFAULT_LIMIT;
     }
 
 
     private String findByCommentNameQuery(String comment) {
-        return "select * from comment where content like '%" + comment + "%'";
+        return "select * from comment  where content like '%" + comment + "%' order by created_at desc";
     }
 
     private RowMapper<CommentContentsItemDto> mapRow() {
@@ -71,7 +73,8 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                 rs.getLong("member_id"),
                 rs.getLong("score"),
                 rs.getString("content"),
-                rs.getLong("other_id")
+                rs.getLong("other_id"),
+                rs.getTimestamp("created_at").toLocalDateTime()
         ));
     }
 
