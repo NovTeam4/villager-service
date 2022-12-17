@@ -33,13 +33,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+import io.restassured.response.Response;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
@@ -52,6 +51,7 @@ import javax.print.attribute.standard.Media;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
 @Import({AuthConfig.class})
+@Disabled
 public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     @Autowired
