@@ -42,13 +42,13 @@ class TownApiControllerTest {
                         .towns(Arrays.asList(
                                 TownListDetail.builder()
                                         .name("서울 용산구")
-                                        .code("1234567890")
+                                        .townCode("1234567890")
                                         .latitude(37.123123)
                                         .longitude(126.13532)
                                         .build(),
                                 TownListDetail.builder()
                                         .name("서울 용산구2")
-                                        .code("1234567891")
+                                        .townCode("1234567891")
                                         .latitude(37.1223)
                                         .longitude(126.532)
                                         .build()))
@@ -85,13 +85,13 @@ class TownApiControllerTest {
                         .towns(Arrays.asList(
                                 TownListDetail.builder()
                                         .name("서울 용산구")
-                                        .code("1234567890")
+                                        .townCode("1234567890")
                                         .latitude(37.123123)
                                         .longitude(126.13532)
                                         .build(),
                                 TownListDetail.builder()
                                         .name("서울 용산구2")
-                                        .code("1234567891")
+                                        .townCode("1234567891")
                                         .latitude(37.1223)
                                         .longitude(126.532)
                                         .build()))
