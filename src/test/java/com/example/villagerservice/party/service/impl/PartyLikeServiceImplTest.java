@@ -16,7 +16,7 @@ import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyLikeRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyLikeDto;
-import com.example.villagerservice.party.type.PartyLikeResponseType;
+
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -86,7 +86,7 @@ class PartyLikeServiceImplTest {
     @DisplayName("좋아요 조회 - 존재")
     void 좋아요_조회_존재() {
         // given
-        given(partyLikeRepository.existByParty_IdAndMember_Email(anyLong(), any()))
+        given(partyLikeRepository.existByPartyIdAndMemberEmail(anyLong(), any()))
             .willReturn(true);
 
         // when
@@ -100,7 +100,7 @@ class PartyLikeServiceImplTest {
     @DisplayName("좋아요 조회 - 존재하지않음")
     void 좋아요_조회_존재하지않음() {
         // given
-        given(partyLikeRepository.existByParty_IdAndMember_Email(anyLong(), any()))
+        given(partyLikeRepository.existByPartyIdAndMemberEmail(anyLong(), any()))
             .willReturn(false);
 
         // when

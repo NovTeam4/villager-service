@@ -18,6 +18,7 @@ import java.util.Arrays;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,7 +57,7 @@ class TownApiControllerTest {
 
         // when
         // then
-        mockMvc.perform(get("/api/v1/towns/location")
+        mockMvc.perform(post("/api/v1/towns/location")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 new TownList.LocationRequest()
@@ -65,11 +66,11 @@ class TownApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("totalCount").value(2))
                 .andExpect(jsonPath("towns[0].name").value("서울 용산구"))
-                .andExpect(jsonPath("towns[0].code").value("1234567890"))
+                .andExpect(jsonPath("towns[0].townCode").value("1234567890"))
                 .andExpect(jsonPath("towns[0].latitude").value(37.123123))
                 .andExpect(jsonPath("towns[0].longitude").value(126.13532))
                 .andExpect(jsonPath("towns[1].name").value("서울 용산구2"))
-                .andExpect(jsonPath("towns[1].code").value("1234567891"))
+                .andExpect(jsonPath("towns[1].townCode").value("1234567891"))
                 .andExpect(jsonPath("towns[1].latitude").value(37.1223))
                 .andExpect(jsonPath("towns[1].longitude").value(126.532))
                 .andDo(print());
@@ -99,7 +100,7 @@ class TownApiControllerTest {
 
         // when
         // then
-        mockMvc.perform(get("/api/v1/towns/name")
+        mockMvc.perform(post("/api/v1/towns/name")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 new TownList.NameRequest()
@@ -108,11 +109,11 @@ class TownApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("totalCount").value(2))
                 .andExpect(jsonPath("towns[0].name").value("서울 용산구"))
-                .andExpect(jsonPath("towns[0].code").value("1234567890"))
+                .andExpect(jsonPath("towns[0].townCode").value("1234567890"))
                 .andExpect(jsonPath("towns[0].latitude").value(37.123123))
                 .andExpect(jsonPath("towns[0].longitude").value(126.13532))
                 .andExpect(jsonPath("towns[1].name").value("서울 용산구2"))
-                .andExpect(jsonPath("towns[1].code").value("1234567891"))
+                .andExpect(jsonPath("towns[1].townCode").value("1234567891"))
                 .andExpect(jsonPath("towns[1].latitude").value(37.1223))
                 .andExpect(jsonPath("towns[1].longitude").value(126.532))
                 .andDo(print());

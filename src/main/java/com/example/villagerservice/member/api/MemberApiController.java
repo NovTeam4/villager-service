@@ -42,7 +42,7 @@ public class MemberApiController {
         memberService.addAttentionTag(member.getEmail(), addAttentionTag);
     }
 
-    @GetMapping("/password/valid")
+    @PostMapping("/password/valid")
     public PasswordValid.Response getPasswordValid(
             @AuthenticationPrincipal Member member,
             @RequestBody PasswordValid.Request request) {
