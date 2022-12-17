@@ -1,5 +1,6 @@
 package com.example.villagerservice.party.handler;
 
+import com.example.villagerservice.config.events.Event;
 import com.example.villagerservice.config.events.EventProducer;
 import com.example.villagerservice.party.domain.PartyCreatedEvent;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class PartyCreatedEventHandler {
             classes = PartyCreatedEvent.class,
             phase = TransactionPhase.AFTER_COMMIT
     )
-    public void handle(PartyCreatedEvent event) {
+    public void handle(Event event) {
         producer.eventPublish(event);
     }
 }
