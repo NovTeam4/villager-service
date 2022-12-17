@@ -241,7 +241,7 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                         getValidNicknameRequestFields(),
                         ValidMemberNickname.Request.class.getName()))
                 .when()
-                .get("/api/v1/auth/valid/nickname")
+                .post("/api/v1/auth/valid/nickname")
                 .then()
                 .statusCode(HttpStatus.OK.value());
     }
@@ -253,7 +253,7 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
 
         givenAuth("",
-            template.allRestDocumentation("모임 신청",
+            template.allRestDocumentation("이메일 인증",
                 getEmailCertPathParameterFields()))
             .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
             .when()
