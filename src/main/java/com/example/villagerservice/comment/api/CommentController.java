@@ -31,6 +31,12 @@ public class CommentController {
         return queryService.getFindName(request.getComment());
     }
 
+  @GetMapping("/findPage")
+    public CommentDto.findPagingResponse findPagingList(@RequestParam Long page){
+       return queryService.findPagingComment(page);
+  }
+
+
 }
 
 
