@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PartyLikeRepository extends JpaRepository<PartyLike, Long> {
     Optional<PartyLike> findByParty_IdAndMember_Email(Long partyId, String email);
+
+    boolean existByParty_IdAndMember_Email(Long partyId, String email);
 }

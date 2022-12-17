@@ -44,4 +44,9 @@ public class PartyLikeServiceImpl implements PartyLikeService {
                 .build());
         return PartyLikeDto.Response.toDto(true);
     }
+
+    @Override
+    public boolean isPartyLike(Long partyId, String email) {
+        return partyLikeRepository.existByParty_IdAndMember_Email(partyId, email);
+    }
 }

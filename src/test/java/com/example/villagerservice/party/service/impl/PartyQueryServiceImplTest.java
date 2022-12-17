@@ -88,4 +88,42 @@ public class PartyQueryServiceImplTest {
         Assertions.assertEquals("홍길동" , result.getNickname());
 
     }
+
+//    @Test
+//    @DisplayName("모임 조회 테스트")
+//    public void getParty() {
+//
+//        Long partyId = 1L;
+//
+//        PartyDTO.Request request = PartyDTO.Request.builder()
+//                .partyName("test-party")
+//                .score(100)
+//                .startDt(LocalDate.now())
+//                .endDt(LocalDate.now().plusDays(2))
+//                .amount(1000)
+//                .numberPeople(2)
+//                .location("수원시")
+//                .latitude(127.1)
+//                .longitude(127.1)
+//                .content("test")
+//                .tagList(null)
+//                .build();
+//
+//        Member member = Member.builder()
+//                .email("test@gmail.com")
+//                .nickname("홍길동")
+//                .build();
+//
+//        Party party = Party.createParty(request , member);
+//
+//        PartyDTO.Response partyResponse = PartyDTO.Response.createPartyResponse(party);
+//
+//        given(partyQueryRepository.getParty(anyLong())).willReturn(Optional.of(partyResponse));
+//
+//        PartyDTO.Response result = partyQueryService.getParty(partyId);
+//
+//        Assertions.assertEquals("test-party" , result.getPartyName());
+//        Assertions.assertEquals("홍길동" , result.getNickname());
+//
+//    }
 }
