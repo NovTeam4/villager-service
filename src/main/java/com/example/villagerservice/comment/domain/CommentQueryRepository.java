@@ -16,4 +16,7 @@ public interface CommentQueryRepository {
     Long getCommentTotalCount(); // 후기 총 갯수
 
     Long getFindByNameTotalCount(String comment); // 내용과 일치한 후기 총 갯수
+
+
+     List<CommentContentsItemDto> findPagingComment(Long page, int size);
 }

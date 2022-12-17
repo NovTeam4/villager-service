@@ -43,6 +43,18 @@ public class CommentDto {
     }
 
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class findPagingResponse {
+        private Long totalCount; // 후기 총 갯수
+        private Long totalPageCount; // 총 페이지 갯수
+        private int countInPage; //  1페이지 짜른 기준 갯수
+        private Long currentPage; // 현재 페이지
+        private List<CommentContentsItemDto> commentContents;
+    }
+
+
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter

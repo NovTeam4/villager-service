@@ -12,6 +12,10 @@ public abstract class StringConverter {
         return getDateTimeToString(localDateTime, "yyyy-MM-dd");
     }
 
+    public static String localDateToShortLocalDateTimeString(LocalDateTime localDateTime) {
+        return getDateTimeToString(localDateTime, "yy-MM-dd HH:mm:ss");
+    }
+
     private static String getDateTimeToString(LocalDateTime localDateTime, String pattern) {
         if(localDateTime == null) {
             return "";
