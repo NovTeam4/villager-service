@@ -14,12 +14,12 @@ public class TownApiController {
 
     private final TownQueryService townQueryService;
 
-    @GetMapping("/location")
+    @PostMapping("/location")
     public TownList.Response getTownListWithLocation(@Valid @RequestBody TownList.LocationRequest townListLocationRequest) {
         return townQueryService.getTownListWithLocation(townListLocationRequest);
     }
 
-    @GetMapping("/name")
+    @PostMapping("/name")
     public TownList.Response getTownListName(@Valid @RequestBody TownList.NameRequest nameRequest) {
         return townQueryService.getTownListWithName(nameRequest);
     }

@@ -45,7 +45,7 @@ public class AuthApiController {
         authTokenService.logout(member.getId(), accessToken);
     }
 
-    @GetMapping("/valid/nickname")
+    @PostMapping("/valid/nickname")
     public void validNickname(@Valid @RequestBody ValidMemberNickname.Request request) {
         memberService.validNickname(request);
     }
