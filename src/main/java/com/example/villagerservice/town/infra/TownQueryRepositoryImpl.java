@@ -35,6 +35,15 @@ public class TownQueryRepositoryImpl implements TownQueryRepository {
                 "order by distance " +
                 "limit " + DEFAULT_LIMIT;
     }
+    private String getLocationQuery(Double latitude, Double longitude) {
+        return "select *, (6371*acos(cos(radians(" + latitude + "))*cos(radians(latitude))*cos(radians(longitude) " +
+                "-radians(" + longitude + "))+sin(radians(" + latitude + "))*sin(radians(latitude)))) " +
+                "as distance\n" +
+                "from town\n" +
+                "group by village " +
+                "order by distance " +
+                "limit " + 1;
+    }
     private RowMapper<TownListDetail> mapRow() {
         return ((rs, rowNum) -> new TownListDetail(
                 rs.getLong("town_id"),
@@ -61,5 +70,19 @@ public class TownQueryRepositoryImpl implements TownQueryRepository {
                 .orderBy(town.code.asc())
                 .fetch();
         return TownList.Response.builder().towns(result).build();
+    }
+
+    @Override
+    public Long getTownId(Double latitude, Double longitude) {
+        try {
+            TownListDetail townListDetail = jdbcTemplate.queryForObject(getLocationQuery(latitude, longitude), mapRow());
+            if(townListDetail != null) {
+                return townListDetail.getTownId();
+            }
+            return null;
+        }catch (Exception e) {
+            return null;
+        }
+
     }
 }

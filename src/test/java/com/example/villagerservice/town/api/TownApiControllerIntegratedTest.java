@@ -9,6 +9,7 @@ import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.domain.MemberTownRepository;
 import com.example.villagerservice.member.dto.LoginMember;
 import com.example.villagerservice.member.dto.UpdateMemberInfo;
+import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.town.dto.TownList;
 import com.example.villagerservice.town.dto.TownListDetail;
 import com.example.villagerservice.town.service.TownQueryService;
@@ -57,10 +58,13 @@ class TownApiControllerIntegratedTest extends BaseDocumentation {
     private RestDocumentationTemplate template = new RestDocumentationTemplate("근처동네 조회 API");
     @Autowired
     private MemberTownRepository memberTownRepository;
+    @Autowired
+    private PartyRepository partyRepository;
 
     @BeforeEach
     void clean() {
         memberTownRepository.deleteAll();
+        partyRepository.deleteAll();
         memberRepository.deleteAll();
     }
     @Test
@@ -81,7 +85,7 @@ class TownApiControllerIntegratedTest extends BaseDocumentation {
                         TownList.Response.class.getName()))
                 .when()
                 .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
-                .get("/api/v1/towns/location");
+                .post("/api/v1/towns/location");
 
         TownList.Response townListResponse = objectMapper.readValue(response.asString(), TownList.Response.class);
 
@@ -108,7 +112,7 @@ class TownApiControllerIntegratedTest extends BaseDocumentation {
                         TownList.Response.class.getName()))
                 .when()
                 .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
-                .get("/api/v1/towns/name");
+                .post("/api/v1/towns/name");
 
         TownList.Response townListResponse = objectMapper.readValue(response.asString(), TownList.Response.class);
 
@@ -125,7 +129,7 @@ class TownApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("towns").type(JsonFieldType.ARRAY).description("근처동네 목록"),
                 fieldWithPath("towns[].townId").description("id"),
                 fieldWithPath("towns[].name").type(JsonFieldType.STRING).description("동네이름"),
-                fieldWithPath("towns[].code").description("코드"),
+                fieldWithPath("towns[].townCode").description("동네코드"),
                 fieldWithPath("towns[].latitude").description("위도"),
                 fieldWithPath("towns[].longitude").description("경도")
         );

@@ -83,6 +83,11 @@ public class PartyApiController {
         return partyLikeService.partyLike(partyId, member);
     }
 
+    @GetMapping("/{partyId}/like")
+    public boolean isPartyLike(@PathVariable Long partyId, @AuthenticationPrincipal Member member){
+        return partyLikeService.isPartyLike(partyId, member.getEmail());
+    }
+
     @PostMapping("/{partyId}/comment")
     public void createComment(@PathVariable Long partyId , @RequestBody String contents){
 

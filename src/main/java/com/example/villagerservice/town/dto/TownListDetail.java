@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 public class TownListDetail {
     private Long townId;
     private String name;
-    private String code;
+    private String townCode;
     private Double latitude;
     private Double longitude;
 
-    public TownListDetail(Long townId, String city, String town, String village, String code, Double latitude, Double longitude) {
+    public TownListDetail(Long townId, String city, String town, String village, String townCode, Double latitude, Double longitude) {
         this.townId = townId;
         this.name = String.format("%s %s %s", city, town, village);
-        this.code = code;
+        this.townCode = townCode;
         this.latitude = latitude;
         this.longitude = longitude;
     }

@@ -13,6 +13,7 @@ import com.example.villagerservice.member.dto.CreateMemberTown;
 import com.example.villagerservice.member.dto.FindMemberTownDetail;
 import com.example.villagerservice.member.dto.FindMemberTownList;
 import com.example.villagerservice.member.dto.UpdateMemberTown;
+import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.town.domain.Town;
 import com.example.villagerservice.town.domain.TownRepository;
 import io.restassured.response.Response;
@@ -43,10 +44,13 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
     @Autowired
     private MemberTownRepository memberTownRepository;
     @Autowired
+    private PartyRepository partyRepository;
+    @Autowired
     private TownRepository townRepository;
 
     @BeforeEach
     void clean() {
+        partyRepository.deleteAll();
         memberTownRepository.deleteAll();
         memberRepository.deleteAll();
     }

@@ -26,6 +26,7 @@ import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.request.PartyLikeDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.restassured.response.Response;
 import java.time.LocalDate;
 
 import java.util.Arrays;
@@ -35,10 +36,7 @@ import io.restassured.response.Response;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
@@ -49,6 +47,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Import({AuthConfig.class})
+@Disabled
 public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     @Autowired

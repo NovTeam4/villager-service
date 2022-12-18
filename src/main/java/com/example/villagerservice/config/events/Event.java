@@ -6,10 +6,9 @@ import lombok.Getter;
 public abstract class Event {
     private final String eventType;
     private final long timestamp;
-    private final Object body;
-    public Event(EventType eventType, Object body) {
+
+    public Event(EventType eventType) {
         this.eventType = eventType.toString();
         this.timestamp = System.currentTimeMillis();
-        this.body = body;
     }
 }

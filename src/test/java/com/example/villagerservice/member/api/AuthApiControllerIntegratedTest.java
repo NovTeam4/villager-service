@@ -1,5 +1,6 @@
 package com.example.villagerservice.member.api;
 
+import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.example.document.BaseDocumentation;
 import com.example.document.RestDocumentationTemplate;
 import com.example.villagerservice.common.jwt.JwtTokenResponse;
@@ -10,7 +11,11 @@ import com.example.villagerservice.member.dto.CreateMember;
 import com.example.villagerservice.member.dto.LoginMember;
 import com.example.villagerservice.member.dto.ValidMemberNickname;
 import com.example.villagerservice.member.service.MemberService;
+import com.example.villagerservice.party.domain.Party;
+import com.example.villagerservice.party.domain.PartyApply;
+import com.example.villagerservice.party.request.PartyApplyDto;
 import io.restassured.response.Response;
+import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
@@ -235,9 +241,25 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
                         getValidNicknameRequestFields(),
                         ValidMemberNickname.Request.class.getName()))
                 .when()
-                .get("/api/v1/auth/valid/nickname")
+                .post("/api/v1/auth/valid/nickname")
                 .then()
                 .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("회원가입 이메일 인증 테스트")
+    void 회원가입_이메일_인증_테스트() throws Exception {
+        String email = "test@naver.com";
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
+
+        givenAuth("",
+            template.allRestDocumentation("이메일 인증",
+                getEmailCertPathParameterFields()))
+            .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+            .when()
+            .post("/api/v1/auth/email-cert/{email}", email)
+            .then()
+            .statusCode(HttpStatus.OK.value());
     }
 
     @NotNull
@@ -254,5 +276,10 @@ class AuthApiControllerIntegratedTest extends BaseDocumentation {
     @NotNull
     private List<FieldDescriptor> getValidNicknameRequestFields() {
         return List.of(fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"));
+    }
+
+    @NotNull
+    private List<ParameterDescriptorWithType> getEmailCertPathParameterFields() {
+        return List.of(new ParameterDescriptorWithType("email").description("이메일"));
     }
 }

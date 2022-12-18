@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
-import org.jetbrains.annotations.NotNull;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,7 @@ import org.springframework.data.domain.Pageable;
 
 
 @ExtendWith(MockitoExtension.class)
+@Disabled
 public class PartyServiceImplTest {
 
     @Mock
