@@ -13,6 +13,7 @@ import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyTag;
 import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
@@ -38,6 +39,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import javax.validation.constraints.NotNull;
+
 
 @ExtendWith(MockitoExtension.class)
 @Disabled
@@ -51,6 +54,9 @@ public class PartyServiceImplTest {
 
     @InjectMocks
     PartyServiceImpl partyService;
+
+    @InjectMocks
+    PartyQueryServiceImpl partyQueryService;
 
 
     @Test
@@ -157,7 +163,7 @@ public class PartyServiceImplTest {
 
         Long partyId = 1L;
         PartyException partyException = assertThrows(PartyException.class, () -> {
-            partyService.updateParty(partyId , any());
+            partyService.updateParty(partyId , any() , anyString());
         });
 
         assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorCode());
@@ -177,7 +183,7 @@ public class PartyServiceImplTest {
 
         given(partyRepository.findById(1L)).willReturn(Optional.of(party));
 
-        PartyDTO.Response response = partyService.updateParty(1L, updateRequest);
+        PartyDTO.Response response = partyService.updateParty(1L, updateRequest , anyString());
 
         assertThat(response.getPartyName()).isEqualTo("updateParty");
 
@@ -188,7 +194,7 @@ public class PartyServiceImplTest {
     void getAllPartyWithoutParty(){
 
         PartyException partyException = assertThrows(PartyException.class,
-                () -> partyService.getAllParty(null));
+                () -> partyQueryService.getPartyList(anyDouble() ,anyDouble()));
 
         Assertions.assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_REGISTERED.getErrorCode());
         Assertions.assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_REGISTERED.getErrorMessage());
@@ -232,10 +238,8 @@ public class PartyServiceImplTest {
         given(partyRepository.findAll((Pageable) any()))
                 .willReturn(partyPage);
 
-        Page<PartyDTO.Response> parties = partyService.getAllParty(null);
-        Assertions.assertThat(parties.getSize()).isEqualTo(2);
-        Assertions.assertThat(parties.getTotalElements()).isEqualTo(list.size());
-
+        List<PartyListDTO> partyList = partyQueryService.getPartyList(anyDouble(), anyDouble());
+        Assertions.assertThat(partyList.size()).isEqualTo(2);
     }
 
     @NotNull

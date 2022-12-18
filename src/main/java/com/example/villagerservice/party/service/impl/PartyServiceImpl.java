@@ -17,6 +17,7 @@ import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.repository.PartyTagRepository;
 import com.example.villagerservice.party.service.PartyCommentService;
+import com.example.villagerservice.party.service.PartyLikeService;
 import com.example.villagerservice.party.service.PartyService;
 import com.example.villagerservice.town.domain.TownQueryRepository;
 import com.example.villagerservice.town.domain.TownRepository;
@@ -41,6 +42,7 @@ public class PartyServiceImpl implements PartyService {
     private final PartyCommentService partyCommentService;
     private final PartyCreatedEventService partyCreatedEventService;
 
+    private final PartyLikeService partyLikeService;
     @Override
     @Transactional
     public void createParty(Long memberId , PartyDTO.Request partyRequest) {
@@ -61,17 +63,18 @@ public class PartyServiceImpl implements PartyService {
 
     @Override
     @Transactional
-    public PartyDTO.Response updateParty(Long partyId , UpdatePartyDTO.Request updatePartyRequest) {
+    public PartyDTO.Response updateParty(Long partyId , UpdatePartyDTO.Request updatePartyRequest , String email) {
         Party party = partyCheckedById(partyId);
-        return updatePartyInfo(party ,updatePartyRequest);
+        return updatePartyInfo(party ,updatePartyRequest , email);
     }
 
     @Override
-    public PartyDTO.Response getParty(Long partyId) {
+    public PartyDTO.Response getParty(Long partyId , String email) {
         Party party = partyCheckedById(partyId);
         List<PartyComment> commentList = partyCommentService.getAllComment(partyId);
+        boolean partyLike = partyLikeService.isPartyLike(partyId, email);
 
-        return PartyDTO.Response.createPartyResponse(party , commentList);
+        return PartyDTO.Response.createPartyResponse(party , commentList , partyLike);
     }
 
     @Override
@@ -98,11 +101,12 @@ public class PartyServiceImpl implements PartyService {
 
     }
 
-    private PartyDTO.Response updatePartyInfo(Party party , UpdatePartyDTO.Request updatePartyRequest) {
+    private PartyDTO.Response updatePartyInfo(Party party , UpdatePartyDTO.Request updatePartyRequest , String email) {
         partyTagRepository.deleteAllByParty_id(party.getId());
         List<PartyComment> commentList = partyCommentService.getAllComment(party.getId());
+        boolean partyLike = partyLikeService.isPartyLike(party.getId(), email);
         party.updatePartyInfo(updatePartyRequest);
-        return PartyDTO.Response.createPartyResponse(party , commentList);
+        return PartyDTO.Response.createPartyResponse(party , commentList , partyLike);
     }
 
 }

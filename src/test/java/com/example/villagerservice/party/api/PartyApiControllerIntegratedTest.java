@@ -12,14 +12,11 @@ import com.example.villagerservice.common.jwt.JwtTokenResponse;
 import com.example.villagerservice.config.AuthConfig;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
-import com.example.villagerservice.party.domain.Party;
-import com.example.villagerservice.party.domain.PartyApply;
-import com.example.villagerservice.party.domain.PartyLike;
+import com.example.villagerservice.party.domain.*;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyLikeRepository;
-import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.repository.PartyCommentRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyApplyDto;
@@ -29,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import java.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,7 +45,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Import({AuthConfig.class})
-@Disabled
 public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     @Autowired
@@ -96,13 +93,8 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     void createParty() throws Exception {
 
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
-        PartyDTO.Request request = PartyDTO.Request.builder()
-                .partyName("test-party")
-                .score(100)
-                .startDt(LocalDate.now())
-                .endDt(LocalDate.now().plusDays(2))
-                .amount(1000)
-                .build();
+
+        PartyDTO.Request request = createRequest();
 
         String value = objectMapper.writeValueAsString(request);
 
@@ -118,9 +110,9 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 .then()
                 .statusCode(HttpStatus.OK.value());
 
-        List<Party> parties = partyRepository.findAll();
-        Assertions.assertThat(parties.size()).isEqualTo(1);
-        Assertions.assertThat(parties.get(0).getPartyName()).isEqualTo("test-party");
+        List<Party> partyList = partyRepository.findAll();
+        Assertions.assertThat(partyList.size()).isEqualTo(1);
+        Assertions.assertThat(partyList.get(0).getPartyName()).isEqualTo("test-party");
     }
 
     @Test
@@ -263,15 +255,53 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 .latitude(127.1)
                 .longitude(127.1)
                 .content("test")
-                .tagList(null)
+                .tagList(new ArrayList<>())
                 .build();
 
         Party party = Party.createParty(request , member);
 
+        request.getTagList().add(PartyTag.builder()
+                .id(1L)
+                .tagName("낚시")
+                        .party(party)
+                .build());
+
+        request.getTagList().add(PartyTag.builder()
+                .id(2L)
+                .tagName("볼링")
+                        .party(party)
+                .build());
 
         partyRepository.save(party);
 
         return party;
+    }
+
+    private static PartyDTO.Request createRequest() {
+        List<PartyTag> tagList = new ArrayList<>();
+
+        tagList.add(PartyTag.builder()
+                .tagName("낚시")
+                .build());
+        tagList.add(PartyTag.builder()
+                .tagName("볼링")
+                .build());
+
+        PartyDTO.Request request = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
+                .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(tagList)
+                .build();
+
+        return request;
     }
 
     private List<FieldDescriptor> getCreatePartyDtoRequestFields() {
@@ -280,7 +310,18 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("score").type(JsonFieldType.NUMBER).description("모임 점수"),
                 fieldWithPath("startDt").type(JsonFieldType.STRING).description("모임 시작 시간"),
                 fieldWithPath("endDt").type(JsonFieldType.STRING).description("모임 종료 시간"),
-                fieldWithPath("amount").type(JsonFieldType.NUMBER).description("모임 금액"));
+                fieldWithPath("amount").type(JsonFieldType.NUMBER).description("모임 금액"),
+                fieldWithPath("numberPeople").type(JsonFieldType.NUMBER).description("모임 인원"),
+                fieldWithPath("location").type(JsonFieldType.STRING).description("모임 장소"),
+                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("모임 위도"),
+                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("모임 경도"),
+                fieldWithPath("content").type(JsonFieldType.STRING).description("모임 상세 내용"),
+                fieldWithPath("tagList").type(JsonFieldType.ARRAY).description("모임 태그"),
+                fieldWithPath("tagList[].id").type(JsonFieldType.NUMBER).description("태그 id").ignored(),
+                fieldWithPath("tagList[].tagName").type(JsonFieldType.STRING).description("태그 이름"),
+                fieldWithPath("tagList[].party").type(JsonFieldType.OBJECT).description("태그와 연결된 모임").ignored()
+                );
+
     }
 
     @Test

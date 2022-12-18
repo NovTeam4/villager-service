@@ -83,7 +83,9 @@ public class PartyDTO {
 
         private Integer mannerPoint;
 
-        public static PartyDTO.Response createPartyResponse(Party party , List<PartyComment> partyCommentList) {
+        private Boolean PartyLike;
+
+        public static PartyDTO.Response createPartyResponse(Party party , List<PartyComment> partyCommentList , Boolean PartyLike) {
             Response response = Response.builder()
                     .partyName(party.getPartyName())
                     .score(party.getScore())
@@ -97,6 +99,7 @@ public class PartyDTO {
                     .commentList(new ArrayList<>())
                     .nickname(party.getMember().getMemberDetail().getNickname())
                     .mannerPoint(party.getMember().getMemberDetail().getMannerPoint().getPoint())
+                    .PartyLike(PartyLike)
                     .build();
 
             for (PartyTag partyTag : party.getTagList()) {

@@ -14,6 +14,6 @@ public interface PartyService {
 
     public void deleteParty(Long partyId);
 
-    public PartyDTO.Response updateParty(Long partyId , UpdatePartyDTO.Request updatePartyRequest);
-    PartyDTO.Response getParty(Long partyId);
+    public PartyDTO.Response updateParty(Long partyId , UpdatePartyDTO.Request updatePartyRequest , String email);
+    PartyDTO.Response getParty(Long partyId , String email);
 }
