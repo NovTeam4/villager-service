@@ -1,13 +1,11 @@
 package com.example.villagerservice.party.repository;
 
 import com.example.villagerservice.party.domain.Party;
-import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.PartyListDTO;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface PartyQueryRepository {
-    Optional<PartyDTO.Response> getParty(Long partyId);
 
-    Optional<Party> findById(Long partyId);
-
+    public List<PartyListDTO> getPartyList(Double lat , Double lnt);
 }

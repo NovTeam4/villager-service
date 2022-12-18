@@ -47,4 +47,9 @@ public class PartyCommentServiceImpl implements PartyCommentService {
     public List<PartyComment> getAllComment(Long partyId) {
         return partyCommentRepository.findAllByParty_id(partyId);
     }
+
+    @Override
+    public void deleteAllComment(Long partyId) {
+        partyCommentRepository.deleteAllByParty_id(partyId);
+    }
 }

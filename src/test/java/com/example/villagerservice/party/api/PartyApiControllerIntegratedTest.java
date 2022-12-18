@@ -21,17 +21,14 @@ import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyLikeRepository;
 import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.repository.PartyCommentRepository;
-import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.request.PartyLikeDto;
-import com.example.villagerservice.party.type.PartyLikeResponseType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.restassured.response.Response;
 import java.time.LocalDate;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,8 +45,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import javax.print.attribute.standard.Media;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
 @Import({AuthConfig.class})
 @Disabled
@@ -63,9 +58,6 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     @Autowired
     private PartyRepository partyRepository;
-
-    @Autowired
-    private PartyQueryRepository partyQueryRepository;
 
     private RestDocumentationTemplate template = new RestDocumentationTemplate("모임 API");
 

@@ -10,4 +10,6 @@ public interface PartyCommentService {
 
     List<PartyComment> getAllComment(Long partyId);
 
+    void deleteAllComment(Long partyId);
+
 }

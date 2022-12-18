@@ -11,6 +11,7 @@ import static org.mockito.Mockito.*;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
+import com.example.villagerservice.party.domain.PartyTag;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyErrorCode;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -82,12 +84,20 @@ public class PartyServiceImplTest {
     @DisplayName("모임 등록 테스트")
     public void createParty(){
 
-        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
+        List<PartyTag> tagList = getTagList();
+
+        PartyDTO.Request request = PartyDTO.Request.builder()
                 .partyName("test-party")
                 .score(100)
                 .startDt(LocalDate.now())
                 .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(tagList)
                 .build();
 
 
@@ -100,7 +110,7 @@ public class PartyServiceImplTest {
 
         ArgumentCaptor<Party> captor = ArgumentCaptor.forClass(Party.class);
 
-        partyService.createParty(1L , partyRequest);
+        partyService.createParty(1L , request);
 
         verify(partyRepository,times(1)).save(captor.capture());
         assertEquals("test-party" , captor.getValue().getPartyName());
@@ -108,6 +118,8 @@ public class PartyServiceImplTest {
         assertEquals("홍길동" , captor.getValue().getMember().getMemberDetail().getNickname());
 
     }
+
+
 
     @Test
     @DisplayName("모임 삭제 시, 모임이 없을 경우")
@@ -126,26 +138,7 @@ public class PartyServiceImplTest {
     @DisplayName("모임 삭제 테스트")
     void deleteParty() {
 
-        PartyDTO.Request request = PartyDTO.Request.builder()
-                .partyName("test-party")
-                .score(100)
-                .startDt(LocalDate.now())
-                .endDt(LocalDate.now().plusDays(2))
-                .amount(1000)
-                .numberPeople(2)
-                .location("수원시")
-                .latitude(127.1)
-                .longitude(127.1)
-                .content("test")
-                .tagList(null)
-                .build();
-
-        Member member = Member.builder()
-                .email("test@gmail.com")
-                .nickname("홍길동")
-                .build();
-
-        Party party = Party.createParty(request, member);
+        Party party = getParty();
 
         given(partyRepository.findById(1L)).willReturn(Optional.of(party));
 
@@ -155,6 +148,8 @@ public class PartyServiceImplTest {
 
         assertEquals(parties.size(),0);
     }
+
+
 
     @Test
     @DisplayName("모임 변경 시, 모임이 없을 경우")
@@ -174,26 +169,7 @@ public class PartyServiceImplTest {
     @DisplayName("모임 변경 테스트")
     void updateParty() {
 
-        PartyDTO.Request request = PartyDTO.Request.builder()
-                .partyName("test-party")
-                .score(100)
-                .startDt(LocalDate.now())
-                .endDt(LocalDate.now().plusDays(2))
-                .amount(1000)
-                .numberPeople(2)
-                .location("수원시")
-                .latitude(127.1)
-                .longitude(127.1)
-                .content("test")
-                .tagList(null)
-                .build();
-
-        Member member = Member.builder()
-                .email("test@gmail.com")
-                .nickname("홍길동")
-                .build();
-
-        Party party = Party.createParty(request , member);
+        Party party = getParty();
 
         UpdatePartyDTO.Request updateRequest = UpdatePartyDTO.Request.builder()
                 .partyName("updateParty")
@@ -260,5 +236,41 @@ public class PartyServiceImplTest {
         Assertions.assertThat(parties.getSize()).isEqualTo(2);
         Assertions.assertThat(parties.getTotalElements()).isEqualTo(list.size());
 
+    }
+
+    @NotNull
+    private static Party getParty() {
+        PartyDTO.Request request = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
+                .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(getTagList())
+                .build();
+
+        Member member = Member.builder()
+                .email("test@gmail.com")
+                .nickname("홍길동")
+                .build();
+
+        return Party.createParty(request, member);
+    }
+
+    private static List<PartyTag> getTagList() {
+        List<PartyTag> list = new ArrayList<>();
+
+        PartyTag tag = PartyTag.builder()
+                .tagName("test-tag")
+                .build();
+
+        list.add(tag);
+
+        return list;
     }
 }
