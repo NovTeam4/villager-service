@@ -14,11 +14,9 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.*;
 import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
-import com.example.villagerservice.party.repository.PartyApplyRepository;
-import com.example.villagerservice.party.repository.PartyLikeRepository;
-import com.example.villagerservice.party.repository.PartyCommentRepository;
-import com.example.villagerservice.party.repository.PartyRepository;
+import com.example.villagerservice.party.repository.*;
 import com.example.villagerservice.party.request.PartyApplyDto;
 import com.example.villagerservice.party.request.PartyLikeDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import io.restassured.response.Response;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
@@ -70,6 +67,9 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     @Autowired
     private PartyLikeRepository partyLikeRepository;
 
+    @Autowired
+    private PartyTagRepository partyTagRepository;
+
     @BeforeEach
     void clean() {
         partyApplyRepository.deleteAll();
@@ -77,6 +77,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         partyRepository.deleteAll();
         memberRepository.deleteAll();
         partyCommentRepository.deleteAll();
+        partyTagRepository.deleteAll();
     }
 
     @AfterEach
@@ -86,6 +87,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         partyLikeRepository.deleteAll();
         partyRepository.deleteAll();
         memberRepository.deleteAll();
+        partyTagRepository.deleteAll();
     }
 
     @Test
@@ -122,15 +124,23 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         Member member = createMember("testparty@gmail.com", "홍길동");
         Party party = saveParty(member);
+        createPartyComment(party);
         Long partyId = party.getId();
 
-        givenAuth("",
-                template.requestRestDocumentation("모임 조회"))
+        Response response = givenAuth("",
+                template.allRestDocumentation("모임 조회",
+                        getPartyPathParameterFields(),
+                        getPartyDtoResponseFields(),
+                        PartyDTO.Response.class.getName()
+                ))
                 .when()
-                .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
-                .get("/api/v1/parties/{partyId}",partyId)
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/parties/{partyId}", partyId);
+
+        response
                 .then()
-                .statusCode(HttpStatus.OK.value());
+                .statusCode(HttpStatus.OK.value())
+                .body("partyName",Matchers.equalTo("test-party"));
 
     }
 
@@ -164,26 +174,45 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         Member member = createMember("testparty@gmail.com", "홍길동");
         Party party = saveParty(member);
+        createPartyComment(party);
         Long partyId = party.getId();
 
+        List<PartyTag> newList = new ArrayList<>();
+        newList.add(PartyTag.builder().tagName("축구").build());
+
         UpdatePartyDTO.Request request = UpdatePartyDTO.Request.builder()
-                .partyName("updateTest")
+                .partyName("update-Test-party")
+                .score(1000)
+                .startDt(LocalDate.of(2022,12,25))
+                .endDt(LocalDate.of(2022,12,25))
+                .amount(1000)
+                .numberPeople(4)
+                .location("서울시")
+                .latitude(130.5)
+                .longitude(130.5)
+                .content("update-test-content")
+                .tagList(newList)
                 .build();
 
         String value = objectMapper.writeValueAsString(request);
 
         System.out.println("partyId = " + partyId);
 
-        givenAuth(value,
-                template.requestRestDocumentation("모임 변경"))
+        Response response = givenAuth(value,
+                template.allRestDocumentation("모임 변경",
+                        getPartyPathParameterFields(),
+                        getPartyDtoResponseFields(),
+                        PartyDTO.Response.class.getName()
+                ))
                 .when()
-                .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
-                .patch("/api/v1/parties/{partId}" , partyId)
-                .then()
-                .statusCode(HttpStatus.OK.value());
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .patch("/api/v1/parties/{partyId}", partyId);
 
-        Party findParty = partyRepository.findById(partyId).get();
-        Assertions.assertThat(findParty.getPartyName()).isEqualTo("updateTest");
+        response
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("partyName",Matchers.equalTo("update-Test-party"));
+
     }
 
     @Test
@@ -193,19 +222,25 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         Member member = createMember("testparty@gmail.com", "홍길동");
         Party party = saveParty(member);
+        createPartyComment(party);
         Party party2 = saveParty(member);
+        createPartyComment(party2);
 
-        givenAuth("",
-                template.requestRestDocumentation("모임 전체 조회"))
+        Response response = givenAuth("",
+                template.allRestDocumentation("모임 전체 조회",
+                        getPartyAllPathParameterFields(),
+                        getPartyListDtoResponseFields(),
+                        PartyListDTO.class.getName()
+
+                ))
                 .when()
-                .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
-                .get("/api/v1/parties")
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/parties/{LAT}/{LNT}",127.1,127.1);
+
+        response
                 .then()
                 .statusCode(HttpStatus.OK.value());
 
-        List<Party> parties = partyRepository.findAll();
-        Assertions.assertThat(parties.size()).isEqualTo(2);
-        Assertions.assertThat(parties.get(0).getPartyName()).isEqualTo(party.getPartyName());
     }
 
     @Test
@@ -218,14 +253,14 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
         String value = "test!";
 
-        givenAuth(value,
-                template.requestRestDocumentation("모임 댓글 작성"))
+        Response response = givenAuth(value,
+                template.requestRestDocumentation("모임 댓글 작성",
+                        getPartyPathParameterFields()
+                ))
                 .when()
-                .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
                 .contentType(MediaType.TEXT_PLAIN_VALUE)
-                .post("/api/v1/parties/{partyId}/comment" , party.getId())
-                .then()
-                .statusCode(HttpStatus.OK.value());
+                .post("/api/v1/parties/{partyId}/comment", party.getId());
 
         PartyComment partyComment = partyCommentRepository.findByParty_id(party.getId());
         Assertions.assertThat(partyComment.getContents()).isEqualTo("test!");
@@ -240,6 +275,13 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         memberRepository.save(member);
 
         return member;
+    }
+
+    private void createPartyComment(Party party) {
+
+        PartyComment partyComment = PartyComment.createPartyComment("test-comment", party);
+
+        partyCommentRepository.save(partyComment);
     }
 
     private Party saveParty(Member member) {
@@ -261,15 +303,11 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Party party = Party.createParty(request , member);
 
         request.getTagList().add(PartyTag.builder()
-                .id(1L)
                 .tagName("낚시")
-                        .party(party)
                 .build());
 
         request.getTagList().add(PartyTag.builder()
-                .id(2L)
                 .tagName("볼링")
-                        .party(party)
                 .build());
 
         partyRepository.save(party);
@@ -304,25 +342,6 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         return request;
     }
 
-    private List<FieldDescriptor> getCreatePartyDtoRequestFields() {
-        return List.of(
-                fieldWithPath("partyName").type(JsonFieldType.STRING).description("모임이름"),
-                fieldWithPath("score").type(JsonFieldType.NUMBER).description("모임 점수"),
-                fieldWithPath("startDt").type(JsonFieldType.STRING).description("모임 시작 시간"),
-                fieldWithPath("endDt").type(JsonFieldType.STRING).description("모임 종료 시간"),
-                fieldWithPath("amount").type(JsonFieldType.NUMBER).description("모임 금액"),
-                fieldWithPath("numberPeople").type(JsonFieldType.NUMBER).description("모임 인원"),
-                fieldWithPath("location").type(JsonFieldType.STRING).description("모임 장소"),
-                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("모임 위도"),
-                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("모임 경도"),
-                fieldWithPath("content").type(JsonFieldType.STRING).description("모임 상세 내용"),
-                fieldWithPath("tagList").type(JsonFieldType.ARRAY).description("모임 태그"),
-                fieldWithPath("tagList[].id").type(JsonFieldType.NUMBER).description("태그 id").ignored(),
-                fieldWithPath("tagList[].tagName").type(JsonFieldType.STRING).description("태그 이름"),
-                fieldWithPath("tagList[].party").type(JsonFieldType.OBJECT).description("태그와 연결된 모임").ignored()
-                );
-
-    }
 
     @Test
     @DisplayName("모임 신청 테스트")
@@ -471,6 +490,17 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     @NotNull
+    private List<ParameterDescriptorWithType> getPartyPathParameterFields() {
+        return List.of(new ParameterDescriptorWithType("partyId").description("모임 id"));
+    }
+
+    @NotNull
+    private List<ParameterDescriptorWithType> getPartyAllPathParameterFields() {
+        return List.of(new ParameterDescriptorWithType("LNT").description("사용자 경도"),
+                new ParameterDescriptorWithType("LAT").description("사용자 위도"));
+    }
+
+    @NotNull
     private List<ParameterDescriptorWithType> partyPermissionPathParameterFields() {
         return Arrays.asList(
             new ParameterDescriptorWithType("partyId").description("모임 id"),
@@ -530,6 +560,62 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
             fieldWithPath("empty").type(JsonFieldType.BOOLEAN).description("null 여부").ignored()
             );
     }
+
+    private List<FieldDescriptor> getCreatePartyDtoRequestFields() {
+        return List.of(
+                fieldWithPath("partyName").type(JsonFieldType.STRING).description("모임이름"),
+                fieldWithPath("score").type(JsonFieldType.NUMBER).description("모임 점수"),
+                fieldWithPath("startDt").type(JsonFieldType.STRING).description("모임 시작 시간"),
+                fieldWithPath("endDt").type(JsonFieldType.STRING).description("모임 종료 시간"),
+                fieldWithPath("amount").type(JsonFieldType.NUMBER).description("모임 금액"),
+                fieldWithPath("numberPeople").type(JsonFieldType.NUMBER).description("모임 인원"),
+                fieldWithPath("location").type(JsonFieldType.STRING).description("모임 장소"),
+                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("모임 위도"),
+                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("모임 경도"),
+                fieldWithPath("content").type(JsonFieldType.STRING).description("모임 상세 내용"),
+                fieldWithPath("tagList").type(JsonFieldType.ARRAY).description("모임 태그"),
+                fieldWithPath("tagList[].id").type(JsonFieldType.NUMBER).description("태그 id").ignored(),
+                fieldWithPath("tagList[].tagName").type(JsonFieldType.STRING).description("태그 이름"),
+                fieldWithPath("tagList[].party").type(JsonFieldType.OBJECT).description("태그와 연결된 모임").ignored()
+        );
+
+    }
+
+    private List<FieldDescriptor> getPartyDtoResponseFields() {
+        return List.of(
+                fieldWithPath("partyName").type(JsonFieldType.STRING).description("모임이름"),
+                fieldWithPath("score").type(JsonFieldType.NUMBER).description("모임 점수"),
+                fieldWithPath("startDt").type(JsonFieldType.STRING).description("모임 시작 시간"),
+                fieldWithPath("endDt").type(JsonFieldType.STRING).description("모임 종료 시간"),
+                fieldWithPath("amount").type(JsonFieldType.NUMBER).description("모임 금액"),
+                fieldWithPath("numberPeople").type(JsonFieldType.NUMBER).description("모임 인원"),
+                fieldWithPath("location").type(JsonFieldType.STRING).description("모임 장소"),
+                fieldWithPath("content").type(JsonFieldType.STRING).description("모임 상세 내용"),
+                fieldWithPath("tagNameList").type(JsonFieldType.ARRAY).description("모임 태그 목록"),
+                fieldWithPath("commentList").type(JsonFieldType.ARRAY).description("모임 댓글 목록"),
+                fieldWithPath("commentList[].contents").type(JsonFieldType.STRING).description("모임 댓글 내용"),
+                fieldWithPath("commentList[].partyCommentId").type(JsonFieldType.NUMBER).description("모임 댓글 id"),
+                fieldWithPath("nickname").type(JsonFieldType.STRING).description("주최자 이름"),
+                fieldWithPath("mannerPoint").type(JsonFieldType.NUMBER).description("주최자 매너점수"),
+                fieldWithPath("partyLike").type(JsonFieldType.BOOLEAN).description("모임 좋아요")
+        );
+    }
+
+    private List<FieldDescriptor> getPartyListDtoResponseFields() {
+        return List.of(
+
+                fieldWithPath("[].partyId").type(JsonFieldType.NUMBER).description("모임 id"),
+                fieldWithPath("[].partyName").type(JsonFieldType.STRING).description("모임이름"),
+                fieldWithPath("[].startDt").type(JsonFieldType.STRING).description("모임 시작 시간"),
+                fieldWithPath("[].endDt").type(JsonFieldType.STRING).description("모임 종료 시간"),
+                fieldWithPath("[].nickname").type(JsonFieldType.STRING).description("주최자 이름"),
+                fieldWithPath("[].content").type(JsonFieldType.STRING).description("모임 상세 내용"),
+                fieldWithPath("[].location").type(JsonFieldType.STRING).description("모임 장소"),
+                fieldWithPath("[].tagNameList").type(JsonFieldType.ARRAY).description("모임 태그 목록"),
+                fieldWithPath("[].partyLike").type(JsonFieldType.BOOLEAN).description("모임 좋아요")
+        );
+    }
+
 
     @NotNull
     private List<ParameterDescriptorWithType> getPartyApplyDtoListRequestParameterFields() {
