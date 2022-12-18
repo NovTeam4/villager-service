@@ -194,7 +194,7 @@ public class PartyServiceImplTest {
     void getAllPartyWithoutParty(){
 
         PartyException partyException = assertThrows(PartyException.class,
-                () -> partyQueryService.getPartyList(anyDouble() ,anyDouble()));
+                () -> partyQueryService.getPartyList(anyString(), anyDouble() ,anyDouble()));
 
         Assertions.assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_REGISTERED.getErrorCode());
         Assertions.assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_REGISTERED.getErrorMessage());
@@ -238,7 +238,7 @@ public class PartyServiceImplTest {
         given(partyRepository.findAll((Pageable) any()))
                 .willReturn(partyPage);
 
-        List<PartyListDTO> partyList = partyQueryService.getPartyList(anyDouble(), anyDouble());
+        List<PartyListDTO> partyList = partyQueryService.getPartyList(anyString(), anyDouble(), anyDouble());
         Assertions.assertThat(partyList.size()).isEqualTo(2);
     }
 

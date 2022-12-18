@@ -45,6 +45,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Import({AuthConfig.class})
+@Disabled
 public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     @Autowired
