@@ -31,7 +31,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(PartyApiController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@Disabled
 public class PartyApiControllerTest {
     @MockBean
     private PartyApplyService partyApplyService;
