@@ -47,6 +47,6 @@ public class PartyLikeServiceImpl implements PartyLikeService {
 
     @Override
     public boolean isPartyLike(Long partyId, String email) {
-        return partyLikeRepository.existByPartyIdAndMemberEmail(partyId, email);
+        return partyLikeRepository.existsByParty_IdAndMember_Email(partyId, email);
     }
 }

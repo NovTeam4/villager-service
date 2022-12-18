@@ -9,8 +9,5 @@ import org.springframework.data.repository.query.Param;
 public interface PartyLikeRepository extends JpaRepository<PartyLike, Long> {
     Optional<PartyLike> findByParty_IdAndMember_Email(Long partyId, String email);
 
-    @Query("select pl from PartyLike pl join fetch pl.party join fetch pl.member " +
-            " where pl.party.id = :partyId and " +
-            " pl.member.email = :email")
-    boolean existByPartyIdAndMemberEmail(@Param("partyId") Long partyId, @Param("email") String email);
+    boolean existsByParty_IdAndMember_Email(Long partyId, String email);
 }
