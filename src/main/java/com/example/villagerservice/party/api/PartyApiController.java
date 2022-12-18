@@ -35,8 +35,8 @@ public class PartyApiController {
 
     }
 
-    @GetMapping()
-    public List<PartyListDTO> getAllParty(@AuthenticationPrincipal Member member ,@RequestParam("LAT") Double LAT , @RequestParam("LNT") Double LNT) {
+    @GetMapping("/{LAT}/{LNT}")
+    public List<PartyListDTO> getAllParty(@AuthenticationPrincipal Member member ,@PathVariable("LAT") Double LAT , @PathVariable("LNT") Double LNT) {
 
         return partyQueryService.getPartyList(member.getEmail() , LAT, LNT);
 
