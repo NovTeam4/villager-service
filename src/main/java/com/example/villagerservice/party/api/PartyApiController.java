@@ -43,15 +43,15 @@ public class PartyApiController {
     }
 
     @GetMapping("/{partyId}")
-    public PartyDTO.Response getParty(@PathVariable Long partyId) {
+    public PartyDTO.Response getParty(@PathVariable Long partyId , @AuthenticationPrincipal Member member) {
 
-        return partyService.getParty(partyId);
+        return partyService.getParty(partyId , member.getEmail());
 
     }
 
     @PatchMapping("/{partyId}")
-    public PartyDTO.Response updateParty(@PathVariable Long partyId , @RequestBody UpdatePartyDTO.Request updatePartyRequest) {
-        return partyService.updateParty(partyId , updatePartyRequest);
+    public PartyDTO.Response updateParty(@PathVariable Long partyId , @RequestBody UpdatePartyDTO.Request updatePartyRequest , @AuthenticationPrincipal Member member) {
+        return partyService.updateParty(partyId , updatePartyRequest , member.getEmail());
     }
 
     @DeleteMapping("/{partyId}")

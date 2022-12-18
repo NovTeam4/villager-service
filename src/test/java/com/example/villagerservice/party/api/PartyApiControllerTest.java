@@ -1,7 +1,6 @@
 package com.example.villagerservice.party.api;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -190,7 +189,7 @@ public class PartyApiControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(partyService,times(1)).updateParty(anyLong() , any());
+        verify(partyService,times(1)).updateParty(anyLong() , any() , any());
     }
 
     @Test
@@ -214,7 +213,7 @@ public class PartyApiControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(partyQueryService,times(1)).getParty(anyLong());
+        verify(partyService,times(1)).getParty(anyLong() , anyString());
     }
 
     @Test
@@ -225,7 +224,7 @@ public class PartyApiControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(partyService,times(1)).getAllParty(any());
+        verify(partyQueryService,times(1)).getPartyList(anyDouble() , anyDouble());
     }
 
     @Test
