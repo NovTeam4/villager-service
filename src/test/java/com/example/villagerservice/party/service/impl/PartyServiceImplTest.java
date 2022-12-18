@@ -190,6 +190,7 @@ public class PartyServiceImplTest {
     @DisplayName("모임 조회 시 , 모임이 없을 경우")
     public void getPartyWithoutParty() {
 
+
         PartyException partyException = assertThrows(PartyException.class, () -> {
             partyService.getParty(1L , anyString());
         });
@@ -258,7 +259,9 @@ public class PartyServiceImplTest {
         given(partyQueryRepository.getPartyList(anyString() , anyDouble() , anyDouble()))
                 .willReturn(responseList);
 
+
         List<PartyListDTO> partyList = partyQueryService.getPartyList(member.getEmail(), 127.1, 127.1);
+
         Assertions.assertThat(partyList.size()).isEqualTo(2);
     }
 
