@@ -16,7 +16,7 @@ public class PartyQueryServiceImpl implements PartyQueryService {
     private final PartyQueryRepository partyQueryRepository;
 
     @Override
-    public List<PartyListDTO> getPartyList(Double LAT, Double LNT) {
-        return partyQueryRepository.getPartyList(LAT , LNT);
+    public List<PartyListDTO> getPartyList(String email ,Double LAT, Double LNT) {
+        return partyQueryRepository.getPartyList(email , LAT , LNT);
     }
 }
