@@ -1,6 +1,5 @@
 package com.example.villagerservice.party.service.impl;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,6 +7,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
+import com.example.villagerservice.events.service.impl.PartyCreatedEventServiceImpl;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
@@ -17,17 +17,19 @@ import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
+import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.villagerservice.party.repository.PartyTagRepository;
+import com.example.villagerservice.party.service.PartyCommentService;
+import com.example.villagerservice.party.service.PartyLikeService;
 import org.assertj.core.api.Assertions;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,15 +37,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+
 
 import javax.validation.constraints.NotNull;
 
 
 @ExtendWith(MockitoExtension.class)
-@Disabled
 public class PartyServiceImplTest {
 
     @Mock
@@ -51,6 +50,21 @@ public class PartyServiceImplTest {
 
     @Mock
     MemberRepository memberRepository;
+
+    @Mock
+    PartyQueryRepository partyQueryRepository;
+
+    @Mock
+    PartyTagRepository partyTagRepository;
+
+    @Mock
+    PartyCreatedEventServiceImpl partyCreatedEventService;
+
+    @Mock
+    PartyCommentService partyCommentService;
+
+    @Mock
+    PartyLikeService partyLikeService;
 
     @InjectMocks
     PartyServiceImpl partyService;
@@ -63,13 +77,7 @@ public class PartyServiceImplTest {
     @DisplayName("모임 등록 시 , 회원 없을 경우")
     public void createPartyWithoutMember() {
 
-        PartyDTO.Request partyRequest = PartyDTO.Request.builder()
-                .partyName("test-party")
-                .score(100)
-                .startDt(LocalDate.now())
-                .endDt(LocalDate.now().plusDays(2))
-                .amount(1000)
-                .build();
+        PartyDTO.Request request = createRequest();
 
         Member member = Member.builder()
                 .email("test@gmail.com")
@@ -78,7 +86,7 @@ public class PartyServiceImplTest {
 
 
         PartyException partyException = assertThrows(PartyException.class, () -> {
-            partyService.createParty(member.getId(), partyRequest);
+            partyService.createParty(member.getId(), request);
         });
 
         assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND_MEMBER.getErrorCode());
@@ -90,21 +98,7 @@ public class PartyServiceImplTest {
     @DisplayName("모임 등록 테스트")
     public void createParty(){
 
-        List<PartyTag> tagList = getTagList();
-
-        PartyDTO.Request request = PartyDTO.Request.builder()
-                .partyName("test-party")
-                .score(100)
-                .startDt(LocalDate.now())
-                .endDt(LocalDate.now().plusDays(2))
-                .amount(1000)
-                .numberPeople(2)
-                .location("수원시")
-                .latitude(127.1)
-                .longitude(127.1)
-                .content("test")
-                .tagList(tagList)
-                .build();
+        PartyDTO.Request request = createRequest();
 
 
         given(memberRepository.findById(anyLong()))
@@ -161,9 +155,12 @@ public class PartyServiceImplTest {
     @DisplayName("모임 변경 시, 모임이 없을 경우")
     void updatePartyWithoutParty() {
 
+        UpdatePartyDTO.Request request = UpdatePartyDTO.Request.builder()
+                .partyName("update-test-party")
+                .build();
         Long partyId = 1L;
         PartyException partyException = assertThrows(PartyException.class, () -> {
-            partyService.updateParty(partyId , any() , anyString());
+            partyService.updateParty(partyId , request , "test@gmail.com");
         });
 
         assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorCode());
@@ -190,14 +187,38 @@ public class PartyServiceImplTest {
     }
 
     @Test
-    @DisplayName("모임 전체 조회 시 , 모임이 없을 경우")
-    void getAllPartyWithoutParty(){
+    @DisplayName("모임 조회 시 , 모임이 없을 경우")
+    public void getPartyWithoutParty() {
 
-        PartyException partyException = assertThrows(PartyException.class,
-                () -> partyQueryService.getPartyList(anyDouble() ,anyDouble()));
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.getParty(1L , anyString());
+        });
 
-        Assertions.assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_REGISTERED.getErrorCode());
-        Assertions.assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_REGISTERED.getErrorMessage());
+        assertEquals(partyException.getErrorCode(), PartyErrorCode.PARTY_NOT_FOUND.getErrorCode());
+
+    }
+
+    @Test
+    @DisplayName("모임 조회 테스트")
+    public void findByParty_id() {
+
+        Long partyId = 1L;
+
+        PartyDTO.Request request = createRequest();
+
+        Member member = Member.builder()
+                .email("test@gmail.com")
+                .nickname("홍길동")
+                .build();
+
+        Party party = Party.createParty(request , member);
+
+        given(partyRepository.findById(any())).willReturn(Optional.of(party));
+
+        PartyDTO.Response result = partyService.getParty(partyId , member.getEmail());
+
+        Assertions.assertThat(result.getPartyName()).isEqualTo("test-party");
+        Assertions.assertThat(result.getNickname()).isEqualTo("홍길동");
 
     }
 
@@ -205,19 +226,7 @@ public class PartyServiceImplTest {
     @DisplayName("모임 전체 조회 테스트")
     void getAllParty(){
 
-        PartyDTO.Request request = PartyDTO.Request.builder()
-                .partyName("test-party")
-                .score(100)
-                .startDt(LocalDate.now())
-                .endDt(LocalDate.now().plusDays(2))
-                .amount(1000)
-                .numberPeople(2)
-                .location("수원시")
-                .latitude(127.1)
-                .longitude(127.1)
-                .content("test")
-                .tagList(null)
-                .build();
+        PartyDTO.Request request = createRequest();
 
         Member member = Member.builder()
                 .email("test@gmail.com")
@@ -231,14 +240,25 @@ public class PartyServiceImplTest {
         list.add(Party.createParty(request , member));
         list.add(Party.createParty(request , member));
 
-        Page<Party> partyPage = new PageImpl<>(list);
+        PartyListDTO partyListDTO = PartyListDTO.builder()
+                .partyName(request.getPartyName())
+                .nickname(member.getMemberDetail().getNickname())
+                .build();
 
-        given(partyRepository.count())
-                .willReturn(2L);
-        given(partyRepository.findAll((Pageable) any()))
-                .willReturn(partyPage);
+        List<PartyListDTO> responseList = new ArrayList<>();
+        responseList.add(PartyListDTO.builder()
+                .partyName(request.getPartyName())
+                .nickname(member.getMemberDetail().getNickname())
+                .build());
+        responseList.add(PartyListDTO.builder()
+                .partyName(request.getPartyName())
+                .nickname(member.getMemberDetail().getNickname())
+                .build());
 
-        List<PartyListDTO> partyList = partyQueryService.getPartyList(anyDouble(), anyDouble());
+        given(partyQueryRepository.getPartyList(anyString() , anyDouble() , anyDouble()))
+                .willReturn(responseList);
+
+        List<PartyListDTO> partyList = partyQueryService.getPartyList(member.getEmail(), 127.1, 127.1);
         Assertions.assertThat(partyList.size()).isEqualTo(2);
     }
 
@@ -276,5 +296,32 @@ public class PartyServiceImplTest {
         list.add(tag);
 
         return list;
+    }
+
+    private static PartyDTO.Request createRequest() {
+        List<PartyTag> tagList = new ArrayList<>();
+
+        tagList.add(PartyTag.builder()
+                .tagName("낚시")
+                .build());
+        tagList.add(PartyTag.builder()
+                .tagName("볼링")
+                .build());
+
+        PartyDTO.Request request = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
+                .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(tagList)
+                .build();
+
+        return request;
     }
 }
