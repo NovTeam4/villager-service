@@ -29,11 +29,12 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(PartyApiController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class PartyApiControllerTest {
-
     @MockBean
     private PartyApplyService partyApplyService;
     @MockBean
     private PartyLikeService partyLikeService;
+    @MockBean
+    private PartyQueryService partyQueryService;
     @MockBean
     private PartyService partyService;
 
@@ -213,7 +214,7 @@ public class PartyApiControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(partyService,times(1)).getParty(anyLong());
+        verify(partyQueryService,times(1)).getParty(anyLong());
     }
 
     @Test

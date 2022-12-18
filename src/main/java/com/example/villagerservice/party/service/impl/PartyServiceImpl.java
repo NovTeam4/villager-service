@@ -5,20 +5,15 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyComment;
-import com.example.villagerservice.party.dto.PartyCommentDTO;
 import com.example.villagerservice.party.dto.PartyDTO;
-import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.domain.PartyCreatedEvent;
 import com.example.villagerservice.party.exception.PartyException;
-import com.example.villagerservice.party.repository.PartyCommentRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.repository.PartyTagRepository;
 import com.example.villagerservice.party.service.PartyCommentService;
 import com.example.villagerservice.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,9 +59,12 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
+    @Transactional
     public void deleteParty(Long partyId) {
-        partyCheckedById(partyId);
-        partyRepository.deleteById(partyId);
+        Party party = partyCheckedById(partyId);
+        partyCommentService.deleteAllComment(party.getId());
+        partyTagRepository.deleteAllByParty_id(party.getId());
+        partyRepository.deleteById(party.getId());
     }
 
     private Member memberCheckedById(Long memberId) {

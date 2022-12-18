@@ -56,7 +56,6 @@ public class PartyApiController {
 
     @DeleteMapping("/{partyId}")
     public void deleteParty(@PathVariable Long partyId) {
-
         partyService.deleteParty(partyId);
     }
 
