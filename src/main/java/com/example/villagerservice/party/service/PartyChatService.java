@@ -1,16 +1,14 @@
 package com.example.villagerservice.party.service;
 
-import static com.example.villagerservice.party.exception.PartyErrorCode.*;
+import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_CHAT_ROOM_NOT_FOUND;
 
 import com.example.villagerservice.party.domain.PartyChatMessage;
 import com.example.villagerservice.party.domain.PartyChatRoom;
 import com.example.villagerservice.party.dto.PartyChatMessageDto;
-import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyChatMessageRepository;
 import com.example.villagerservice.party.repository.PartyChatRoomRepository;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -22,6 +20,10 @@ public class PartyChatService {
     private final PartyChatRoomRepository partyChatRoomRepository;
     private final PartyChatMessageRepository partyChatMessageRepository;
 
+    /**
+     * 처음 접속 시
+     * @param message
+     */
     public void enter(PartyChatMessageDto message) {
         message.setMessage(message.getWriterNickname() + "님이 모임에 참여하였습니다.");
 
@@ -41,6 +43,10 @@ public class PartyChatService {
         template.convertAndSend("/sub/chat/ room/" + message.getRoomId(), message);
     }
 
+    /**
+     * 메세지 전송
+     * @param message
+     */
     public void message(PartyChatMessageDto message){
         // 바로 메세지 전송
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
@@ -56,5 +62,14 @@ public class PartyChatService {
         partyChatRoom.update(partyChatMessage);
         // 채팅방 저장
         partyChatRoomRepository.save(partyChatRoom);
+    }
+
+    /**
+     * 채팅방 개설
+     * @param hostNickname
+     * @param roomName
+     */
+    public void create(String hostNickname, String roomName) {
+        partyChatRoomRepository.save(PartyChatRoom.toEntity(hostNickname, roomName));
     }
 }

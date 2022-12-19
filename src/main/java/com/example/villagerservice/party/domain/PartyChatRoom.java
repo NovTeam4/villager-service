@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,13 +16,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class PartyChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String roomId;
 
     private String roomName;
 
@@ -33,5 +35,12 @@ public class PartyChatRoom {
     public PartyChatRoom update(PartyChatMessage message) {
         this.partyChatMessageList.add(message);
         return this;
+    }
+
+    public static PartyChatRoom toEntity(String hostMemberNickname, String roomName){
+        return PartyChatRoom.builder()
+            .roomName(roomName)
+            .hostNickname(hostMemberNickname)
+            .build();
     }
 }

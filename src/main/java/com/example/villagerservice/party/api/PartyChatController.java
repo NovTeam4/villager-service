@@ -1,16 +1,20 @@
 package com.example.villagerservice.party.api;
 
+import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.dto.PartyChatMessageDto;
-import com.example.villagerservice.party.repository.PartyChatMessageRepository;
-import com.example.villagerservice.party.repository.PartyChatRoomRepository;
 import com.example.villagerservice.party.service.PartyChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/parties")
+@MessageMapping("/api/v1/parties")
 public class PartyChatController {
     private final PartyChatService partyChatService;
 
@@ -25,6 +29,12 @@ public class PartyChatController {
     @MessageMapping(value = "/chat/message")
     public void message(PartyChatMessageDto message) {
         partyChatService.message(message);
+    }
+
+    //채팅방 개설
+    @PostMapping(value = "/room/{roomName}")
+    public void create(@AuthenticationPrincipal Member member, @PathVariable String roomName){
+        partyChatService.create(member.getMemberDetail().getNickname(), roomName);
     }
 //    @MessageMapping 을 통해 WebSocket 으로 들어오는 메세지 발행을 처리한다.
 //    Client 에서는 prefix 를 붙여 "/pub/chat/enter"로 발행 요청을 하면
