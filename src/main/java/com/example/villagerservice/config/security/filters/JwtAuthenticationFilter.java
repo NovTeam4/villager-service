@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } else {
                 try {
                     String accessToken = null;
-                    if(servletPath.equals("/api/v1/auth/refresh")) {
+                    if(servletPath.equals("/api/v1/auth/refresh") || servletPath.equals("/api/v1/auth/logout")) {
                         accessToken = jwtTokenProvider.getAccessToken(request);
                     } else {
                         accessToken = jwtTokenProvider.resolveAccessToken(request);

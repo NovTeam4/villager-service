@@ -265,7 +265,7 @@ class AuthApiControllerTest {
     @DisplayName("로그아웃 테스트")
     void logoutTest() throws Exception {
         // given
-        given(jwtTokenProvider.resolveAccessToken(any()))
+        given(jwtTokenProvider.getAccessToken(any()))
                 .willReturn("accessToken");
 
         doNothing()
@@ -278,7 +278,7 @@ class AuthApiControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(jwtTokenProvider, times(1)).resolveAccessToken(any());
+        verify(jwtTokenProvider, times(1)).getAccessToken(any());
         verify(authTokenService, times(1)).logout(anyLong(), anyString());
     }
 
