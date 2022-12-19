@@ -2,10 +2,7 @@ package com.example.villagerservice.party.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,8 +24,14 @@ public class PartyChatRoom {
 
     private String roomName;
 
-    private String chatMentor;
+    private String hostNickname;
 
     @OneToMany
     private List<PartyChatMessage> partyChatMessageList = new ArrayList<>();
+
+    // 새로운 메세지를 업데이트
+    public PartyChatRoom update(PartyChatMessage message) {
+        this.partyChatMessageList.add(message);
+        return this;
+    }
 }

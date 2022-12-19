@@ -14,15 +14,15 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         // 서버에서 가공해야하는데이터
-        registry.setApplicationDestinationPrefixes("/app");
+        registry.setApplicationDestinationPrefixes("/pub");
         // 가공할 필요가 없음 queue: 1:1 송신 topic: 1:N 송신
-        registry.enableSimpleBroker("/queue", "/topic");
+        registry.enableSimpleBroker("/sub");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/stomp/chat").withSockJS();
+        registry.addEndpoint("/stomp/chat")
+            .setAllowedOrigins("*")
+            .withSockJS();
     }
-
-
 }
