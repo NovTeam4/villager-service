@@ -49,13 +49,16 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    private String picture;
+
     @Builder
-    private Member(String nickname, String email, String encodedPassword, Gender gender, Birthday birthday, String introduce, SocialType socialType) {
+    private Member(String nickname, String email, String encodedPassword, Gender gender, Birthday birthday, String introduce, SocialType socialType, String picture) {
         this.email = email;
         this.encodedPassword = encodedPassword;
         this.isDeleted = false;
         this.roleType = RoleType.USER;
         this.socialType = socialType;
+        this.picture = picture;
         addMemberDetail(nickname, gender, birthday, introduce);
     }
 

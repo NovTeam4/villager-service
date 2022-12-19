@@ -1,5 +1,6 @@
 package com.example.villagerservice.config.security.oauth2.model;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
@@ -10,11 +11,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collection;
 import java.util.Map;
 
+@Getter
 public class PrincipalUser implements UserDetails, OidcUser, OAuth2User {
 
     private final ProviderUser providerUser;
-    public PrincipalUser(ProviderUser providerUser) {
+    private final Long memberId;
+    public PrincipalUser(ProviderUser providerUser, Long memberId) {
         this.providerUser = providerUser;
+        this.memberId = memberId;
     }
 
     @Override
