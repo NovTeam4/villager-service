@@ -1,6 +1,7 @@
 package com.example.villagerservice.member.domain;
 
 import com.example.villagerservice.common.domain.BaseTimeEntity;
+import com.example.villagerservice.config.security.oauth2.enums.SocialType;
 import com.example.villagerservice.member.exception.MemberException;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -45,12 +46,16 @@ public class Member extends BaseTimeEntity {
     @Embedded
     private TagCollection tagCollection = new TagCollection();
 
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+
     @Builder
-    private Member(String nickname, String email, String encodedPassword, Gender gender, Birthday birthday, String introduce) {
+    private Member(String nickname, String email, String encodedPassword, Gender gender, Birthday birthday, String introduce, SocialType socialType) {
         this.email = email;
         this.encodedPassword = encodedPassword;
         this.isDeleted = false;
         this.roleType = RoleType.USER;
+        this.socialType = socialType;
         addMemberDetail(nickname, gender, birthday, introduce);
     }
 
