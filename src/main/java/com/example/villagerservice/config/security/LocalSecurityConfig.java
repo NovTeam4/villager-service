@@ -1,6 +1,9 @@
 package com.example.villagerservice.config.security;
 
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
+import com.example.villagerservice.config.security.oauth2.CustomAuthorityMapper;
+import com.example.villagerservice.config.security.oauth2.service.CustomOAuth2UserService;
+import com.example.villagerservice.config.security.oauth2.service.CustomOidcUserService;
 import com.example.villagerservice.config.redis.RedisRepository;
 import com.example.villagerservice.config.security.filters.CustomAuthenticationFilter;
 import com.example.villagerservice.config.security.filters.JwtAuthenticationFilter;
@@ -19,6 +22,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -39,6 +43,8 @@ public class LocalSecurityConfig {
     private final RedisRepository redisRepository;
     private final CorsProperties corsProperties;
     private final Environment env;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOidcUserService customOidcUserService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -76,6 +82,13 @@ public class LocalSecurityConfig {
             http.addFilterBefore(new LocalAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         }
 
+        http
+                .oauth2Login(oauth2 ->
+                        oauth2.userInfoEndpoint(userInfoEndpointConfig ->
+                                userInfoEndpointConfig
+                                        .userService(customOAuth2UserService)
+                                        .oidcUserService(customOidcUserService)));
+
         return http.build();
     }
 
@@ -105,5 +118,10 @@ public class LocalSecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
         return authConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public GrantedAuthoritiesMapper customAuthorityMapper() {
+        return new CustomAuthorityMapper();
     }
 }
