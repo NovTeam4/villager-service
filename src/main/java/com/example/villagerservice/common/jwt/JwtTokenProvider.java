@@ -173,7 +173,20 @@ public class JwtTokenProvider {
         }
     }
 
-    public String resolveRefreshToken(HttpServletRequest request) {
+    public String getAccessToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(JWT_TOKEN_HEADER);
+
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(JWT_TOKEN_GRANT_TYPE)) {
+
+            String accessToken = bearerToken.substring(7);
+            validateToken(accessToken, JwtTokenType.ACCESS_TOKEN);
+            return accessToken;
+        } else {
+            throw new JwtTokenException(JWT_ACCESS_TOKEN_NOT_EXIST);
+        }
+    }
+
+    public String getRefreshToken(HttpServletRequest request) {
         return request.getHeader("refresh-token");
     }
 }

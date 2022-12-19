@@ -55,8 +55,8 @@ public class AuthApiController {
             @AuthenticationPrincipal Member member,
             HttpServletRequest request) {
 
-        String accessToken = jwtTokenProvider.resolveAccessToken(request);
-        String refreshToken = jwtTokenProvider.resolveRefreshToken(request);
+        String accessToken = jwtTokenProvider.getAccessToken(request);
+        String refreshToken = jwtTokenProvider.getRefreshToken(request);
         accessTokenValid(accessToken);
         refreshTokenValid(refreshToken);
 
