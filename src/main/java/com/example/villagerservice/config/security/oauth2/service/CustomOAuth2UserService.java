@@ -5,6 +5,7 @@ import com.example.villagerservice.config.security.oauth2.converters.ProviderUse
 import com.example.villagerservice.config.security.oauth2.model.PrincipalUser;
 import com.example.villagerservice.config.security.oauth2.model.ProviderUser;
 import com.example.villagerservice.member.domain.MemberRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -16,8 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomOAuth2UserService extends AbstractOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    public CustomOAuth2UserService(MemberRepository memberRepository, MemberService memberService, ProviderUserConverter<ProviderUserRequest, ProviderUser> providerUserConverter) {
-        super(memberRepository, memberService, providerUserConverter);
+    public CustomOAuth2UserService(MemberRepository memberRepository, ProviderUserConverter<ProviderUserRequest, ProviderUser> providerUserConverter) {
+        super(memberRepository, providerUserConverter);
     }
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -31,8 +32,7 @@ public class CustomOAuth2UserService extends AbstractOAuth2UserService implement
         ProviderUser providerUser = super.providerUser(providerUserRequest);
 
         // 회원 가입
-        super.register(providerUser, userRequest);
-
-        return new PrincipalUser(providerUser);
+        Long memberId = super.register(providerUser, userRequest);
+        return new PrincipalUser(providerUser, memberId);
     }
 }

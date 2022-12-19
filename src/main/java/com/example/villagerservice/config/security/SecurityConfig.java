@@ -33,9 +33,8 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final RedisRepository redisRepository;
     private final CorsProperties corsProperties;
+    private final CustomSuccessHandler successHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -90,7 +89,9 @@ public class SecurityConfig {
         CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManager);
         authenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
         authenticationFilter.setAuthenticationFailureHandler(new CustomFailureHandler());
-        authenticationFilter.setAuthenticationSuccessHandler(new CustomSuccessHandler(jwtTokenProvider, redisTemplate, redisRepository));
+        //authenticationFilter.setAuthenticationSuccessHandler(new CustomSuccessHandler(jwtTokenProvider, redisTemplate, redisRepository));
+        authenticationFilter.setAuthenticationSuccessHandler(successHandler);
+
         return authenticationFilter;
     }
 

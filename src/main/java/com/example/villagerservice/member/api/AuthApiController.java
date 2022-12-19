@@ -39,7 +39,7 @@ public class AuthApiController {
     @GetMapping("/logout")
     public void logout(@AuthenticationPrincipal Member member,
                        HttpServletRequest request) {
-        String accessToken = jwtTokenProvider.resolveAccessToken(request);
+        String accessToken = jwtTokenProvider.getAccessToken(request);
         accessTokenValid(accessToken);
 
         authTokenService.logout(member.getId(), accessToken);

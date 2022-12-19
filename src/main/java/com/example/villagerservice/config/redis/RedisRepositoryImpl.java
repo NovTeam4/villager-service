@@ -1,6 +1,7 @@
 package com.example.villagerservice.config.redis;
 
 import com.example.villagerservice.common.jwt.JwtTokenInfoDto;
+import com.example.villagerservice.config.security.oauth2.model.PrincipalUser;
 import com.example.villagerservice.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -34,7 +35,11 @@ public class RedisRepositoryImpl implements RedisRepository {
     }
 
     private String getKey(Authentication authentication) {
-        return REDIS_KEY_PREFIX + ((Member) authentication.getPrincipal()).getEmail();
+        if(authentication.getPrincipal() instanceof Member) {
+            return REDIS_KEY_PREFIX + ((Member) authentication.getPrincipal()).getEmail();
+        } else {
+            return REDIS_KEY_PREFIX + ((PrincipalUser) authentication.getPrincipal()).getProviderUser().getEmail();
+        }
     }
 
 }
