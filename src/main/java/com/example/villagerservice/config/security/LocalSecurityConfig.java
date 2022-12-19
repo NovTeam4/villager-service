@@ -37,15 +37,13 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Profile(value = {"local", "town-test"})
 public class LocalSecurityConfig {
-
     private final JwtTokenProvider jwtTokenProvider;
-//    private final RedisTemplate<String, Object> redisTemplate;
-//    private final RedisRepository redisRepository;
     private final CorsProperties corsProperties;
     private final Environment env;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOidcUserService customOidcUserService;
     private final CustomSuccessHandler successHandler;
+    private final CustomFailureHandler failureHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -91,7 +89,8 @@ public class LocalSecurityConfig {
                                         .oidcUserService(customOidcUserService)));
         http
                 .oauth2Login()
-                .successHandler(successHandler);
+                .successHandler(successHandler)
+                .failureHandler(failureHandler);
 
         return http.build();
     }
@@ -114,9 +113,8 @@ public class LocalSecurityConfig {
     private CustomAuthenticationFilter createCustomAuthenticationFilter(AuthenticationManager authenticationManager) {
         CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManager);
         authenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
-        authenticationFilter.setAuthenticationFailureHandler(new CustomFailureHandler());
+        authenticationFilter.setAuthenticationFailureHandler(failureHandler);
         authenticationFilter.setAuthenticationSuccessHandler(successHandler);
-        //authenticationFilter.setAuthenticationSuccessHandler(new CustomSuccessHandler(jwtTokenProvider, redisRepository));
         return authenticationFilter;
     }
 

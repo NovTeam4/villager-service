@@ -1,6 +1,8 @@
 package com.example.villagerservice.config.security;
 
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
+import com.example.villagerservice.config.security.oauth2.service.CustomOAuth2UserService;
+import com.example.villagerservice.config.security.oauth2.service.CustomOidcUserService;
 import com.example.villagerservice.config.security.properties.CorsProperties;
 import com.example.villagerservice.config.redis.RedisRepository;
 import com.example.villagerservice.config.security.filters.CustomAuthenticationFilter;
@@ -35,7 +37,9 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final CorsProperties corsProperties;
     private final CustomSuccessHandler successHandler;
-
+    private final CustomFailureHandler failureHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOidcUserService customOidcUserService;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -67,6 +71,17 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
         ;
 
+        http
+                .oauth2Login(oauth2 ->
+                        oauth2.userInfoEndpoint(userInfoEndpointConfig ->
+                                userInfoEndpointConfig
+                                        .userService(customOAuth2UserService)
+                                        .oidcUserService(customOidcUserService)));
+        http
+                .oauth2Login()
+                .successHandler(successHandler)
+                .failureHandler(failureHandler);
+
         return http.build();
     }
 
@@ -88,8 +103,7 @@ public class SecurityConfig {
     private CustomAuthenticationFilter createCustomAuthenticationFilter(AuthenticationManager authenticationManager) {
         CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManager);
         authenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
-        authenticationFilter.setAuthenticationFailureHandler(new CustomFailureHandler());
-        //authenticationFilter.setAuthenticationSuccessHandler(new CustomSuccessHandler(jwtTokenProvider, redisTemplate, redisRepository));
+        authenticationFilter.setAuthenticationFailureHandler(failureHandler);
         authenticationFilter.setAuthenticationSuccessHandler(successHandler);
 
         return authenticationFilter;
