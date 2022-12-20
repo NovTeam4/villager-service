@@ -50,7 +50,7 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
 
     private String getQuery(){
 
-        return " SELECT p.party_id ,p.party_name ,p.start_dt , p.end_dt ,m.nickname , p.content, p.location ,(6371*acos(cos(radians(?))*cos(radians(p.latitude))*cos(radians(p.longitude)-radians(?))+sin(radians(?))*sin(radians(p.latitude)))) AS distance " +
+        return " SELECT p.party_id ,p.party_name ,p.start_dt , p.end_dt ,m.nickname , p.content, p.location , m.member_id ,(6371*acos(cos(radians(?))*cos(radians(p.latitude))*cos(radians(p.longitude)-radians(?))+sin(radians(?))*sin(radians(p.latitude)))) AS distance " +
                 " FROM party as p join member_detail as m on m.member_id = p.member_id " +
                 " ORDER BY distance " +
                 " limit 5 ";
@@ -67,7 +67,8 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
                 rs.getString("content"),
                 rs.getString("location"),
                 new ArrayList<>(),
-                false
+                false,
+                rs.getLong("member_id")
         ));
     }
 }
