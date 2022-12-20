@@ -32,4 +32,8 @@ public class PartyComment {
                 .party(party)
                 .build();
     }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
 }

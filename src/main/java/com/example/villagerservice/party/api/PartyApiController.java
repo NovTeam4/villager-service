@@ -94,4 +94,9 @@ public class PartyApiController {
         partyCommentService.createComment(partyId , contents);
 
     }
+
+    @PatchMapping("/{partyCommentId}/comment")
+    public String updateComment(@PathVariable Long partyCommentId , @RequestBody String contents) {
+        return partyCommentService.updateComment(partyCommentId , contents);
+    }
 }

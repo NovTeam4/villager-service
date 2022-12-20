@@ -12,4 +12,6 @@ public interface PartyCommentService {
 
     void deleteAllComment(Long partyId);
 
+    String updateComment(Long partyCommentId , String contents);
+
 }
