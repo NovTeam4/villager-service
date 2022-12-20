@@ -41,7 +41,6 @@ public class PartyServiceImpl implements PartyService {
     private final PartyTagRepository partyTagRepository;
     private final PartyCommentService partyCommentService;
     private final PartyCreatedEventService partyCreatedEventService;
-
     private final PartyLikeService partyLikeService;
     @Override
     @Transactional
@@ -76,6 +75,11 @@ public class PartyServiceImpl implements PartyService {
 
         System.out.println("party.getMember().getId() = " + party.getMember().getId());
         return PartyDTO.Response.createPartyResponse(party , commentList , partyLike);
+    }
+
+    @Override
+    public void startParty(Long partyId, Member member) {
+
     }
 
     @Override

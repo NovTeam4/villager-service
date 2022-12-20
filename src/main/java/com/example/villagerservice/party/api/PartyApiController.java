@@ -99,4 +99,9 @@ public class PartyApiController {
     public String updateComment(@PathVariable Long partyCommentId , @RequestBody String contents) {
         return partyCommentService.updateComment(partyCommentId , contents);
     }
+
+    @PostMapping("{partyId}/start")
+    public void partyStart(@PathVariable Long partyId, @AuthenticationPrincipal Member member){
+        partyService.startParty(partyId, member);
+    }
 }
