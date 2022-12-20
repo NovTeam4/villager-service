@@ -28,14 +28,16 @@ public class PartyMember extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
     private Party party;
 
-    @Enumerated(EnumType.STRING)
-    private PartyMemberRolesType roles;
+    public static PartyMember createPartyMember(PartyApply acceptPartyApply) {
+        return PartyMember.builder()
+            .memberId(acceptPartyApply.getTargetMemberId())
+            .party(acceptPartyApply.getParty())
+            .build();
+    }
 }

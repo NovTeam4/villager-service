@@ -11,12 +11,14 @@ import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyApply;
 import com.example.villagerservice.party.domain.PartyComment;
+import com.example.villagerservice.party.domain.PartyMember;
 import com.example.villagerservice.party.dto.PartyApplyDto;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyApplyRepository;
+import com.example.villagerservice.party.repository.PartyMemberRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.repository.PartyTagRepository;
 import com.example.villagerservice.party.service.PartyApplyQueryService;
@@ -42,6 +44,8 @@ public class PartyServiceImpl implements PartyService {
     private final PartyCreatedEventService partyCreatedEventService;
     private final PartyLikeService partyLikeService;
     private final PartyApplyQueryService partyApplyQueryService;
+    private final PartyApplyRepository partyApplyRepository;
+    private final PartyMemberRepository partyMemberRepository;
 
     @Override
     @Transactional
@@ -108,6 +112,15 @@ public class PartyServiceImpl implements PartyService {
             throw new PartyException(PARTY_MEMBER_EMPTY);
         }
 
+        // 신청 테이블 삭제
+        for(PartyApply partyApply: partyApplyList){
+            partyApplyRepository.delete(partyApply);
+        }
+
+        // 모임원 테이블 insert
+        for(PartyApply acceptPartyApply: acceptPartyApplyList){
+            partyMemberRepository.save(PartyMember.createPartyMember(acceptPartyApply));
+        }
     }
 
     @Override
