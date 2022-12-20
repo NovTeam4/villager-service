@@ -215,7 +215,7 @@ class AuthApiControllerTest {
     @DisplayName("refresh 토큰 요청 시 refresh-token이 없을 경우")
     void reissueNotRefreshTokenExistTest() throws Exception {
         // given
-        given(jwtTokenProvider.resolveAccessToken(any()))
+        given(jwtTokenProvider.getAccessToken(any()))
                 .willReturn("accessToken");
 
         // when & then
@@ -231,9 +231,9 @@ class AuthApiControllerTest {
     @DisplayName("refresh 토큰 요청 테스트")
     void reissueTest() throws Exception {
         // given
-        given(jwtTokenProvider.resolveAccessToken(any()))
+        given(jwtTokenProvider.getAccessToken(any()))
                 .willReturn("accessToken");
-        given(jwtTokenProvider.resolveRefreshToken(any()))
+        given(jwtTokenProvider.getRefreshToken(any()))
                 .willReturn("refreshToken");
         given(authTokenService.getReissueTokenInfo(anyLong(), anyString(), anyString()))
                 .willReturn(JwtTokenInfoDto
@@ -254,8 +254,8 @@ class AuthApiControllerTest {
                 .andExpect(jsonPath("accessTokenExpirationTime").value(50000L))
                 .andDo(print());
 
-        verify(jwtTokenProvider, times(1)).resolveAccessToken(any());
-        verify(jwtTokenProvider, times(1)).resolveRefreshToken(any());
+        verify(jwtTokenProvider, times(1)).getAccessToken(any());
+        verify(jwtTokenProvider, times(1)).getRefreshToken(any());
         verify(authTokenService, times(1))
                 .getReissueTokenInfo(anyLong(), anyString(), anyString());
     }
@@ -265,7 +265,7 @@ class AuthApiControllerTest {
     @DisplayName("로그아웃 테스트")
     void logoutTest() throws Exception {
         // given
-        given(jwtTokenProvider.resolveAccessToken(any()))
+        given(jwtTokenProvider.getAccessToken(any()))
                 .willReturn("accessToken");
 
         doNothing()
@@ -278,7 +278,7 @@ class AuthApiControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(jwtTokenProvider, times(1)).resolveAccessToken(any());
+        verify(jwtTokenProvider, times(1)).getAccessToken(any());
         verify(authTokenService, times(1)).logout(anyLong(), anyString());
     }
 

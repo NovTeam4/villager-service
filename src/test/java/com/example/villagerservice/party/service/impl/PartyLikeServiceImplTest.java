@@ -86,7 +86,7 @@ class PartyLikeServiceImplTest {
     @DisplayName("좋아요 조회 - 존재")
     void 좋아요_조회_존재() {
         // given
-        given(partyLikeRepository.existByPartyIdAndMemberEmail(anyLong(), any()))
+        given(partyLikeRepository.existsByParty_IdAndMember_Email(anyLong(), any()))
             .willReturn(true);
 
         // when
@@ -100,7 +100,7 @@ class PartyLikeServiceImplTest {
     @DisplayName("좋아요 조회 - 존재하지않음")
     void 좋아요_조회_존재하지않음() {
         // given
-        given(partyLikeRepository.existByPartyIdAndMemberEmail(anyLong(), any()))
+        given(partyLikeRepository.existsByParty_IdAndMember_Email(anyLong(), any()))
             .willReturn(false);
 
         // when

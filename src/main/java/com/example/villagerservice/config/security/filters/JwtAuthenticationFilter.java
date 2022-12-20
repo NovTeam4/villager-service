@@ -40,7 +40,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 JwtTokenResponse.createJwtTokenErrorResponse(response, SC_BAD_REQUEST, JWT_ACCESS_TOKEN_NOT_EXIST);
             } else {
                 try {
-                    String accessToken = jwtTokenProvider.resolveAccessToken(request);
+                    String accessToken = null;
+                    if(servletPath.equals("/api/v1/auth/refresh") || servletPath.equals("/api/v1/auth/logout")) {
+                        accessToken = jwtTokenProvider.getAccessToken(request);
+                    } else {
+                        accessToken = jwtTokenProvider.resolveAccessToken(request);
+                    }
 
                     Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
                     Member member = (Member) authentication.getPrincipal();
@@ -59,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.equals("/api/v1/auth/login") ||
                 path.equals("/api/v1/auth/signup") ||
                 path.equals("/api/v1/auth/valid/nickname") ||
+                path.contains("/oauth2/authorization") ||
                 (path.contains("/api/v1/auth/email-cert") && httpMethod.equals("POST")) ||
                 (path.contains("/api/v1/posts") && httpMethod.equals("GET")) ||
                 path.equals("/h2-console") ||

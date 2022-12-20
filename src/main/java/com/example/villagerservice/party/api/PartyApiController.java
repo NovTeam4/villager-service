@@ -35,23 +35,23 @@ public class PartyApiController {
 
     }
 
-    @GetMapping()
-    public List<PartyListDTO> getAllParty(@RequestParam("LAT") Double LAT , @RequestParam("LNT") Double LNT) {
+    @GetMapping("/{LAT}/{LNT}")
+    public List<PartyListDTO> getAllParty(@AuthenticationPrincipal Member member ,@PathVariable("LAT") Double LAT , @PathVariable("LNT") Double LNT) {
 
-        return partyQueryService.getPartyList(LAT, LNT);
+        return partyQueryService.getPartyList(member.getEmail() , LAT, LNT);
 
     }
 
     @GetMapping("/{partyId}")
-    public PartyDTO.Response getParty(@PathVariable Long partyId) {
+    public PartyDTO.Response getParty(@PathVariable Long partyId , @AuthenticationPrincipal Member member) {
 
-        return partyService.getParty(partyId);
+        return partyService.getParty(partyId , member.getEmail());
 
     }
 
     @PatchMapping("/{partyId}")
-    public PartyDTO.Response updateParty(@PathVariable Long partyId , @RequestBody UpdatePartyDTO.Request updatePartyRequest) {
-        return partyService.updateParty(partyId , updatePartyRequest);
+    public PartyDTO.Response updateParty(@PathVariable Long partyId , @RequestBody UpdatePartyDTO.Request updatePartyRequest , @AuthenticationPrincipal Member member) {
+        return partyService.updateParty(partyId , updatePartyRequest , member.getEmail());
     }
 
     @DeleteMapping("/{partyId}")
@@ -93,5 +93,10 @@ public class PartyApiController {
 
         partyCommentService.createComment(partyId , contents);
 
+    }
+
+    @PatchMapping("/{partyCommentId}/comment")
+    public String updateComment(@PathVariable Long partyCommentId , @RequestBody String contents) {
+        return partyCommentService.updateComment(partyCommentId , contents);
     }
 }

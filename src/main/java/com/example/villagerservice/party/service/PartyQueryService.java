@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface PartyQueryService {
 
-    public List<PartyListDTO> getPartyList(Double lat , Double lnt);
+    public List<PartyListDTO> getPartyList(String email , Double lat , Double lnt);
 
 }

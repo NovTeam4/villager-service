@@ -1,24 +1,26 @@
 package com.example.villagerservice.config.security;
 
 import com.example.villagerservice.common.jwt.JwtTokenProvider;
-import com.example.villagerservice.config.redis.RedisRepository;
 import com.example.villagerservice.config.security.filters.CustomAuthenticationFilter;
 import com.example.villagerservice.config.security.filters.JwtAuthenticationFilter;
 import com.example.villagerservice.config.security.filters.LocalAuthenticationFilter;
 import com.example.villagerservice.config.security.handler.CustomFailureHandler;
 import com.example.villagerservice.config.security.handler.CustomSuccessHandler;
+import com.example.villagerservice.config.security.oauth2.CustomAuthorityMapper;
+import com.example.villagerservice.config.security.oauth2.service.CustomOAuth2UserService;
+import com.example.villagerservice.config.security.oauth2.service.CustomOidcUserService;
 import com.example.villagerservice.config.security.properties.CorsProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -33,12 +35,13 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Profile(value = {"local", "town-test"})
 public class LocalSecurityConfig {
-
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final RedisRepository redisRepository;
     private final CorsProperties corsProperties;
     private final Environment env;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOidcUserService customOidcUserService;
+    private final CustomSuccessHandler successHandler;
+    private final CustomFailureHandler failureHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -56,7 +59,7 @@ public class LocalSecurityConfig {
                 .frameOptions()
                 .sameOrigin()
         ;
-        
+
         http
                 .cors()
                 .and()
@@ -70,11 +73,20 @@ public class LocalSecurityConfig {
                 .addFilter(authenticationFilter)
         ;
 
-        if(Boolean.parseBoolean(env.getProperty("jwt.active"))) {
+        if (Boolean.parseBoolean(env.getProperty("jwt.active"))) {
             http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         } else {
             http.addFilterBefore(new LocalAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         }
+
+        http
+                .oauth2Login(oauth2 ->
+                        oauth2.userInfoEndpoint(userInfoEndpointConfig ->
+                                        userInfoEndpointConfig
+                                                .userService(customOAuth2UserService)
+                                                .oidcUserService(customOidcUserService))
+                                .successHandler(successHandler)
+                                .failureHandler(failureHandler));
 
         return http.build();
     }
@@ -97,13 +109,18 @@ public class LocalSecurityConfig {
     private CustomAuthenticationFilter createCustomAuthenticationFilter(AuthenticationManager authenticationManager) {
         CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManager);
         authenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
-        authenticationFilter.setAuthenticationFailureHandler(new CustomFailureHandler());
-        authenticationFilter.setAuthenticationSuccessHandler(new CustomSuccessHandler(jwtTokenProvider, redisTemplate, redisRepository));
+        authenticationFilter.setAuthenticationFailureHandler(failureHandler);
+        authenticationFilter.setAuthenticationSuccessHandler(successHandler);
         return authenticationFilter;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
         return authConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public GrantedAuthoritiesMapper customAuthorityMapper() {
+        return new CustomAuthorityMapper();
     }
 }

@@ -4,7 +4,6 @@ import com.example.villagerservice.member.domain.Birthday;
 import com.example.villagerservice.member.domain.Gender;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.valid.Birth;
-import com.example.villagerservice.member.valid.DigitLength;
 import com.example.villagerservice.member.valid.Genders;
 import com.example.villagerservice.member.valid.Password;
 import lombok.AllArgsConstructor;
@@ -14,6 +13,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.*;
+
+import static com.example.villagerservice.config.security.oauth2.enums.SocialType.VILLAGER;
 
 
 public class CreateMember {
@@ -53,6 +54,7 @@ public class CreateMember {
                     .gender(Gender.valueOf(this.gender))
                     .birthday(new Birthday(getYear(birth), getMonth(birth), getDay(birth)))
                     .introduce(this.introduce)
+                    .socialType(VILLAGER)
                     .build();
         }
 

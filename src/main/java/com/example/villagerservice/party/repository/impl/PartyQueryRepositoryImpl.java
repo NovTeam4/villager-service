@@ -2,6 +2,7 @@ package com.example.villagerservice.party.repository.impl;
 
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.dto.PartyListDTO;
+import com.example.villagerservice.party.repository.PartyLikeRepository;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,17 +20,20 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Override
-    public List<PartyListDTO> getPartyList(Double LAT, Double LNT) {
+    private final PartyLikeRepository partyLikeRepository;
 
-        System.out.println("LAT = " + LAT);
-        System.out.println("LNT = " + LNT);
+    @Override
+    public List<PartyListDTO> getPartyList(String email ,Double LAT, Double LNT) {
+
         List<PartyListDTO> partyList = jdbcTemplate.query(getQuery(), mapRow(), LAT, LNT, LAT);
         for (PartyListDTO partyListDTO : partyList) {
             List<String> tagNameList = getTagNameList(partyListDTO.getPartyId());
             for (String tagName : tagNameList) {
                 partyListDTO.getTagNameList().add(tagName);
             }
+
+            boolean partyLike = partyLikeRepository.existsByParty_IdAndMember_Email(partyListDTO.getPartyId(), email);
+            partyListDTO.setPartyLike(partyLike);
         }
 
         return partyList;
@@ -46,7 +50,7 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
 
     private String getQuery(){
 
-        return " SELECT p.party_id ,p.party_name ,p.start_dt , p.end_dt ,m.nickname , p.content, p.location ,(6371*acos(cos(radians(?))*cos(radians(p.latitude))*cos(radians(p.longitude)-radians(?))+sin(radians(?))*sin(radians(p.latitude)))) AS distance " +
+        return " SELECT p.party_id ,p.party_name ,p.start_dt , p.end_dt ,m.nickname , p.content, p.location , m.member_id ,(6371*acos(cos(radians(?))*cos(radians(p.latitude))*cos(radians(p.longitude)-radians(?))+sin(radians(?))*sin(radians(p.latitude)))) AS distance " +
                 " FROM party as p join member_detail as m on m.member_id = p.member_id " +
                 " ORDER BY distance " +
                 " limit 5 ";
@@ -62,7 +66,9 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
                 rs.getString("nickname"),
                 rs.getString("content"),
                 rs.getString("location"),
-                new ArrayList<>()
+                new ArrayList<>(),
+                false,
+                rs.getLong("member_id")
         ));
     }
 }

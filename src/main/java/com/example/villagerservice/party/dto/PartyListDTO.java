@@ -30,4 +30,13 @@ public class PartyListDTO {
 
     private List<String> tagNameList;
 
+    private boolean partyLike;
+
+    private Long memberId;
+
+
+    public void setPartyLike(boolean partyLike) {
+        this.partyLike = partyLike;
+    }
+
 }

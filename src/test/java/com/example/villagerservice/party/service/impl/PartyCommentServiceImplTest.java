@@ -4,6 +4,7 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyComment;
+import com.example.villagerservice.party.domain.PartyTag;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.exception.PartyCommentErrorCode;
 import com.example.villagerservice.party.exception.PartyCommentException;
@@ -21,6 +22,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -31,7 +34,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-@Disabled
 public class PartyCommentServiceImplTest {
 
     @Mock
@@ -50,19 +52,7 @@ public class PartyCommentServiceImplTest {
     @DisplayName("모임 댓글 등록 시 , 내용이 없을 경우")
     void createCommentWithoutContent() {
 
-        PartyDTO.Request request = PartyDTO.Request.builder()
-                .partyName("test-party")
-                .score(100)
-                .startDt(LocalDate.now())
-                .endDt(LocalDate.now().plusDays(2))
-                .amount(1000)
-                .numberPeople(2)
-                .location("수원시")
-                .latitude(127.1)
-                .longitude(127.1)
-                .content("test")
-                .tagList(null)
-                .build();
+        PartyDTO.Request request = createRequest();
 
         Member member = Member.builder()
                 .email("test@gmail.com")
@@ -89,19 +79,7 @@ public class PartyCommentServiceImplTest {
 
         Long partyId = 1L;
 
-        PartyDTO.Request request = PartyDTO.Request.builder()
-                .partyName("test-party")
-                .score(100)
-                .startDt(LocalDate.now())
-                .endDt(LocalDate.now().plusDays(2))
-                .amount(1000)
-                .numberPeople(2)
-                .location("수원시")
-                .latitude(127.1)
-                .longitude(127.1)
-                .content("test")
-                .tagList(null)
-                .build();
+        PartyDTO.Request request = createRequest();
 
         Member member = Member.builder()
                 .email("test@gmail.com")
@@ -119,5 +97,32 @@ public class PartyCommentServiceImplTest {
 
         verify(partyCommentRepository,times(1)).save(captor.capture());
         Assertions.assertThat(captor.getValue().getContents()).isEqualTo("test");
+    }
+
+    private static PartyDTO.Request createRequest() {
+        List<PartyTag> tagList = new ArrayList<>();
+
+        tagList.add(PartyTag.builder()
+                .tagName("낚시")
+                .build());
+        tagList.add(PartyTag.builder()
+                .tagName("볼링")
+                .build());
+
+        PartyDTO.Request request = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
+                .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(tagList)
+                .build();
+
+        return request;
     }
 }

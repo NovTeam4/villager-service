@@ -1,5 +1,6 @@
 package com.example.villagerservice.common.jwt;
 
+import com.example.villagerservice.config.security.oauth2.model.PrincipalUser;
 import com.example.villagerservice.member.domain.Member;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -80,12 +81,57 @@ public class JwtTokenProvider {
                 .build();
     }
 
+    public JwtTokenInfoDto generateToken(PrincipalUser authentication) {
+        // 권한 가져오기
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        long now = (new Date()).getTime();
+
+        // Access Token 생성
+        String accessToken = Jwts.builder()
+                .setSubject(authentication.getProviderUser().getEmail())
+                .claim("auth", authorities)
+                .addClaims(createClaims(authentication))
+                .setExpiration(new Date(now + accessTokenValidTime))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        // Refresh Token 생성
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + refreshTokenValidTime))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        return JwtTokenInfoDto.builder()
+                .grantType(JWT_TOKEN_GRANT_TYPE)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .accessTokenValidTime(accessTokenValidTime)
+                .refreshTokenExpirationTime(refreshTokenValidTime)
+                .build();
+    }
+
     private Map<String, Object> createClaims(Member member) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", member.getEmail());
         claims.put("id", member.getId());
         claims.put("nickname", member.getMemberDetail().getNickname());
         return claims;
+    }
+
+    private Map<String, Object> createClaims(PrincipalUser member) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", member.getProviderUser().getEmail());
+        claims.put("id", member.getMemberId());
+        claims.put("nickname", getNickname(member.getProviderUser().getEmail()));
+        return claims;
+    }
+
+    private String getNickname(String email) {
+        int idx = email.indexOf("@");
+        return email.substring(0, idx);
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
@@ -173,7 +219,20 @@ public class JwtTokenProvider {
         }
     }
 
-    public String resolveRefreshToken(HttpServletRequest request) {
+    public String getAccessToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(JWT_TOKEN_HEADER);
+
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(JWT_TOKEN_GRANT_TYPE)) {
+
+            String accessToken = bearerToken.substring(7);
+            validateToken(accessToken, JwtTokenType.ACCESS_TOKEN);
+            return accessToken;
+        } else {
+            throw new JwtTokenException(JWT_ACCESS_TOKEN_NOT_EXIST);
+        }
+    }
+
+    public String getRefreshToken(HttpServletRequest request) {
         return request.getHeader("refresh-token");
     }
 }

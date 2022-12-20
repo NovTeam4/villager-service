@@ -1,7 +1,6 @@
 package com.example.villagerservice.party.api;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -10,13 +9,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.villagerservice.config.WithMockCustomMember;
+import com.example.villagerservice.party.domain.PartyTag;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.service.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,13 +107,7 @@ public class PartyApiControllerTest {
     @WithMockCustomMember
     void createParty() throws Exception {
 
-        PartyDTO.Request request = PartyDTO.Request.builder()
-                .partyName("test-party")
-                .score(100)
-                .startDt(LocalDate.now())
-                .endDt(LocalDate.now().plusDays(2))
-                .amount(1000)
-                .build();
+        PartyDTO.Request request = createRequest();
 
         String value = objectMapper.writeValueAsString(request);
 
@@ -131,7 +128,7 @@ public class PartyApiControllerTest {
     void createPartyWithoutPartyName() throws Exception {
 
         PartyDTO.Request request = PartyDTO.Request.builder()
-                .score(100)
+                .score(50)
                 .startDt(LocalDate.now())
                 .endDt(LocalDate.now().plusDays(2))
                 .amount(1000)
@@ -174,6 +171,7 @@ public class PartyApiControllerTest {
     }
 
     @Test
+    @WithMockCustomMember
     @DisplayName("모임 변경 테스트")
     void updateParty() throws Exception {
         Long partyId = 1L;
@@ -183,6 +181,7 @@ public class PartyApiControllerTest {
                 .build();
 
         String value = objectMapper.writeValueAsString(request);
+
         mockMvc.perform(patch("/api/v1/parties/{partyId}", partyId)
                         .characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -190,7 +189,7 @@ public class PartyApiControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(partyService,times(1)).updateParty(anyLong() , any());
+        verify(partyService,times(1)).updateParty(anyLong() , any() , any());
     }
 
     @Test
@@ -207,6 +206,7 @@ public class PartyApiControllerTest {
     }
 
     @Test
+    @WithMockCustomMember
     @DisplayName("모임 조회 테스트")
     void getParty() throws Exception {
         Long partyId = 1L;
@@ -214,18 +214,19 @@ public class PartyApiControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(partyQueryService,times(1)).getParty(anyLong());
+        verify(partyService,times(1)).getParty(anyLong() , anyString());
     }
 
     @Test
+    @WithMockCustomMember
     @DisplayName("모임 전체 조회 테스트")
     void getAllParty() throws Exception {
 
-        mockMvc.perform(get("/api/v1/parties"))
+        mockMvc.perform(get("/api/v1/parties/{LAT}/{LNT}" ,127.1,127.1))
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(partyService,times(1)).getAllParty(any());
+        verify(partyQueryService,times(1)).getPartyList(anyString() , anyDouble() , anyDouble());
     }
 
     @Test
@@ -242,6 +243,33 @@ public class PartyApiControllerTest {
                 .andDo(print());
 
         verify(partyCommentService,times(1)).createComment(partyId , value);
+    }
+
+    private static PartyDTO.Request createRequest() {
+        List<PartyTag> tagList = new ArrayList<>();
+
+        tagList.add(PartyTag.builder()
+                .tagName("낚시")
+                .build());
+        tagList.add(PartyTag.builder()
+                .tagName("볼링")
+                .build());
+
+        PartyDTO.Request request = PartyDTO.Request.builder()
+                .partyName("test-party")
+                .score(100)
+                .startDt(LocalDate.now())
+                .endDt(LocalDate.now().plusDays(2))
+                .amount(1000)
+                .numberPeople(2)
+                .location("수원시")
+                .latitude(127.1)
+                .longitude(127.1)
+                .content("test")
+                .tagList(tagList)
+                .build();
+
+        return request;
     }
 
 }

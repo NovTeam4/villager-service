@@ -77,7 +77,7 @@ public class AuthConfig {
         CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManager);
         authenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
         authenticationFilter.setAuthenticationFailureHandler(new CustomFailureHandler());
-        authenticationFilter.setAuthenticationSuccessHandler(new CustomSuccessHandler(jwtTokenProvider, redisTemplate, redisRepository));
+        authenticationFilter.setAuthenticationSuccessHandler(new CustomSuccessHandler(jwtTokenProvider, redisRepository));
         return authenticationFilter;
     }
 

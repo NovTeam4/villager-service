@@ -29,7 +29,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MemberServiceImplTest {
+class OAuth2MemberServiceImplTest {
 
     @Mock
     private MemberRepository memberRepository;
