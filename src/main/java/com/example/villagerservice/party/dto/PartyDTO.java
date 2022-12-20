@@ -112,7 +112,8 @@ public class PartyDTO {
             for (PartyComment partyComment : partyCommentList) {
                 response.commentList.add(PartyCommentDTO.Response.builder()
                                 .contents(partyComment.getContents())
-                                .partyCommentId(partyComment.getParty().getId()).build());
+                                .partyCommentId(partyComment.getId())
+                                .partyId(partyComment.getParty().getId()).build());
             }
 
             return response;

@@ -13,6 +13,7 @@ import com.example.villagerservice.config.AuthConfig;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.*;
+import com.example.villagerservice.party.dto.PartyCommentDTO;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
@@ -266,6 +267,31 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Assertions.assertThat(partyComment.getContents()).isEqualTo("test!");
     }
 
+    @Test
+    @DisplayName("모임 댓글 변경 테스트")
+    void updatePartyComment() throws Exception {
+
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
+        Member member = createMember("testparty@gmail.com", "홍길동");
+        Party party = saveParty(member);
+        String value = "update-test!";
+        PartyComment partyComment = savePartyComment(party, value);
+
+        Response response = givenAuth(value,
+                template.requestRestDocumentation("모임 댓글 변경",
+                        getPartyCommentPathParameterFields()
+                ))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .contentType(MediaType.TEXT_PLAIN_VALUE)
+                .patch("/api/v1/parties/{partyCommentId}/comment", partyComment.getId());
+
+        response.then()
+                .statusCode(HttpStatus.OK.value())
+                .body(Matchers.equalTo(value));
+
+    }
+
     private Member createMember(String email, String nickname) {
         Member member = Member.builder()
                 .email(email)
@@ -313,6 +339,16 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         partyRepository.save(party);
 
         return party;
+    }
+
+    private PartyComment savePartyComment(Party party , String contents) {
+        PartyComment partyComment = PartyComment.builder()
+                .party(party)
+                .contents(contents)
+                .build();
+
+        partyCommentRepository.save(partyComment);
+        return partyComment;
     }
 
     private static PartyDTO.Request createRequest() {
@@ -495,6 +531,11 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     @NotNull
+    private List<ParameterDescriptorWithType> getPartyCommentPathParameterFields() {
+        return List.of(new ParameterDescriptorWithType("partyCommentId").description("모임댓글 id"));
+    }
+
+    @NotNull
     private List<ParameterDescriptorWithType> getPartyAllPathParameterFields() {
         return List.of(new ParameterDescriptorWithType("LNT").description("사용자 경도"),
                 new ParameterDescriptorWithType("LAT").description("사용자 위도"));
@@ -595,6 +636,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("commentList").type(JsonFieldType.ARRAY).description("모임 댓글 목록"),
                 fieldWithPath("commentList[].contents").type(JsonFieldType.STRING).description("모임 댓글 내용"),
                 fieldWithPath("commentList[].partyCommentId").type(JsonFieldType.NUMBER).description("모임 댓글 id"),
+                fieldWithPath("commentList[].partyId").type(JsonFieldType.NUMBER).description("모임 id"),
                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("주최자 이름"),
                 fieldWithPath("mannerPoint").type(JsonFieldType.NUMBER).description("주최자 매너점수"),
                 fieldWithPath("partyLike").type(JsonFieldType.BOOLEAN).description("모임 좋아요"),

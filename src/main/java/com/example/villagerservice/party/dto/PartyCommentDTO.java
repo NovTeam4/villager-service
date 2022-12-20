@@ -31,5 +31,7 @@ public class PartyCommentDTO {
 
         private Long partyCommentId;
 
+        private Long partyId;
+
     }
 }

@@ -10,6 +10,7 @@ import com.example.villagerservice.party.repository.PartyRepository;
 import com.example.villagerservice.party.service.PartyCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -36,10 +37,26 @@ public class PartyCommentServiceImpl implements PartyCommentService {
         partyCommentRepository.save(partyComment);
     }
 
+    @Override
+    @Transactional
+    public String updateComment(Long partyCommentId, String contents) {
+        PartyComment partyComment = partyCommentCheckedById(partyCommentId);
+
+        partyComment.setContents(contents);
+        return partyComment.getContents();
+    }
+
     private Party partyCheckedById(Long partyId) {
 
         return partyRepository.findById(partyId).orElseThrow(
                 () -> new PartyException(PARTY_NOT_FOUND)
+        );
+    }
+
+    private PartyComment partyCommentCheckedById(Long partyCommentId) {
+
+        return partyCommentRepository.findById(partyCommentId).orElseThrow(
+                () -> new PartyCommentException(PartyCommentErrorCode.CONTENT_NOT_FOUND)
         );
     }
 
