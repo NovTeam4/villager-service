@@ -2,8 +2,11 @@ package com.example.villagerservice.party.domain;
 
 import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.party.type.PartyMemberRolesType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,4 +35,7 @@ public class PartyMember extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
     private Party party;
+
+    @Enumerated(EnumType.STRING)
+    private PartyMemberRolesType roles;
 }

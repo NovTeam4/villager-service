@@ -15,7 +15,7 @@ import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyLikeRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
-import com.example.villagerservice.party.request.PartyLikeDto;
+import com.example.villagerservice.party.dto.PartyLikeDto;
 
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;

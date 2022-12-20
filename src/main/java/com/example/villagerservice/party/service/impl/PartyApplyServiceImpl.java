@@ -4,12 +4,11 @@ import static com.example.villagerservice.party.exception.PartyApplyErrorCode.*;
 
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyApply;
-import com.example.villagerservice.party.exception.PartyApplyErrorCode;
 import com.example.villagerservice.party.exception.PartyApplyException;
 import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
-import com.example.villagerservice.party.request.PartyApplyDto;
-import com.example.villagerservice.party.request.PartyApplyDto.Response;
+import com.example.villagerservice.party.dto.PartyApplyDto;
+import com.example.villagerservice.party.dto.PartyApplyDto.Response;
 import com.example.villagerservice.party.service.PartyApplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

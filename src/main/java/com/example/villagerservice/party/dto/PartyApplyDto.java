@@ -1,4 +1,4 @@
-package com.example.villagerservice.party.request;
+package com.example.villagerservice.party.dto;
 
 import com.example.villagerservice.party.domain.PartyApply;
 import lombok.AllArgsConstructor;
@@ -32,5 +32,4 @@ public class PartyApplyDto {
                 .build();
         }
     }
-
 }

@@ -4,26 +4,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.example.villagerservice.member.domain.Member;
-import com.example.villagerservice.member.domain.Tag;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyApply;
 import com.example.villagerservice.party.exception.PartyApplyErrorCode;
 import com.example.villagerservice.party.exception.PartyApplyException;
 import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
-import com.example.villagerservice.party.request.PartyApplyDto;
-import com.example.villagerservice.party.request.PartyApplyDto.Response;
+import com.example.villagerservice.party.dto.PartyApplyDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

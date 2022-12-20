@@ -13,13 +13,12 @@ import com.example.villagerservice.config.AuthConfig;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.*;
-import com.example.villagerservice.party.dto.PartyCommentDTO;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.repository.*;
-import com.example.villagerservice.party.request.PartyApplyDto;
-import com.example.villagerservice.party.request.PartyLikeDto;
+import com.example.villagerservice.party.dto.PartyApplyDto;
+import com.example.villagerservice.party.dto.PartyLikeDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.restassured.response.Response;
