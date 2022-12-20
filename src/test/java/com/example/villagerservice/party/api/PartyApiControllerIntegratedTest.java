@@ -597,7 +597,8 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("commentList[].partyCommentId").type(JsonFieldType.NUMBER).description("모임 댓글 id"),
                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("주최자 이름"),
                 fieldWithPath("mannerPoint").type(JsonFieldType.NUMBER).description("주최자 매너점수"),
-                fieldWithPath("partyLike").type(JsonFieldType.BOOLEAN).description("모임 좋아요")
+                fieldWithPath("partyLike").type(JsonFieldType.BOOLEAN).description("모임 좋아요"),
+                fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("주최자 id")
         );
     }
 
