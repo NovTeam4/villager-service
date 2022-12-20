@@ -85,6 +85,8 @@ public class PartyDTO {
 
         private Boolean PartyLike;
 
+        private Long memberId;
+
         public static PartyDTO.Response createPartyResponse(Party party , List<PartyComment> partyCommentList , Boolean PartyLike) {
             Response response = Response.builder()
                     .partyName(party.getPartyName())
@@ -100,6 +102,7 @@ public class PartyDTO {
                     .nickname(party.getMember().getMemberDetail().getNickname())
                     .mannerPoint(party.getMember().getMemberDetail().getMannerPoint().getPoint())
                     .PartyLike(PartyLike)
+                    .memberId(party.getMember().getId())
                     .build();
 
             for (PartyTag partyTag : party.getTagList()) {

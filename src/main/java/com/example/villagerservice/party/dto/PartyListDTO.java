@@ -32,6 +32,8 @@ public class PartyListDTO {
 
     private boolean partyLike;
 
+    private Long memberId;
+
 
     public void setPartyLike(boolean partyLike) {
         this.partyLike = partyLike;
