@@ -1,0 +1,25 @@
+### 회원 가입
+POST http://localhost:8080/api/v1/auth/signup
+Content-Type: application/json
+
+{
+  "nickname" : "반갑습니다~1",
+  "email" : "test1@gmail.com",
+  "password" : "hellOworld12^^",
+  "gender" : "MAN",
+  "birth" : "2022-05-02",
+  "introduce" : "자기소개"
+}
+
+### 로그인
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "test1@gmail.com",
+  "password": "hellOworld12^^"
+}
+
+### 이메일 전송
+POST http://localhost:8080/api/v1/auth/email-cert/22rkdmin@naver.com
+Content-Type: application/json

@@ -1,0 +1,50 @@
+### 모임 등록
+POST http://localhost:8080/api/v1/parties
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwibmlja25hbWUiOiLrsJjqsJHsirXri4jri6R-MSIsImlkIjoyLCJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImV4cCI6MTY3MTM0Nzk0OH0.Psi7Kw1zwvIBLglClc8xNJnj1qQMGAQUzZt0Umd_RKI
+Content-Type: application/json
+
+{
+  "partyName" : "Test-party",
+  "score" : 20 ,
+  "startDt" : "2022-12-01" ,
+  "endDt" : "2022-12-03" ,
+  "amount" : 10000 ,
+  "numberPeople" : 2 ,
+  "location" : "수원시 팔달구" ,
+  "latitude" : 127.1 ,
+  "longitude" : 127.1 ,
+  "content" : "테스트 모임",
+  "tagList" : [
+    {
+      "tagName" : "축구"
+    },
+    {
+      "tagName" : "낚시"
+    }
+  ]
+}
+
+### 모임 신청
+POST http://localhost:8080/api/v1/parties/1/apply
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwibmlja25hbWUiOiLrsJjqsJHsirXri4jri6R-MSIsImlkIjoyLCJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImV4cCI6MTY3MTM0Nzk0OH0.Psi7Kw1zwvIBLglClc8xNJnj1qQMGAQUzZt0Umd_RKI
+Content-Type: application/json
+
+### 모임 신청 목록 조회
+GET http://localhost:8080/api/v1/parties/1/apply
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0QG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJuaWNrbmFtZSI6IjEyMzQiLCJpZCI6MiwiZW1haWwiOiIxMjM0QG5hdmVyLmNvbSIsImV4cCI6MTY3MDg3NDY0NH0.860gMAHLjzRfqRE-ml7ZrQU2cf2m8DN3JumzNafMVC0
+Content-Type: application/json
+
+### 모임 허가
+PATCH http://localhost:8080/api/v1/parties/1/permission/3
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NUBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwibmlja25hbWUiOiIxMjM0NSIsImlkIjoyLCJlbWFpbCI6IjEyMzQ1QG5hdmVyLmNvbSIsImV4cCI6MTY3MDc3NDYzN30.gg8vYwdhKLLIpIHw43ncQQdkWiDoybxkUhGZrIvZN40
+Content-Type: application/json
+
+### 관심모임 등록/취소
+POST http://localhost:8080/api/v1/parties/1/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwibmlja25hbWUiOiLrsJjqsJHsirXri4jri6R-MSIsImlkIjoyLCJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImV4cCI6MTY3MTM0Nzk0OH0.Psi7Kw1zwvIBLglClc8xNJnj1qQMGAQUzZt0Umd_RKI
+Content-Type: application/json
+
+### 관심모임 조회
+GET http://localhost:8080/api/v1/parties/1/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwibmlja25hbWUiOiLrsJjqsJHsirXri4jri6R-MSIsImlkIjoyLCJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImV4cCI6MTY3MTM0Nzk0OH0.Psi7Kw1zwvIBLglClc8xNJnj1qQMGAQUzZt0Umd_RKI
+Content-Type: application/json

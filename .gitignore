@@ -234,3 +234,10 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,jetbrains+iml,gradle,intellij+all
+
+### CYC ###
+# application.yml
+
+src/test/java/com/example/villagerservice/encode/*
+
+spy.log
