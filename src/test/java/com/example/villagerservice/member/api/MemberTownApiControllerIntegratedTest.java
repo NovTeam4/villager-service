@@ -265,7 +265,9 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("towns[].cityName").description("동네명"),
                 fieldWithPath("towns[].createdAt").description("생성일"),
                 fieldWithPath("towns[].modifiedAt").description("수정일"),
-                fieldWithPath("towns[].main").description("메인동네 여부")
+                fieldWithPath("towns[].main").description("메인동네 여부"),
+                fieldWithPath("towns[].latitude").description("위도"),
+                fieldWithPath("towns[].longitude").description("경도")
         );
     }
 

@@ -19,14 +19,20 @@ public class MemberTownListItem {
     private String createdAt;
     private String modifiedAt;
     private boolean isMain;
+    private Double latitude;
+    private Double longitude;
 
-    public MemberTownListItem(Long memberTownId, String townName, String city, String town, String village,  LocalDateTime createdAt, LocalDateTime modifiedAt, boolean isMain) {
+    public MemberTownListItem(Long memberTownId, String townName, String city, String town, String village,
+                              LocalDateTime createdAt, LocalDateTime modifiedAt, boolean isMain,
+                              Double latitude, Double longitude) {
         this.memberTownId = memberTownId;
         this.townName = townName;
         this.cityName = getCityName(city, town, village);
         this.createdAt = StringConverter.localDateTimeToLocalDateTimeString(createdAt);
         this.modifiedAt = StringConverter.localDateTimeToLocalDateTimeString(modifiedAt);
         this.isMain = isMain;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     private String getCityName(String city, String town, String village) {

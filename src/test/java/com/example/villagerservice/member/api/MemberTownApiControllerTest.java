@@ -286,11 +286,11 @@ class MemberTownApiControllerTest {
                 .willReturn(FindMemberTownList.Response.builder()
                         .towns(Arrays.asList(
                                 new MemberTownListItem(1L, "name1", "city1", "town1", "village1",
-                                        LocalDateTime.now(), LocalDateTime.now(), true),
+                                        LocalDateTime.now(), LocalDateTime.now(), true, 32.555, 127.123),
                                 new MemberTownListItem(2L, "name2", "city2", "town2", "village2",
-                                        LocalDateTime.now(), LocalDateTime.now(), false),
+                                        LocalDateTime.now(), LocalDateTime.now(), false, 32.555, 127.123),
                                 new MemberTownListItem(3L, "name3", "city3", "town3", "village3",
-                                        LocalDateTime.now(), LocalDateTime.now(), true)
+                                        LocalDateTime.now(), LocalDateTime.now(), true, 32.555, 127.123)
                         ))
                         .build());
 
@@ -301,14 +301,20 @@ class MemberTownApiControllerTest {
                 .andExpect(jsonPath("$.towns[0].townName").value("name1"))
                 .andExpect(jsonPath("$.towns[0].cityName").value("city1 town1 village1"))
                 .andExpect(jsonPath("$.towns[0].main").value(true))
+                .andExpect(jsonPath("$.towns[0].latitude").value(32.555))
+                .andExpect(jsonPath("$.towns[0].longitude").value(127.123))
                 .andExpect(jsonPath("$.towns[1].memberTownId").value(2L))
                 .andExpect(jsonPath("$.towns[1].townName").value("name2"))
                 .andExpect(jsonPath("$.towns[1].cityName").value("city2 town2 village2"))
                 .andExpect(jsonPath("$.towns[1].main").value(false))
+                .andExpect(jsonPath("$.towns[1].latitude").value(32.555))
+                .andExpect(jsonPath("$.towns[1].longitude").value(127.123))
                 .andExpect(jsonPath("$.towns[2].memberTownId").value(3L))
                 .andExpect(jsonPath("$.towns[2].townName").value("name3"))
                 .andExpect(jsonPath("$.towns[2].cityName").value("city3 town3 village3"))
                 .andExpect(jsonPath("$.towns[2].main").value(true))
+                .andExpect(jsonPath("$.towns[2].latitude").value(32.555))
+                .andExpect(jsonPath("$.towns[2].longitude").value(127.123))
                 .andDo(print());
 
         verify(memberTownQueryService, times(1))

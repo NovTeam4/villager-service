@@ -31,11 +31,11 @@ class MemberTownQueryServiceImplTest {
         FindMemberTownList.Response mockResponse = FindMemberTownList.Response.builder()
                 .towns(Arrays.asList(
                         new MemberTownListItem(1L, "name1", "city1", "town1", "village1",
-                                LocalDateTime.now(), LocalDateTime.now(), false),
+                                LocalDateTime.now(), LocalDateTime.now(), false, 32.789, 127.123),
                         new MemberTownListItem(2L, "name2", "city2", "town2", "village2",
-                                LocalDateTime.now(), LocalDateTime.now(), false),
+                                LocalDateTime.now(), LocalDateTime.now(), false, 32.789, 127.123),
                         new MemberTownListItem(3L, "name3", "city3", "town3", "village3",
-                                LocalDateTime.now(), LocalDateTime.now(), false)
+                                LocalDateTime.now(), LocalDateTime.now(), false, 32.789, 127.123)
                 ))
                 .build();
 

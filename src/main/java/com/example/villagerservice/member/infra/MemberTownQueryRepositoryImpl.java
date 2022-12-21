@@ -28,7 +28,9 @@ public class MemberTownQueryRepositoryImpl implements MemberTownQueryRepository 
                         town1.city, town1.town, town1.village,
                         memberTown.createdAt,
                         memberTown.modifiedAt,
-                        memberTown.isMain))
+                        memberTown.isMain,
+                        memberTown.townLocation.latitude,
+                        memberTown.townLocation.longitude))
                 .from(memberTown)
                 .join(memberTown.town, town1)
                 .where(memberTown.member.id.eq(memberId))
