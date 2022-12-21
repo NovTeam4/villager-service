@@ -1,11 +1,9 @@
 package com.example.villagerservice.party.service;
 
-import com.example.villagerservice.party.request.PartyApplyDto;
-import com.example.villagerservice.party.request.PartyApplyDto.Response;
+import com.example.villagerservice.party.dto.PartyApplyDto;
+import com.example.villagerservice.party.dto.PartyApplyDto.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 public interface PartyApplyService {
 

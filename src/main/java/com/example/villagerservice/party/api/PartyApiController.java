@@ -4,8 +4,8 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
-import com.example.villagerservice.party.request.PartyApplyDto;
-import com.example.villagerservice.party.request.PartyLikeDto;
+import com.example.villagerservice.party.dto.PartyApplyDto;
+import com.example.villagerservice.party.dto.PartyLikeDto;
 import com.example.villagerservice.party.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -98,5 +98,10 @@ public class PartyApiController {
     @PatchMapping("/{partyCommentId}/comment")
     public String updateComment(@PathVariable Long partyCommentId , @RequestBody String contents) {
         return partyCommentService.updateComment(partyCommentId , contents);
+    }
+
+    @PostMapping("{partyId}/start")
+    public void partyStart(@PathVariable Long partyId, @AuthenticationPrincipal Member member){
+        partyService.startParty(partyId, member);
     }
 }

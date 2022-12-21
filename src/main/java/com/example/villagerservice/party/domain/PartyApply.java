@@ -18,7 +18,6 @@ public class PartyApply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "party_list_id")
     private Long id;
 
     private Long targetMemberId;
