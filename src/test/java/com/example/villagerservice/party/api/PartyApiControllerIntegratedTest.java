@@ -2,6 +2,7 @@ package com.example.villagerservice.party.api;
 
 
 import static com.example.villagerservice.party.type.PartyLikeResponseType.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
@@ -70,8 +71,12 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     @Autowired
     private PartyTagRepository partyTagRepository;
 
+    @Autowired
+    private PartyMemberRepository partyMemberRepository;
+
     @BeforeEach
     void clean() {
+        partyMemberRepository.deleteAll();
         partyApplyRepository.deleteAll();
         partyLikeRepository.deleteAll();
         partyRepository.deleteAll();
@@ -82,6 +87,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     @AfterEach
     void afterClean() {
+        partyMemberRepository.deleteAll();
         partyCommentRepository.deleteAll();
         partyApplyRepository.deleteAll();
         partyLikeRepository.deleteAll();
@@ -414,7 +420,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         // 모임 신청 10개
         int applyCnt = 10;
         for(long i = 1; i <= applyCnt; i++){
-            savePartyApply(i, party);
+            savePartyApply(i, party, false);
         }
 
         Response response = givenAuth("",
@@ -441,7 +447,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Member applicant = createMember("applicant@gmail.com", "신청자");
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(host.getEmail(), "hello11@@nW");// 신청자로 로그인
         Party party = saveParty(host);// 주최자기준
-        savePartyApply(applicant.getId(), party);// 파티신청
+        savePartyApply(applicant.getId(), party, false);// 모임신청
 
         Response response = givenAuth("",
             template.allRestDocumentation("모임 허락",
@@ -459,12 +465,20 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     }
 
     // 파티 신청
-    private void savePartyApply(Long targetMemberId, Party party) {
-        partyApplyRepository.save(PartyApply.builder()
+    private void savePartyApply(Long targetMemberId, Party party, boolean isAccept) {
+        if(isAccept){
+            partyApplyRepository.save(PartyApply.builder()
+                .party(party)
+                .isAccept(true)
+                .targetMemberId(targetMemberId)
+                .build());
+        }else{
+            partyApplyRepository.save(PartyApply.builder()
                 .party(party)
                 .isAccept(false)
                 .targetMemberId(targetMemberId)
                 .build());
+        }
     }
 
     @Test
@@ -516,24 +530,27 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     @DisplayName("모임 시작 테스트")
     void partyStart() throws Exception {
         Member host = createMember("host@gmail.com", "주최자");
-        Member user1 = createMember("user1@gmail.com", "신청자1");
-        Member user2 = createMember("user2@gmail.com", "신청자2");
-        Member user3 = createMember("user3@gmail.com", "신청자3");
 
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(host.getEmail(), "hello11@@nW");// 신청자로 로그인
-        Party party = saveParty(host);// 주최자기준
+        Party party = saveParty(host);// 모임 생성
+        // 모임 신청 5개
+        int applyCnt = 5;
+        for(long i = 1; i <= applyCnt; i++){
+            savePartyApply(i, party, true);
+        }
 
         givenAuth("",
-            template.allRestDocumentation("모임 좋아요",
-                getApplyPartyPathParameterFields(),
-                getPartyLikeDtoResponseFields(),
-                PartyLikeDto.Response.class.getName()))
+            template.allRestDocumentation("모임 시작",
+                getPartyStartPathParameterFields()
+                ))
             .when()
             .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
-            .post("/api/v1/parties/{partyId}/like", party.getId())
+            .post("/api/v1/parties/{partyId}/start", party.getId())
             .then()
             .statusCode(HttpStatus.OK.value());
 
+        // 저장된 개수 확인(모임장까지 +1개)
+        assertThat(partyMemberRepository.count()).isEqualTo(applyCnt + 1);
     }
 
     private void savePartyLike(Member member, Party party) {
@@ -545,6 +562,11 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
     @NotNull
     private List<ParameterDescriptorWithType> getApplyPartyPathParameterFields() {
+        return List.of(new ParameterDescriptorWithType("partyId").description("모임 id"));
+    }
+
+    @NotNull
+    private List<ParameterDescriptorWithType> getPartyStartPathParameterFields() {
         return List.of(new ParameterDescriptorWithType("partyId").description("모임 id"));
     }
 
