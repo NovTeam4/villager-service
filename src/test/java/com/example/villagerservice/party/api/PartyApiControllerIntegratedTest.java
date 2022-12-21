@@ -512,6 +512,30 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
             .body("response", Matchers.equalTo(관심모임취소.toString()));
     }
 
+    @Test
+    @DisplayName("모임 시작 테스트")
+    void partyStart() throws Exception {
+        Member host = createMember("host@gmail.com", "주최자");
+        Member user1 = createMember("user1@gmail.com", "신청자1");
+        Member user2 = createMember("user2@gmail.com", "신청자2");
+        Member user3 = createMember("user3@gmail.com", "신청자3");
+
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(host.getEmail(), "hello11@@nW");// 신청자로 로그인
+        Party party = saveParty(host);// 주최자기준
+
+        givenAuth("",
+            template.allRestDocumentation("모임 좋아요",
+                getApplyPartyPathParameterFields(),
+                getPartyLikeDtoResponseFields(),
+                PartyLikeDto.Response.class.getName()))
+            .when()
+            .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+            .post("/api/v1/parties/{partyId}/like", party.getId())
+            .then()
+            .statusCode(HttpStatus.OK.value());
+
+    }
+
     private void savePartyLike(Member member, Party party) {
         partyLikeRepository.save(PartyLike.builder()
                 .member(member)

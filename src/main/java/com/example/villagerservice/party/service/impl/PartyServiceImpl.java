@@ -121,6 +121,11 @@ public class PartyServiceImpl implements PartyService {
         for(PartyApply acceptPartyApply: acceptPartyApplyList){
             partyMemberRepository.save(PartyMember.createPartyMember(acceptPartyApply));
         }
+        // 모임장 insert
+        partyMemberRepository.save(PartyMember.builder()
+                .memberId(member.getId())
+                .party(party)
+                .build());
     }
 
     @Override
