@@ -39,12 +39,11 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build -Pjasypt.encryptor.password=${{ secrets.VILLAGER_ENCRYPTOR_PASSWORD }}
 
-    # 테스트 후 Result를 보기위해 Publish Unit Test Results step 추가
-    - name: Publish Unit Test Results
+    - name: 테스트 결과를 PR에 코멘트로 등록합니다
       uses: EnricoMi/publish-unit-test-result-action@v1
-      if: ${{ always() }}  # 테스트가 실패하여도 Report를 보기 위해 `always`로 설정
+      if: always()
       with:
-        files: build/test-results/**/*.xml
+        files: '**/build/test-results/test/TEST-*.xml'
 
     # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
     - name: Configure AWS credentials
