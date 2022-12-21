@@ -91,6 +91,12 @@ jar {
     enabled = false
 }
 
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
     systemProperty "jasypt.encryptor.password", System.getProperties().get("jasypt.encryptor.password")
