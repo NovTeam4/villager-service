@@ -87,11 +87,14 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
+jar {
+    enabled = false
+}
+
 tasks.named('test') {
     useJUnitPlatform()
     systemProperty "jasypt.encryptor.password", System.getProperties().get("jasypt.encryptor.password")
 }
-
 // ===== querydsl start ===== //
 def querydslDir = "$buildDir/generated/querydsl"
 
@@ -123,7 +126,7 @@ compileQuerydsl {
 // ===== querydsl end ===== //
 
 openapi3 {
-    setServer("http://localhost:8080")
+    setServer("http://ec2-15-164-233-107.ap-northeast-2.compute.amazonaws.com:8080")
     title = "동네친구들 API Documentation"
     description = "NovTeam4"
     version = "0.0.1"
