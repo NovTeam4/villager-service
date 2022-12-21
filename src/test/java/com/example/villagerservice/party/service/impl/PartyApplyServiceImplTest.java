@@ -50,7 +50,7 @@ class PartyApplyServiceImplTest {
             .willReturn(Optional.of(Party.builder()
                     .id(partyId)
                     .build()));
-        given(partyApplyRepository.existsByParty_Member_IdAndParty_Id(anyLong(), anyLong()))
+        given(partyApplyRepository.existsByTargetMemberIdAndParty_Id(anyLong(), anyLong()))
             .willReturn(false);
         given(partyApplyRepository.save(any()))
             .willReturn(PartyApply.builder()
@@ -76,7 +76,7 @@ class PartyApplyServiceImplTest {
         // given
         given(partyRepository.findById(anyLong()))
             .willReturn(Optional.of(Party.builder().build()));
-        given(partyApplyRepository.existsByParty_Member_IdAndParty_Id(anyLong(), any()))
+        given(partyApplyRepository.existsByTargetMemberIdAndParty_Id(anyLong(), any()))
             .willReturn(true);
 
         // when

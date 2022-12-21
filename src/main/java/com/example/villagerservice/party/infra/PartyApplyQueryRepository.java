@@ -15,14 +15,14 @@ import org.springframework.stereotype.Repository;
 public class PartyApplyQueryRepository {
     private final JPAQueryFactory queryFactory;
 
-    public List<PartyApply> getPartyApply(Long partyId, Long memberId) {
+    public List<PartyApply> getPartyApply(Long partyId, String email) {
         QPartyApply p = QPartyApply.partyApply;
 
         List<PartyApply> result = queryFactory
             .select(p)
             .from(p)
             .where(p.party.id.eq(partyId)
-                .and(p.party.member.id.eq(memberId)))
+                .and(p.party.member.email.eq(email)))
             .fetch();
 
         return result;

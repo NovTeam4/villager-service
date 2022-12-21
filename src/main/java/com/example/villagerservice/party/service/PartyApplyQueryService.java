@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface PartyApplyQueryService {
 
-    List<PartyApply> getPartyApplyId(Long partyId, Long memberId);
+    List<PartyApply> getPartyApplyId(Long partyId, String email);
 }

@@ -26,7 +26,7 @@ public class PartyApplyServiceImpl implements PartyApplyService {
         Party party = partyRepository.findById(partyId).orElseThrow(
             () -> new PartyApplyException(PARTY_NOT_FOUND)
         );
-        if(partyApplyRepository.existsByParty_Member_IdAndParty_Id(targetMemberId, partyId)){
+        if(partyApplyRepository.existsByTargetMemberIdAndParty_Id(targetMemberId, partyId)){
             throw new PartyApplyException(ALREADY_BEAN_APPLIED);
         }
 

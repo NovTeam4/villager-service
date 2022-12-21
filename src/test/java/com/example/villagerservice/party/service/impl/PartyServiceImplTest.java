@@ -3,33 +3,40 @@ package com.example.villagerservice.party.service.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import com.example.villagerservice.events.service.impl.PartyCreatedEventServiceImpl;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
+import com.example.villagerservice.party.domain.PartyApply;
+import com.example.villagerservice.party.domain.PartyMember;
 import com.example.villagerservice.party.domain.PartyTag;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
+import com.example.villagerservice.party.repository.PartyApplyRepository;
+import com.example.villagerservice.party.repository.PartyMemberRepository;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
-
+import com.example.villagerservice.party.repository.PartyTagRepository;
+import com.example.villagerservice.party.service.PartyApplyQueryService;
+import com.example.villagerservice.party.service.PartyCommentService;
+import com.example.villagerservice.party.service.PartyLikeService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import com.example.villagerservice.party.repository.PartyTagRepository;
-import com.example.villagerservice.party.service.PartyCommentService;
-import com.example.villagerservice.party.service.PartyLikeService;
+import javax.validation.constraints.NotNull;
 import org.assertj.core.api.Assertions;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,9 +44,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-
-import javax.validation.constraints.NotNull;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -65,6 +69,15 @@ public class PartyServiceImplTest {
 
     @Mock
     PartyLikeService partyLikeService;
+
+    @Mock
+    PartyApplyQueryService partyApplyQueryService;
+
+    @Mock
+    PartyApplyRepository partyApplyRepository;
+
+    @Mock
+    PartyMemberRepository partyMemberRepository;
 
     @InjectMocks
     PartyServiceImpl partyService;
@@ -263,6 +276,109 @@ public class PartyServiceImplTest {
         List<PartyListDTO> partyList = partyQueryService.getPartyList(member.getEmail(), 127.1, 127.1);
 
         Assertions.assertThat(partyList.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("모임 시작 실패 - 모임이 없음")
+    public void 모임_시작_실패_모임이없음(){
+        // given
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.empty());
+
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.startParty(1L, Member.builder().build());
+        });
+
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("모임 시작 실패 - 자신이 모임장이 아님")
+    public void 모임_시작_실패_자신이모임장이아님(){
+        // given
+        Member host = Member.builder().email("host@naver.com").build();// 모임장
+        Member user = Member.builder().email("user@naver.com").build();// 로그인한 사용자
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.ofNullable(Party.builder().member(host).build()));
+
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.startParty(1L, user);
+        });
+
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND_MEMBER.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND_MEMBER.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("모임 시작 실패 - 시작시간이 안넘었음")
+    public void 모임_시작_실패_시작시간이안넘었음(){
+        // given
+        LocalDate startDt = LocalDate.MAX;// 시작시간
+        Member member = Member.builder().email("member@naver.com").build();// 모임장
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.ofNullable(Party.builder().member(member).startDt(startDt).build()));
+
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.startParty(1L, member);
+        });
+
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_IS_NOT_TIME.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_IS_NOT_TIME.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("모임 시작 실패 - 허락된 멤버가 한명도 없음")
+    public void 모임_시작_실패_허락된멤버가한명도없음(){
+        // given
+        LocalDate startDt = LocalDate.now();// 시작시간
+        Member member = Member.builder().email("member@naver.com").build();// 모임장
+        Party party = Party.builder().member(member).startDt(startDt).build();
+        List<PartyApply> partyApplyList = new ArrayList<>();
+        for(long i = 1; i <= 10; i++){
+            partyApplyList.add(PartyApply.createPartyList(party, i));
+        }
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.of(party));
+        given(partyApplyQueryService.getPartyApplyId(anyLong(), anyString()))
+            .willReturn(partyApplyList);// 10개 다 허락안한 신청
+
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.startParty(1L, member);
+        });
+
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_MEMBER_EMPTY.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_MEMBER_EMPTY.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("모임 시작 성공")
+    public void 모임_시작_성공(){
+        // given
+        LocalDate startDt = LocalDate.now();// 시작시간
+        Member member = Member.builder().email("member@naver.com").build();// 모임장
+        Party party = Party.builder().member(member).startDt(startDt).build();
+        List<PartyApply> partyApplyList = new ArrayList<>();
+        for(long i = 1; i <= 10; i++){
+            partyApplyList.add(PartyApply.builder()
+                    .targetMemberId(i)
+                    .isAccept(true)
+                    .party(party)
+                    .build());
+        }
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.of(party));
+        given(partyApplyQueryService.getPartyApplyId(anyLong(), anyString()))
+            .willReturn(partyApplyList);// 10개 다 허락안한 신청
+
+        // when
+        partyService.startParty(1L, member);
+
+        // then
     }
 
     @NotNull

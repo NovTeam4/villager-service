@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PartyApplyRepository extends JpaRepository<PartyApply, Long> {
-    boolean existsByParty_Member_IdAndParty_Id(Long Id, Long partyId);
+    boolean existsByTargetMemberIdAndParty_Id(Long Id, Long partyId);
 
     Page<PartyApply> findByParty_Id(Long partyId, Pageable pageable);
 

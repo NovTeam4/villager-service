@@ -15,7 +15,7 @@ public class PartyApplyQueryServiceImpl implements PartyApplyQueryService {
     private final PartyApplyQueryRepository partyApplyQueryRepository;
 
     @Override
-    public List<PartyApply> getPartyApplyId(Long partyId, Long memberId) {
-        return partyApplyQueryRepository.getPartyApply(partyId, memberId);
+    public List<PartyApply> getPartyApplyId(Long partyId, String email) {
+        return partyApplyQueryRepository.getPartyApply(partyId, email);
     }
 }

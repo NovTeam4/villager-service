@@ -89,17 +89,17 @@ public class PartyServiceImpl implements PartyService {
         Party party = partyRepository.findById(partyId).orElseThrow(
             () -> new PartyException(PARTY_NOT_FOUND)
         );
-        if(party.getMember().getId() != member.getId()){
+        if(!party.getMember().getEmail().equals(member.getEmail())){
             throw new PartyException(PARTY_NOT_FOUND_MEMBER);
         }
 
         // 시작시간이 넘었는지 검사
-        if(party.getStartDt().isBefore(LocalDate.now())){
+        if(party.getStartDt().isAfter(LocalDate.now())){
             throw new PartyException(PARTY_IS_NOT_TIME);
         }
 
         // 파티신청자 불러오기
-        List<PartyApply> partyApplyList = partyApplyQueryService.getPartyApplyId(partyId, member.getId());
+        List<PartyApply> partyApplyList = partyApplyQueryService.getPartyApplyId(partyId, member.getEmail());
         // 허락신청자 블러오기
         List<PartyApply> acceptPartyApplyList = new ArrayList<>();
         for(PartyApply partyApply: partyApplyList){
