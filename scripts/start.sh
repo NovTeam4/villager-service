@@ -3,6 +3,10 @@
 PROJECT_ROOT="/home/ubuntu/app"
 JAR_FILE="$PROJECT_ROOT/villager-service-0.0.1-SNAPSHOT.jar"
 
+APP_LOG="$PROJECT_ROOT/application.log"
+ERROR_LOG="$PROJECT_ROOT/error.log"
+DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
+
 TIME_NOW=$(date +%c)
 
 # build 파일 복사
