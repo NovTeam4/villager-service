@@ -1,6 +1,6 @@
 ### 모임 등록
 POST http://localhost:8080/api/v1/parties
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwibmlja25hbWUiOiLrsJjqsJHsirXri4jri6R-MSIsImlkIjoyLCJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImV4cCI6MTY3MTM0Nzk0OH0.Psi7Kw1zwvIBLglClc8xNJnj1qQMGAQUzZt0Umd_RKI
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MTFAZ21haWwuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsIm5pY2tuYW1lIjoi67CY6rCR7Iq164uI64ukfjExIiwiaWQiOjIsImVtYWlsIjoidGVzdDExQGdtYWlsLmNvbSIsImV4cCI6MTY3MTYxMzQ0NX0.vSpNl95AcIMxLMKkk5bW_I0gdy4Q1cImVUI87aseMgM
 Content-Type: application/json
 
 {
@@ -26,7 +26,7 @@ Content-Type: application/json
 
 ### 모임 신청
 POST http://localhost:8080/api/v1/parties/1/apply
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwibmlja25hbWUiOiLrsJjqsJHsirXri4jri6R-MSIsImlkIjoyLCJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImV4cCI6MTY3MTM0Nzk0OH0.Psi7Kw1zwvIBLglClc8xNJnj1qQMGAQUzZt0Umd_RKI
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwibmlja25hbWUiOiLrsJjqsJHsirXri4jri6R-MSIsImlkIjozLCJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImV4cCI6MTY3MTYxMzQ4Nn0.X305v3iJ--atzlG-I1lBznPLAtT4BDGS-hwUTFfuR0Q
 Content-Type: application/json
 
 ### 모임 신청 목록 조회
@@ -36,7 +36,7 @@ Content-Type: application/json
 
 ### 모임 허가
 PATCH http://localhost:8080/api/v1/parties/1/permission/3
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NUBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwibmlja25hbWUiOiIxMjM0NSIsImlkIjoyLCJlbWFpbCI6IjEyMzQ1QG5hdmVyLmNvbSIsImV4cCI6MTY3MDc3NDYzN30.gg8vYwdhKLLIpIHw43ncQQdkWiDoybxkUhGZrIvZN40
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MTFAZ21haWwuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsIm5pY2tuYW1lIjoi67CY6rCR7Iq164uI64ukfjExIiwiaWQiOjIsImVtYWlsIjoidGVzdDExQGdtYWlsLmNvbSIsImV4cCI6MTY3MTYxMzQ0NX0.vSpNl95AcIMxLMKkk5bW_I0gdy4Q1cImVUI87aseMgM
 Content-Type: application/json
 
 ### 관심모임 등록/취소
@@ -47,4 +47,9 @@ Content-Type: application/json
 ### 관심모임 조회
 GET http://localhost:8080/api/v1/parties/1/like
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwibmlja25hbWUiOiLrsJjqsJHsirXri4jri6R-MSIsImlkIjoyLCJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImV4cCI6MTY3MTM0Nzk0OH0.Psi7Kw1zwvIBLglClc8xNJnj1qQMGAQUzZt0Umd_RKI
+Content-Type: application/json
+
+### 모임 시작
+POST http://localhost:8080/api/v1/parties/1/start
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MTFAZ21haWwuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsIm5pY2tuYW1lIjoi67CY6rCR7Iq164uI64ukfjExIiwiaWQiOjIsImVtYWlsIjoidGVzdDExQGdtYWlsLmNvbSIsImV4cCI6MTY3MTYxMzQ0NX0.vSpNl95AcIMxLMKkk5bW_I0gdy4Q1cImVUI87aseMgM
 Content-Type: application/json

@@ -3,8 +3,8 @@ POST http://localhost:8080/api/v1/auth/signup
 Content-Type: application/json
 
 {
-  "nickname" : "반갑습니다~1",
-  "email" : "test1@gmail.com",
+  "nickname" : "반갑습니다~111",
+  "email" : "test111@gmail.com",
   "password" : "hellOworld12^^",
   "gender" : "MAN",
   "birth" : "2022-05-02",
@@ -16,7 +16,7 @@ POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "email": "test1@gmail.com",
+  "email": "test111@gmail.com",
   "password": "hellOworld12^^"
 }
 

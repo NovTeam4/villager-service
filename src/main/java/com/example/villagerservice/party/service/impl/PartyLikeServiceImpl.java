@@ -7,7 +7,7 @@ import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyLikeRepository;
 import com.example.villagerservice.party.repository.PartyRepository;
-import com.example.villagerservice.party.request.PartyLikeDto;
+import com.example.villagerservice.party.dto.PartyLikeDto;
 import com.example.villagerservice.party.service.PartyLikeService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

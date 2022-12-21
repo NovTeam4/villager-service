@@ -1,4 +1,4 @@
-package com.example.villagerservice.party.request;
+package com.example.villagerservice.party.dto;
 
 import static com.example.villagerservice.party.type.PartyLikeResponseType.*;
 
