@@ -464,6 +464,30 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
             .body("accept", Matchers.equalTo(true));
     }
 
+    @Test
+    @DisplayName("모임 허락 취소 테스트")
+    void partyPermissionCancel() throws Exception {
+        Member host = createMember("host@gmail.com", "주최자");
+        Member applicant = createMember("applicant@gmail.com", "신청자");
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(host.getEmail(), "hello11@@nW");// 신청자로 로그인
+        Party party = saveParty(host);// 주최자기준
+        savePartyApply(applicant.getId(), party, true);// 모임신청
+
+        Response response = givenAuth("",
+            template.allRestDocumentation("모임 허락",
+                partyPermissionPathParameterFields(),
+                getPartyApplyDtoResponseFields(),
+                PartyApplyDto.Response.class.getName()))
+            .when()
+            .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+            .patch("/api/v1/parties/{partyId}/permission/{targetMemberId}", party.getId(), applicant.getId());
+
+        response
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("accept", Matchers.equalTo(false));
+    }
+
     // 파티 신청
     private void savePartyApply(Long targetMemberId, Party party, boolean isAccept) {
         if(isAccept){
