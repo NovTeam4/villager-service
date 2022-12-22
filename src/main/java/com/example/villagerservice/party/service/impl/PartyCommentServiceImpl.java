@@ -56,7 +56,7 @@ public class PartyCommentServiceImpl implements PartyCommentService {
     private PartyComment partyCommentCheckedById(Long partyCommentId) {
 
         return partyCommentRepository.findById(partyCommentId).orElseThrow(
-                () -> new PartyCommentException(PartyCommentErrorCode.CONTENT_NOT_FOUND)
+                () -> new PartyCommentException(PartyCommentErrorCode.COMMENT_NOT_FOUND)
         );
     }
 
