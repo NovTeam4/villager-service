@@ -273,8 +273,10 @@ public class PartyServiceImplTest {
                 .willReturn(responseList);
 
 
+        // then
         List<PartyListDTO> partyList = partyQueryService.getPartyList(member.getEmail(), 127.1, 127.1);
 
+        // then
         Assertions.assertThat(partyList.size()).isEqualTo(2);
     }
 
@@ -285,10 +287,12 @@ public class PartyServiceImplTest {
         given(partyRepository.findById(anyLong()))
             .willReturn(Optional.empty());
 
+        // when
         PartyException partyException = assertThrows(PartyException.class, () -> {
             partyService.startParty(1L, Member.builder().build());
         });
 
+        // then
         assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorCode());
         assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorMessage());
     }
@@ -303,10 +307,12 @@ public class PartyServiceImplTest {
         given(partyRepository.findById(anyLong()))
             .willReturn(Optional.ofNullable(Party.builder().member(host).build()));
 
+        // when
         PartyException partyException = assertThrows(PartyException.class, () -> {
             partyService.startParty(1L, user);
         });
 
+        // then
         assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND_MEMBER.getErrorCode());
         assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND_MEMBER.getErrorMessage());
     }
@@ -321,10 +327,12 @@ public class PartyServiceImplTest {
         given(partyRepository.findById(anyLong()))
             .willReturn(Optional.ofNullable(Party.builder().member(member).startDt(startDt).build()));
 
+        // when
         PartyException partyException = assertThrows(PartyException.class, () -> {
             partyService.startParty(1L, member);
         });
 
+        // then
         assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_START_TIME.getErrorCode());
         assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_START_TIME.getErrorMessage());
     }
@@ -346,10 +354,12 @@ public class PartyServiceImplTest {
         given(partyApplyQueryService.getPartyApplyId(anyLong(), anyString()))
             .willReturn(partyApplyList);// 10개 다 허락안한 신청
 
+        // when
         PartyException partyException = assertThrows(PartyException.class, () -> {
             partyService.startParty(1L, member);
         });
 
+        // then
         assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_MEMBER_EMPTY.getErrorCode());
         assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_MEMBER_EMPTY.getErrorMessage());
     }
@@ -379,6 +389,140 @@ public class PartyServiceImplTest {
         partyService.startParty(1L, member);
 
         // then
+    }
+
+    @Test
+    @DisplayName("모임 연장 실패 - 모임이 없음")
+    public void 모임_연장_실패_모임이없음(){
+        // given
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.empty());
+
+        // when
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.extensionParty(1L, null, null);
+        });
+
+        // then
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("모임 연장 실패 - 자신이 모임장이 아님")
+    public void 모임_연장_실패_자신이모임장이아님(){
+        // given
+        String hostEmail = "host@naver.com";
+        String loginEmail = "login@naver.com";
+        // hostEmail로 되어있는모임
+        Party party = Party.builder().member(Member.builder().email(hostEmail).build()).build();
+        // 로그인한 멤버
+        Member user = Member.builder().email(loginEmail).build();
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.of(party));
+
+        // when
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.extensionParty(1L, user, null);
+        });
+
+        // then
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND_MEMBER.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_FOUND_MEMBER.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("모임 연장 실패 - 종료시간이 원래 종료시간보다 이전")
+    public void 모임_연장_실패_종료시간이원래종료시간보다이전(){
+        // given
+        LocalDate endDt = LocalDate.parse("2022-12-12");// 모임 기존 종료날
+        LocalDate newEndDt = LocalDate.parse("2022-11-11");// 새로 등록할 종료날
+        Member member = Member.builder().email("user@naver.com").build();
+        Party party = Party.builder().endDt(endDt).member(member).build();
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.of(party));
+
+        // when
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.extensionParty(1L, member, newEndDt);
+        });
+
+        // then
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_WRONG_END_TIME.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_WRONG_END_TIME.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("모임 연장 실패 - 모임이 시작되지 않음")
+    public void 모임_연장_실패_모임이시작되지않음(){
+        // given
+        LocalDate endDt = LocalDate.parse("2022-12-12");// 모임 기존 종료날
+        LocalDate newEndDt = LocalDate.parse("2022-12-13");// 새로 등록할 종료날
+        Member member = Member.builder().email("user@naver.com").build();
+        Party party = Party.builder().endDt(endDt).member(member).build();
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.of(party));
+        given(partyMemberRepository.existsByParty_Id(anyLong()))
+            .willReturn(false);
+
+        // when
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.extensionParty(1L, member, newEndDt);
+        });
+
+        // then
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_DOES_NOT_START.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_DOES_NOT_START.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("모임 연장 실패 - 아직 종료시간이 아님")
+    public void 모임_연장_실패_아직종료시간이아님(){
+        // given
+        LocalDate endDt = LocalDate.now().plusDays(1);// 모임 기존 종료날(now + 1)
+        LocalDate newEndDt = LocalDate.now().plusDays(2);// 새로 등록할 종료날(now + 2)
+        Member member = Member.builder().email("user@naver.com").build();
+        Party party = Party.builder().endDt(endDt).member(member).build();
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.of(party));
+        given(partyMemberRepository.existsByParty_Id(anyLong()))
+            .willReturn(true);
+
+        // when
+        PartyException partyException = assertThrows(PartyException.class, () -> {
+            partyService.extensionParty(1L, member, newEndDt);
+        });
+
+        // then
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_END_TIME.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_END_TIME.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("모임 연장 성공")
+    public void 모임_연장_성공(){
+        // given
+        LocalDate endDt = LocalDate.now().minusDays(1);// 모임 기존 종료날(now - 1)
+        LocalDate newEndDt = LocalDate.now().plusDays(1);// 새로 등록할 종료날(now + 1)
+        Member member = Member.builder().email("user@naver.com").build();
+        Party party = Party.builder().endDt(endDt).member(member).build();
+
+        given(partyRepository.findById(anyLong()))
+            .willReturn(Optional.of(party));
+        given(partyMemberRepository.existsByParty_Id(anyLong()))
+            .willReturn(true);
+        ArgumentCaptor<Party> captor = ArgumentCaptor.forClass(Party.class);
+
+        // when
+        partyService.extensionParty(1L, member, newEndDt);
+
+        // then
+        verify(partyRepository, times(1)).save(captor.capture());
+        assertThat(newEndDt).isEqualTo(captor.getValue().getEndDt());
     }
 
     @NotNull
