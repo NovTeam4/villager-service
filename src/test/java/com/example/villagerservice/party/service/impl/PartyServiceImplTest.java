@@ -325,8 +325,8 @@ public class PartyServiceImplTest {
             partyService.startParty(1L, member);
         });
 
-        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_IS_NOT_TIME.getErrorCode());
-        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_IS_NOT_TIME.getErrorMessage());
+        assertThat(partyException.getErrorCode()).isEqualTo(PartyErrorCode.PARTY_NOT_START_TIME.getErrorCode());
+        assertThat(partyException.getErrorMessage()).isEqualTo(PartyErrorCode.PARTY_NOT_START_TIME.getErrorMessage());
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
+import java.time.LocalDate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -24,4 +25,12 @@ public interface PartyService {
      * @param member
      */
     void startParty(Long partyId, Member member);
+
+    /**
+     * 모임 연장
+     * @param partyId
+     * @param member
+     * @param endTime
+     */
+    void extensionParty(Long partyId, Member member, LocalDate endTime);
 }

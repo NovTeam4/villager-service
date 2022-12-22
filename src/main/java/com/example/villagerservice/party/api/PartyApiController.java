@@ -7,9 +7,11 @@ import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.dto.PartyApplyDto;
 import com.example.villagerservice.party.dto.PartyLikeDto;
 import com.example.villagerservice.party.service.*;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -103,5 +105,12 @@ public class PartyApiController {
     @PostMapping("{partyId}/start")
     public void partyStart(@PathVariable Long partyId, @AuthenticationPrincipal Member member){
         partyService.startParty(partyId, member);
+    }
+
+    @PostMapping("{partyId}/extension/{endTime}")
+    public void partyExtension(@PathVariable Long partyId,
+        @DateTimeFormat(pattern = "yyyy-MM-dd") @PathVariable LocalDate endTime,
+        @AuthenticationPrincipal Member member){
+        partyService.extensionParty(partyId, member, endTime);
     }
 }

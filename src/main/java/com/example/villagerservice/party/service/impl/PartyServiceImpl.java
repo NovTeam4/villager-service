@@ -1,9 +1,12 @@
 package com.example.villagerservice.party.service.impl;
 
-import static com.example.villagerservice.party.exception.PartyErrorCode.*;
-import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_IS_NOT_TIME;
+import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_DOES_NOT_START;
+import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_MEMBER_EMPTY;
+import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_END_TIME;
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_FOUND;
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_FOUND_MEMBER;
+import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_START_TIME;
+import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_WRONG_END_TIME;
 
 import com.example.villagerservice.events.service.PartyCreatedEventService;
 import com.example.villagerservice.member.domain.Member;
@@ -12,10 +15,8 @@ import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyApply;
 import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.domain.PartyMember;
-import com.example.villagerservice.party.dto.PartyApplyDto;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
-import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.PartyApplyRepository;
 import com.example.villagerservice.party.repository.PartyMemberRepository;
@@ -95,7 +96,7 @@ public class PartyServiceImpl implements PartyService {
 
         // 시작시간이 넘었는지 검사
         if(party.getStartDt().isAfter(LocalDate.now())){
-            throw new PartyException(PARTY_IS_NOT_TIME);
+            throw new PartyException(PARTY_NOT_START_TIME);
         }
 
         // 파티신청자 불러오기
@@ -126,6 +127,33 @@ public class PartyServiceImpl implements PartyService {
                 .memberId(member.getId())
                 .party(party)
                 .build());
+    }
+
+    @Override
+    public void extensionParty(Long partyId, Member member, LocalDate endTime) {
+        // 모임장인지 검사
+        Party party = partyRepository.findById(partyId).orElseThrow(
+            () -> new PartyException(PARTY_NOT_FOUND)
+        );
+        if(!party.getMember().getEmail().equals(member.getEmail())){
+            throw new PartyException(PARTY_NOT_FOUND_MEMBER);
+        }
+        // 새로 입력한 종료시간이 원래 종료시간보다 이전인 경우 에러
+        if(party.getEndDt().isAfter(endTime)){
+            throw new PartyException(PARTY_WRONG_END_TIME);
+        }
+        // 파티가 시작됐는지 검사
+        if(!partyMemberRepository.existsByParty_Id(partyId)){
+            throw new PartyException(PARTY_DOES_NOT_START);
+        }
+        // 종료시간이 넘었는지 검사
+        if(party.getEndDt().isBefore(LocalDate.now())){
+            throw new PartyException(PARTY_NOT_END_TIME);
+        }
+
+        // 종료가 됐으면 종료시간 늘리고 저장
+        party.setEndDt(endTime);
+        partyRepository.save(party);
     }
 
     @Override
