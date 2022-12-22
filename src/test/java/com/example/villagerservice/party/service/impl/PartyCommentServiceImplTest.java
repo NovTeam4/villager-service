@@ -5,6 +5,7 @@ import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.domain.PartyTag;
+import com.example.villagerservice.party.dto.PartyCommentDTO;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.exception.PartyCommentErrorCode;
 import com.example.villagerservice.party.exception.PartyCommentException;
@@ -97,6 +98,47 @@ public class PartyCommentServiceImplTest {
 
         verify(partyCommentRepository,times(1)).save(captor.capture());
         Assertions.assertThat(captor.getValue().getContents()).isEqualTo("test");
+    }
+
+    @Test
+    @DisplayName("모임 댓글 변경 시 , 댓글이 없을 경우")
+    void updateCommentWithoutComment() {
+
+        Long partyCommentId = 1L;
+        String value = "update-test";
+
+        PartyCommentException partyCommentException = assertThrows(PartyCommentException.class, () -> {
+            partyCommentService.updateComment(anyLong() , value);
+        });
+
+        assertThat(partyCommentException.getErrorCode()).isEqualTo(PartyCommentErrorCode.COMMENT_NOT_FOUND.getErrorCode());
+        assertThat(partyCommentException.getErrorMessage()).isEqualTo(PartyCommentErrorCode.COMMENT_NOT_FOUND.getErrorMessage());
+
+    }
+
+    @Test
+    @DisplayName("모임 댓글 변경 테스트")
+    void updateComment() {
+
+        PartyDTO.Request request = createRequest();
+
+        Member member = Member.builder()
+                .email("test@gmail.com")
+                .nickname("홍길동")
+                .build();
+
+        Party party = Party.createParty(request , member);
+
+        PartyComment partyComment = PartyComment.createPartyComment("test", party);
+
+        given(partyCommentRepository.findById(1L))
+                .willReturn(Optional.of(partyComment));
+
+        partyCommentService.updateComment(1L, "update-test");
+
+        Assertions.assertThat(partyCommentRepository.findById(1L).get().getContents()).isEqualTo("update-test");
+
+
     }
 
     private static PartyDTO.Request createRequest() {

@@ -245,6 +245,22 @@ public class PartyApiControllerTest {
         verify(partyCommentService,times(1)).createComment(partyId , value);
     }
 
+    @Test
+    @DisplayName("모임 댓글 변경 테스트")
+    void updateComment() throws Exception {
+
+        Long partyCommentId = 1L;
+        String value = "update-test";
+        mockMvc.perform(patch("/api/v1/parties/{partyId}/comment",partyCommentId)
+                        .characterEncoding("UTF-8")
+                        .contentType(MediaType.TEXT_PLAIN_VALUE)
+                        .content(value))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(partyCommentService,times(1)).updateComment(partyCommentId , value);
+    }
+
     private static PartyDTO.Request createRequest() {
         List<PartyTag> tagList = new ArrayList<>();
 
