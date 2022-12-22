@@ -346,6 +346,37 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         return party;
     }
 
+    private Party saveParty(Member member, LocalDate endDt) {
+
+        PartyDTO.Request request = PartyDTO.Request.builder()
+            .partyName("test-party")
+            .score(100)
+            .startDt(LocalDate.MIN)
+            .endDt(endDt)
+            .amount(1000)
+            .numberPeople(2)
+            .location("수원시")
+            .latitude(127.1)
+            .longitude(127.1)
+            .content("test")
+            .tagList(new ArrayList<>())
+            .build();
+
+        Party party = Party.createParty(request , member);
+
+        request.getTagList().add(PartyTag.builder()
+            .tagName("낚시")
+            .build());
+
+        request.getTagList().add(PartyTag.builder()
+            .tagName("볼링")
+            .build());
+
+        partyRepository.save(party);
+
+        return party;
+    }
+
     private PartyComment savePartyComment(Party party , String contents) {
         PartyComment partyComment = PartyComment.builder()
                 .party(party)
@@ -577,6 +608,43 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         assertThat(partyMemberRepository.count()).isEqualTo(applyCnt + 1);
     }
 
+    @Test
+    @DisplayName("모임 연장 테스트")
+    void partyExtension() throws Exception {
+        Member host = createMember("host@gmail.com", "주최자");
+        LocalDate endDt = LocalDate.now().minusDays(1);// 1일 이전 종료
+        String newEndDt = LocalDate.now().plusDays(7).toString();// 7일 연장
+
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse(host.getEmail(), "hello11@@nW");// 신청자로 로그인
+        Party party = saveParty(host, endDt);// 모임 생성
+        // 모임원 모임장 포함 5명 넣기
+        savePartyMember(party, host.getId());// 모임장
+        for(long i = 1001; i <= 1004; i++){
+            savePartyMember(party, i);// 모임원
+        }
+
+        givenAuth("",
+            template.allRestDocumentation("모임 시작",
+                getPartyExtensionPathParameterFields()
+            ))
+            .when()
+            .header(HttpHeaders.AUTHORIZATION , "Bearer " + jwtTokenResponse.getAccessToken())
+            .post("/api/v1/parties/{partyId}/extension/{endDt}", party.getId(), newEndDt)
+            .then()
+            .statusCode(HttpStatus.OK.value());
+
+        // 저장된 개수 확인(모임장까지 +1개)
+        Party savedParty = partyRepository.findById(party.getId()).get();
+        assertThat(savedParty.getEndDt()).isEqualTo(newEndDt);
+    }
+
+    private PartyMember savePartyMember(Party party, Long memberId){
+        return partyMemberRepository.save(PartyMember.builder()
+            .party(party)
+            .memberId(memberId)
+            .build());
+    }
+
     private void savePartyLike(Member member, Party party) {
         partyLikeRepository.save(PartyLike.builder()
                 .member(member)
@@ -592,6 +660,12 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
     @NotNull
     private List<ParameterDescriptorWithType> getPartyStartPathParameterFields() {
         return List.of(new ParameterDescriptorWithType("partyId").description("모임 id"));
+    }
+
+    @NotNull
+    private List<ParameterDescriptorWithType> getPartyExtensionPathParameterFields() {
+        return List.of(new ParameterDescriptorWithType("partyId").description("모임 id"),
+            new ParameterDescriptorWithType("endDt").description("새로바꿀종료시간"));
     }
 
     @NotNull

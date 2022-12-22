@@ -147,7 +147,7 @@ public class PartyServiceImpl implements PartyService {
             throw new PartyException(PARTY_DOES_NOT_START);
         }
         // 종료시간이 넘었는지 검사
-        if(party.getEndDt().isBefore(LocalDate.now())){
+        if(party.getEndDt().isAfter(LocalDate.now())){
             throw new PartyException(PARTY_NOT_END_TIME);
         }
 

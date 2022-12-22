@@ -482,8 +482,8 @@ public class PartyServiceImplTest {
     @DisplayName("모임 연장 실패 - 아직 종료시간이 아님")
     public void 모임_연장_실패_아직종료시간이아님(){
         // given
-        LocalDate endDt = LocalDate.now().minusDays(1);// 모임 기존 종료날(now - 1)
-        LocalDate newEndDt = LocalDate.now().plusDays(1);// 새로 등록할 종료날(now + 1)
+        LocalDate endDt = LocalDate.now().plusDays(1);// 모임 기존 종료날(now + 1)
+        LocalDate newEndDt = LocalDate.now().plusDays(2);// 새로 등록할 종료날(now + 2)
         Member member = Member.builder().email("user@naver.com").build();
         Party party = Party.builder().endDt(endDt).member(member).build();
 
@@ -506,8 +506,8 @@ public class PartyServiceImplTest {
     @DisplayName("모임 연장 성공")
     public void 모임_연장_성공(){
         // given
-        LocalDate endDt = LocalDate.now().plusDays(1);// 모임 기존 종료날(now + 1)
-        LocalDate newEndDt = LocalDate.now().plusDays(2);// 새로 등록할 종료날(now + 2)
+        LocalDate endDt = LocalDate.now().minusDays(1);// 모임 기존 종료날(now - 1)
+        LocalDate newEndDt = LocalDate.now().plusDays(1);// 새로 등록할 종료날(now + 1)
         Member member = Member.builder().email("user@naver.com").build();
         Party party = Party.builder().endDt(endDt).member(member).build();
 
