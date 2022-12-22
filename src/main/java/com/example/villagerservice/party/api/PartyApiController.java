@@ -107,10 +107,10 @@ public class PartyApiController {
         partyService.startParty(partyId, member);
     }
 
-    @PostMapping("{partyId}/extension/{endTime}")
+    @PostMapping("{partyId}/extension/{endDt}")
     public void partyExtension(@PathVariable Long partyId,
-        @DateTimeFormat(pattern = "yyyy-MM-dd") @PathVariable LocalDate endTime,
+        @DateTimeFormat(pattern = "yyyy-MM-dd") @PathVariable LocalDate endDt,
         @AuthenticationPrincipal Member member){
-        partyService.extensionParty(partyId, member, endTime);
+        partyService.extensionParty(partyId, member, endDt);
     }
 }

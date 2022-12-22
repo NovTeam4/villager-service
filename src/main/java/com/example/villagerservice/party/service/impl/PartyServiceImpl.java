@@ -130,7 +130,7 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
-    public void extensionParty(Long partyId, Member member, LocalDate endTime) {
+    public void extensionParty(Long partyId, Member member, LocalDate endDt) {
         // 모임장인지 검사
         Party party = partyRepository.findById(partyId).orElseThrow(
             () -> new PartyException(PARTY_NOT_FOUND)
@@ -139,7 +139,7 @@ public class PartyServiceImpl implements PartyService {
             throw new PartyException(PARTY_NOT_FOUND_MEMBER);
         }
         // 새로 입력한 종료시간이 원래 종료시간보다 이전인 경우 에러
-        if(party.getEndDt().isAfter(endTime)){
+        if(party.getEndDt().isAfter(endDt)){
             throw new PartyException(PARTY_WRONG_END_TIME);
         }
         // 파티가 시작됐는지 검사
@@ -152,7 +152,7 @@ public class PartyServiceImpl implements PartyService {
         }
 
         // 종료가 됐으면 종료시간 늘리고 저장
-        party.setEndDt(endTime);
+        party.setEndDt(endDt);
         partyRepository.save(party);
     }
 
