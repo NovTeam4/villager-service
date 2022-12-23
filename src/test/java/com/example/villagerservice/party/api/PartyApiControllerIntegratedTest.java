@@ -775,6 +775,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("numberPeople").type(JsonFieldType.NUMBER).description("모임 인원"),
                 fieldWithPath("location").type(JsonFieldType.STRING).description("모임 장소"),
                 fieldWithPath("content").type(JsonFieldType.STRING).description("모임 상세 내용"),
+                fieldWithPath("state").type(JsonFieldType.STRING).description("모임 상태"),
                 fieldWithPath("tagNameList").type(JsonFieldType.ARRAY).description("모임 태그 목록"),
                 fieldWithPath("commentList").type(JsonFieldType.ARRAY).description("모임 댓글 목록"),
                 fieldWithPath("commentList[].contents").type(JsonFieldType.STRING).description("모임 댓글 내용"),

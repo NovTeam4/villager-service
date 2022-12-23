@@ -58,6 +58,9 @@ public class Party extends BaseTimeEntity {
 
     private String content;
 
+    @Enumerated(EnumType.STRING)
+    private PartyState state;
+
     //Member와 연결 필요
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -78,6 +81,7 @@ public class Party extends BaseTimeEntity {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .content(request.getContent())
+                .state(PartyState.READY)
                 .tagList(request.getTagList())
                 .member(member)
                 .build();
