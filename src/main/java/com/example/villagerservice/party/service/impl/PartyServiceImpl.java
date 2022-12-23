@@ -161,6 +161,7 @@ public class PartyServiceImpl implements PartyService {
         partyCommentService.deleteAllComment(party.getId());
         partyTagRepository.deleteAllByParty_id(party.getId());
         partyLikeRepository.deleteByParty_id(party.getId());
+        partyApplyRepository.deleteAllByParty_id(party.getId());
         partyRepository.deleteById(party.getId());
     }
 

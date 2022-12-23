@@ -14,4 +14,6 @@ public interface PartyApplyRepository extends JpaRepository<PartyApply, Long> {
     Optional<PartyApply> findByParty_IdAndTargetMemberId(Long partyId, Long targetMemberId);
 
     Optional<PartyApply> findFirstByOrderByIdDesc();
+
+    void deleteAllByParty_id(Long partyId);
 }

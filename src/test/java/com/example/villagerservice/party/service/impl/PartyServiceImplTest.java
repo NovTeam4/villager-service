@@ -149,7 +149,6 @@ public class PartyServiceImplTest {
 
     @Test
     @DisplayName("모임 삭제 테스트")
-    @Disabled
     void deleteParty() {
 
         Party party = getParty();
