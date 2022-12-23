@@ -3,6 +3,12 @@ spring:
     host: localhost
     port: 6379
 
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+        default-page-size: 10
+
   main:
     allow-bean-definition-overriding: true
 
