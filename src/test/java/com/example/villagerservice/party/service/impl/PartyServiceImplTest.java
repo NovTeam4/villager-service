@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.validation.constraints.NotNull;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -149,6 +150,7 @@ public class PartyServiceImplTest {
 
     @Test
     @DisplayName("모임 삭제 테스트")
+    @Disabled
     void deleteParty() {
 
         Party party = getParty();
