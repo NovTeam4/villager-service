@@ -126,7 +126,7 @@ compileQuerydsl {
 // ===== querydsl end ===== //
 
 openapi3 {
-    setServer("http://ec2-15-164-233-107.ap-northeast-2.compute.amazonaws.com:8080")
+    setServer("https://devwinter.com")
     title = "동네친구들 API Documentation"
     description = "NovTeam4"
     version = "0.0.1"
