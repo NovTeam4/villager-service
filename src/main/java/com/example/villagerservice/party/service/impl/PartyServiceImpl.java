@@ -18,10 +18,7 @@ import com.example.villagerservice.party.domain.PartyMember;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyException;
-import com.example.villagerservice.party.repository.PartyApplyRepository;
-import com.example.villagerservice.party.repository.PartyMemberRepository;
-import com.example.villagerservice.party.repository.PartyRepository;
-import com.example.villagerservice.party.repository.PartyTagRepository;
+import com.example.villagerservice.party.repository.*;
 import com.example.villagerservice.party.service.PartyApplyQueryService;
 import com.example.villagerservice.party.service.PartyCommentService;
 import com.example.villagerservice.party.service.PartyLikeService;
@@ -47,6 +44,8 @@ public class PartyServiceImpl implements PartyService {
     private final PartyApplyQueryService partyApplyQueryService;
     private final PartyApplyRepository partyApplyRepository;
     private final PartyMemberRepository partyMemberRepository;
+
+    private final PartyLikeRepository partyLikeRepository;
 
     @Override
     @Transactional
@@ -162,6 +161,7 @@ public class PartyServiceImpl implements PartyService {
         Party party = partyCheckedById(partyId);
         partyCommentService.deleteAllComment(party.getId());
         partyTagRepository.deleteAllByParty_id(party.getId());
+        partyLikeRepository.deleteByParty_id(party.getId());
         partyRepository.deleteById(party.getId());
     }
 
