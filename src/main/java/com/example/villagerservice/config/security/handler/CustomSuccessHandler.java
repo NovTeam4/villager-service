@@ -8,7 +8,7 @@ import com.example.villagerservice.config.redis.RedisRepository;
 import com.example.villagerservice.config.security.oauth2.CookieUtils;
 import com.example.villagerservice.config.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.example.villagerservice.config.security.oauth2.model.PrincipalUser;
-import com.example.villagerservice.config.security.properties.Oauth2Properties;
+import com.example.villagerservice.config.security.properties.OAuth2Properties;
 import com.example.villagerservice.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ import static com.example.villagerservice.config.security.oauth2.HttpCookieOAuth
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisRepository redisRepository;
-    private final Oauth2Properties oauth2Properties;
+    private final OAuth2Properties oauth2Properties;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

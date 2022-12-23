@@ -7,12 +7,10 @@ import com.example.villagerservice.config.security.filters.JwtAuthenticationFilt
 import com.example.villagerservice.config.security.handler.CustomFailureHandler;
 import com.example.villagerservice.config.security.handler.CustomSuccessHandler;
 import com.example.villagerservice.config.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.example.villagerservice.config.security.properties.Oauth2Properties;
+import com.example.villagerservice.config.security.properties.OAuth2Properties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,7 +31,7 @@ public class AuthConfig {
     private final JwtTokenProvider jwtTokenProvider;
 
     private final RedisRepository redisRepository;
-    private final Oauth2Properties oauth2Properties;
+    private final OAuth2Properties oauth2Properties;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Bean
