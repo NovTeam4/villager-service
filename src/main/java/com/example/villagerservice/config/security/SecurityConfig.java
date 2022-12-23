@@ -5,6 +5,7 @@ import com.example.villagerservice.config.security.filters.CustomAuthenticationF
 import com.example.villagerservice.config.security.filters.JwtAuthenticationFilter;
 import com.example.villagerservice.config.security.handler.CustomFailureHandler;
 import com.example.villagerservice.config.security.handler.CustomSuccessHandler;
+import com.example.villagerservice.config.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.example.villagerservice.config.security.oauth2.service.CustomOAuth2UserService;
 import com.example.villagerservice.config.security.oauth2.service.CustomOidcUserService;
 import com.example.villagerservice.config.security.properties.CorsProperties;
@@ -38,6 +39,8 @@ public class SecurityConfig {
     private final CustomFailureHandler failureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOidcUserService customOidcUserService;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -77,7 +80,10 @@ public class SecurityConfig {
                                                 .userService(customOAuth2UserService)
                                                 .oidcUserService(customOidcUserService))
                                 .successHandler(successHandler)
-                                .failureHandler(failureHandler));
+                                .failureHandler(failureHandler)
+                                .authorizationEndpoint()
+                                .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))
+        ;
 
         return http.build();
     }

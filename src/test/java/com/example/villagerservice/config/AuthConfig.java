@@ -6,6 +6,8 @@ import com.example.villagerservice.config.security.filters.CustomAuthenticationF
 import com.example.villagerservice.config.security.filters.JwtAuthenticationFilter;
 import com.example.villagerservice.config.security.handler.CustomFailureHandler;
 import com.example.villagerservice.config.security.handler.CustomSuccessHandler;
+import com.example.villagerservice.config.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.example.villagerservice.config.security.properties.Oauth2Properties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,8 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AuthConfig {
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisTemplate<String, Object> redisTemplate;
+
     private final RedisRepository redisRepository;
+    private final Oauth2Properties oauth2Properties;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -77,7 +81,11 @@ public class AuthConfig {
         CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManager);
         authenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
         authenticationFilter.setAuthenticationFailureHandler(new CustomFailureHandler());
-        authenticationFilter.setAuthenticationSuccessHandler(new CustomSuccessHandler(jwtTokenProvider, redisRepository));
+        authenticationFilter.setAuthenticationSuccessHandler(new CustomSuccessHandler(
+                jwtTokenProvider,
+                redisRepository,
+                oauth2Properties,
+                httpCookieOAuth2AuthorizationRequestRepository));
         return authenticationFilter;
     }
 
