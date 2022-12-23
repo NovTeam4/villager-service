@@ -73,13 +73,9 @@ public class TownQueryRepositoryImpl implements TownQueryRepository {
     }
 
     @Override
-    public Long getTownId(Double latitude, Double longitude) {
+    public TownListDetail getTownInfo(Double latitude, Double longitude) {
         try {
-            TownListDetail townListDetail = jdbcTemplate.queryForObject(getLocationQuery(latitude, longitude), mapRow());
-            if(townListDetail != null) {
-                return townListDetail.getTownId();
-            }
-            return null;
+            return jdbcTemplate.queryForObject(getLocationQuery(latitude, longitude), mapRow());
         }catch (Exception e) {
             return null;
         }

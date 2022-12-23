@@ -13,6 +13,7 @@ public class PartyCreatedEvent extends Event {
     private final Body body;
 
     private PartyCreatedEvent(Long townId,
+                              String townName,
                               Double latitude,
                               Double longitude,
                               int mannerPoint,
@@ -22,11 +23,12 @@ public class PartyCreatedEvent extends Event {
                               String partyName,
                               List<String> tags) {
         super(PARTY_CREATED_EVENT);
-        this.body = new Body(townId, latitude, longitude, mannerPoint, memberCount, partyId,
+        this.body = new Body(townId, townName, latitude, longitude, mannerPoint, memberCount, partyId,
                 amount, partyName, tags);
     }
 
     public static PartyCreatedEvent createEvent(Long townId,
+                                                String townName,
                                                 Double latitude,
                                                 Double longitude,
                                                 int mannerPoint,
@@ -35,7 +37,7 @@ public class PartyCreatedEvent extends Event {
                                                 int amount,
                                                 String partyName,
                                                 List<String> tags) {
-        return new PartyCreatedEvent(townId, latitude, longitude,
+        return new PartyCreatedEvent(townId, townName, latitude, longitude,
                 mannerPoint, memberCount, partyId, amount, partyName, tags);
     }
 
@@ -43,6 +45,7 @@ public class PartyCreatedEvent extends Event {
     @Getter
     static class Body {
         private Long townId;
+        private String townName;
         private Double latitude;
         private Double longitude;
         private int mannerPoint;

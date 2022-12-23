@@ -5,10 +5,10 @@ import com.example.villagerservice.events.service.PartyCreatedEventService;
 import com.example.villagerservice.party.domain.PartyCreatedEvent;
 import com.example.villagerservice.party.domain.PartyTag;
 import com.example.villagerservice.town.domain.TownQueryRepository;
+import com.example.villagerservice.town.dto.TownListDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,11 +26,13 @@ public class PartyCreatedEventServiceImpl implements PartyCreatedEventService {
                       int amount,
                       String partyName,
                       List<PartyTag> tags) {
-        Long townCode = getTownId(latitude, longitude);
-        if(townCode != null) {
+        TownListDetail townInfo = getTownInfo(latitude, longitude);
+        if(townInfo != null) {
             log.info("PartyCreatedEventServiceImpl raise");
             List<String> partyTags = getPartyTags(tags);
-            Events.raise(PartyCreatedEvent.createEvent(townCode,
+            Events.raise(PartyCreatedEvent.createEvent(
+                    townInfo.getTownId(),
+                    townInfo.getName(),
                     latitude,
                     longitude,
                     mannerPoint,
@@ -48,7 +50,7 @@ public class PartyCreatedEventServiceImpl implements PartyCreatedEventService {
                 .collect(Collectors.toList());
     }
 
-    private Long getTownId(Double latitude, Double longitude) {
-        return townQueryRepository.getTownId(latitude, longitude);
+    private TownListDetail getTownInfo(Double latitude, Double longitude) {
+        return townQueryRepository.getTownInfo(latitude, longitude);
     }
 }
