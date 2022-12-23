@@ -29,6 +29,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -66,7 +67,7 @@ public class PartyCommentServiceImplTest {
                 .willReturn(Optional.of(party));
 
         PartyCommentException partyCommentException = assertThrows(PartyCommentException.class, () -> {
-            partyCommentService.createComment(anyLong() , "");
+            partyCommentService.createComment(anyLong() , "" , member);
         });
 
         assertThat(partyCommentException.getErrorCode()).isEqualTo(PartyCommentErrorCode.CONTENT_IS_REQUIRED.getErrorCode());
@@ -94,7 +95,7 @@ public class PartyCommentServiceImplTest {
 
         ArgumentCaptor<PartyComment> captor = ArgumentCaptor.forClass(PartyComment.class);
 
-        partyCommentService.createComment(partyId , "test");
+        partyCommentService.createComment(partyId , "test" , member);
 
         verify(partyCommentRepository,times(1)).save(captor.capture());
         Assertions.assertThat(captor.getValue().getContents()).isEqualTo("test");
@@ -129,7 +130,7 @@ public class PartyCommentServiceImplTest {
 
         Party party = Party.createParty(request , member);
 
-        PartyComment partyComment = PartyComment.createPartyComment("test", party);
+        PartyComment partyComment = PartyComment.createPartyComment("test", party , member.getMemberDetail().getNickname());
 
         given(partyCommentRepository.findById(1L))
                 .willReturn(Optional.of(partyComment));

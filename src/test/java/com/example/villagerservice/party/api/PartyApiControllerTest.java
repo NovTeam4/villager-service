@@ -231,6 +231,7 @@ public class PartyApiControllerTest {
 
     @Test
     @DisplayName("모임 댓글 테스트")
+    @WithMockCustomMember
     void createComment() throws Exception {
 
         Long partyId = 1L;
@@ -242,7 +243,7 @@ public class PartyApiControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(partyCommentService,times(1)).createComment(partyId , value);
+        verify(partyCommentService,times(1)).createComment(anyLong() , anyString() , any());
     }
 
     @Test
