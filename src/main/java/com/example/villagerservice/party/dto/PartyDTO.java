@@ -110,8 +110,13 @@ public class PartyDTO {
             }
 
             for (PartyComment partyComment : partyCommentList) {
+
+                boolean isOwner = party.getMember().getMemberDetail().getNickname().equals(partyComment.getNickname());
+
                 response.commentList.add(PartyCommentDTO.Response.builder()
                                 .contents(partyComment.getContents())
+                                .nickName(partyComment.getNickname())
+                                .isOwner(isOwner)
                                 .partyCommentId(partyComment.getId())
                                 .partyId(partyComment.getParty().getId()).build());
             }

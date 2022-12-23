@@ -23,11 +23,7 @@ import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyErrorCode;
 import com.example.villagerservice.party.exception.PartyException;
-import com.example.villagerservice.party.repository.PartyApplyRepository;
-import com.example.villagerservice.party.repository.PartyMemberRepository;
-import com.example.villagerservice.party.repository.PartyQueryRepository;
-import com.example.villagerservice.party.repository.PartyRepository;
-import com.example.villagerservice.party.repository.PartyTagRepository;
+import com.example.villagerservice.party.repository.*;
 import com.example.villagerservice.party.service.PartyApplyQueryService;
 import com.example.villagerservice.party.service.PartyCommentService;
 import com.example.villagerservice.party.service.PartyLikeService;
@@ -58,6 +54,9 @@ public class PartyServiceImplTest {
 
     @Mock
     PartyQueryRepository partyQueryRepository;
+
+    @Mock
+    PartyLikeRepository partyLikeRepository;
 
     @Mock
     PartyTagRepository partyTagRepository;

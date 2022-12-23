@@ -130,7 +130,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         Member member = createMember("testparty@gmail.com", "홍길동");
         Party party = saveParty(member);
-        createPartyComment(party);
+        createPartyComment(party , member.getMemberDetail().getNickname());
         Long partyId = party.getId();
 
         Response response = givenAuth("",
@@ -180,7 +180,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         Member member = createMember("testparty@gmail.com", "홍길동");
         Party party = saveParty(member);
-        createPartyComment(party);
+        createPartyComment(party , member.getMemberDetail().getNickname());
         Long partyId = party.getId();
 
         List<PartyTag> newList = new ArrayList<>();
@@ -228,9 +228,9 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
         Member member = createMember("testparty@gmail.com", "홍길동");
         Party party = saveParty(member);
-        createPartyComment(party);
+        createPartyComment(party , member.getMemberDetail().getNickname());
         Party party2 = saveParty(member);
-        createPartyComment(party2);
+        createPartyComment(party2 , member.getMemberDetail().getNickname());
 
         Response response = givenAuth("",
                 template.allRestDocumentation("모임 전체 조회",
@@ -308,9 +308,9 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         return member;
     }
 
-    private void createPartyComment(Party party) {
+    private void createPartyComment(Party party , String nickName) {
 
-        PartyComment partyComment = PartyComment.createPartyComment("test-comment", party);
+        PartyComment partyComment = PartyComment.createPartyComment("test-comment", party , nickName);
 
         partyCommentRepository.save(partyComment);
     }
@@ -780,6 +780,8 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("commentList[].contents").type(JsonFieldType.STRING).description("모임 댓글 내용"),
                 fieldWithPath("commentList[].partyCommentId").type(JsonFieldType.NUMBER).description("모임 댓글 id"),
                 fieldWithPath("commentList[].partyId").type(JsonFieldType.NUMBER).description("모임 id"),
+                fieldWithPath("commentList[].nickName").type(JsonFieldType.STRING).description("모임 댓글 작성자"),
+                fieldWithPath("commentList[].owner").type(JsonFieldType.BOOLEAN).description("모임 주최자일 경우"),
                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("주최자 이름"),
                 fieldWithPath("mannerPoint").type(JsonFieldType.NUMBER).description("주최자 매너점수"),
                 fieldWithPath("partyLike").type(JsonFieldType.BOOLEAN).description("모임 좋아요"),

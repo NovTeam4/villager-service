@@ -1,5 +1,6 @@
 package com.example.villagerservice.party.service.impl;
 
+import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.exception.PartyCommentErrorCode;
@@ -26,13 +27,13 @@ public class PartyCommentServiceImpl implements PartyCommentService {
     private final PartyRepository partyRepository;
 
     @Override
-    public void createComment(Long partyId, String contents) {
+    public void createComment(Long partyId, String contents , Member member) {
         Party party = partyCheckedById(partyId);
 
         if(!StringUtils.hasText(contents)){
             throw new PartyCommentException(PartyCommentErrorCode.CONTENT_IS_REQUIRED);
         }
-        PartyComment partyComment = PartyComment.createPartyComment(contents, party);
+        PartyComment partyComment = PartyComment.createPartyComment(contents, party , member.getMemberDetail().getNickname());
 
         partyCommentRepository.save(partyComment);
     }
