@@ -2,6 +2,7 @@ package com.example.villagerservice.party.dto;
 
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyComment;
+import com.example.villagerservice.party.domain.PartyState;
 import com.example.villagerservice.party.domain.PartyTag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -87,6 +88,8 @@ public class PartyDTO {
 
         private Long memberId;
 
+        private PartyState state;
+
         public static PartyDTO.Response createPartyResponse(Party party , List<PartyComment> partyCommentList , Boolean PartyLike) {
             Response response = Response.builder()
                     .partyName(party.getPartyName())
@@ -97,6 +100,7 @@ public class PartyDTO {
                     .numberPeople(party.getNumberPeople())
                     .location(party.getLocation())
                     .content(party.getContent())
+                    .state(party.getState())
                     .tagNameList(new ArrayList<>())
                     .commentList(new ArrayList<>())
                     .nickname(party.getMember().getMemberDetail().getNickname())
