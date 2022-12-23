@@ -11,6 +11,7 @@ import com.example.villagerservice.member.dto.ValidMemberNickname;
 import com.example.villagerservice.member.service.AuthTokenService;
 import com.example.villagerservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,11 @@ public class AuthApiController {
     private final AuthTokenService authTokenService;
     private final JwtTokenProvider jwtTokenProvider;
     private final MailService mailService;
+
+    @GetMapping("/healthcheck")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("ok");
+    }
 
     @PostMapping("/signup")
     public void createMember(@Valid @RequestBody CreateMember.Request createMember) {
