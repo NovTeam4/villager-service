@@ -33,5 +33,9 @@ public class PartyCommentDTO {
 
         private Long partyId;
 
+        private String nickName;
+
+        private boolean isOwner;
+
     }
 }

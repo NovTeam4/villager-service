@@ -91,9 +91,9 @@ public class PartyApiController {
     }
 
     @PostMapping("/{partyId}/comment")
-    public void createComment(@PathVariable Long partyId , @RequestBody String contents){
+    public void createComment(@PathVariable Long partyId , @RequestBody String contents , @AuthenticationPrincipal Member member){
 
-        partyCommentService.createComment(partyId , contents);
+        partyCommentService.createComment(partyId , contents , member);
 
     }
 

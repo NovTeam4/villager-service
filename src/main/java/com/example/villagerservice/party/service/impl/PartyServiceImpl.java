@@ -78,7 +78,6 @@ public class PartyServiceImpl implements PartyService {
         List<PartyComment> commentList = partyCommentService.getAllComment(partyId);
         boolean partyLike = partyLikeService.isPartyLike(partyId, email);
 
-        System.out.println("party.getMember().getId() = " + party.getMember().getId());
         return PartyDTO.Response.createPartyResponse(party , commentList , partyLike);
     }
 
