@@ -28,6 +28,7 @@ spring:
           google:
             client-id: ENC(rshExAmjBc5kYu6uqVOE2GLLFtuODhG49kHSnqqn+jwVN3hu8yZt5NhKwkqWL3924wUAo80OwVrvQJ4n/BD8T6gkHroDnjjxCNfOi2VW/v8=)
             client-secret: ENC(NNHnN8yaKo6IMLgJ5U0ZZG3a/0UXdnh2SAajwOuXyIN10JrseFh9Sa2d6e7wZGN3)
+            redirect-uri: ENC(xahjgyE04NRL/2wFNXr6zmKHfAnQIsAnSLxfP5VLkh3aMC0MUWChuVeFsEPodmdJr2gVxY2jkr4=)
             scope: openid,profile,email
           kakao:
             client-id: ENC(zXaLrbeCrBLZx+6pS6ZsDjDVgHU4RgCqNnr5BEwy4kIs3I/VQMkpuxE6h1WMdoNq)
@@ -35,7 +36,7 @@ spring:
             authorization-grant-type: authorization_code
             client-authentication-method: POST
             client-name: villager-app
-            redirect-uri: ENC(/Lk+1qphTvm6txWDH8OBMmFKI/6/I+FsQBwayxCwRAzYFzZzJlh9nspeRnTDi7sa0Ifad+0FWpq8K/aH5710h+tIQLm0U9YqgdH9j6kcK1eHoeETwIsN16RYmJichGa4zHDBR6N/W08=)
+            redirect-uri: ENC(r+g4MWAVXpjaGF1NDRrwZj/EsBEAwH1Ub9yuSWA4t0ma2rwaplD4f+Vnb4S1aeBUTRgXU7R/1rA=)
             scope: openid,profile_nickname,profile_image,account_email
             provider: kakao
           naver:
@@ -43,7 +44,7 @@ spring:
             client-secret: ENC(YpIeX1xiNDblTKg0yQ68p0vdYno0iyFg)
             authorization-grant-type: authorization_code
             client-name: villager-app
-            redirect-uri: ENC(1pNFCYtmJBg7uSj/bCoRjwPPVhIiYMKI26NRQprS6pJIL4y4vpDUAWBb9YzMMLlkDr7DJNqqGQa5nWO9FdaeDQUTRQlEF6B/8MkNHkkqd5M9vZ3Kxzq2pInjsD8/4gvswVqKolJGjkw=)
+            redirect-uri: ENC(CRxuBHQfARbr8yYPkkGdV2j8tmeRrbHTzLsgzy4X8OfqCyTRF44wJO/TPoMvyHQeyuFTs3wL3bw=)
             scope: profile,email
             provider: naver
         provider:
@@ -77,10 +78,15 @@ jwt:
   refresh-token-validity-in-seconds: 86400000  # 24 * 60 * 60 * 1000 = 86400000
 
 cors:
-  allowed-origins: http://localhost:3000, http://ec2-15-164-233-107.ap-northeast-2.compute.amazonaws.com:8080
+  allowed-origins: http://localhost:3000, http://ec2-15-164-233-107.ap-northeast-2.compute.amazonaws.com:8080, https://devwinter.com, https://clinquant-mochi-13e034.netlify.app
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
   allowed-headers: '*'
   max-age: 3600
+
+oauth2:
+  authorizedRedirectUris:
+    - http://localhost:3000/oauth2/redirect
+    - https://clinquant-mochi-13e034.netlify.app/oauth2/redirect
 
 jasypt:
   encryptor:
