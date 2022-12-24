@@ -17,6 +17,7 @@ public enum PartyErrorCode {
     PARTY_MEMBER_EMPTY("INFO-606" , "모임원이 없습니다."),
     PARTY_DOES_NOT_START("INFO-607" , "모임이 시작되지 않았습니다."),
     PARTY_WRONG_END_TIME("INFO-609" , "잘못된 모임 종료시간 입니다."),
+    PARTY_WRONG_STATUS("INFO-610" , "잘못된 모임 상태입니다.")
     ;
 
     private final String errorCode;

@@ -8,6 +8,7 @@ import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_N
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_FOUND_MEMBER;
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_START_TIME;
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_WRONG_END_TIME;
+import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_WRONG_STATUS;
 
 import com.example.villagerservice.events.service.PartyCreatedEventService;
 import com.example.villagerservice.member.domain.Member;
@@ -157,6 +158,24 @@ public class PartyServiceImpl implements PartyService {
 
         // 종료가 됐으면 종료시간 늘리고 저장
         party.setEndDt(endDt);
+        partyRepository.save(party);
+    }
+
+    @Override
+    public void endParty(Long partyId, Member member) {
+        // 모임장인지 검사
+        Party party = partyRepository.findById(partyId).orElseThrow(
+            () -> new PartyException(PARTY_NOT_FOUND)
+        );
+        if(!party.getMember().getEmail().equals(member.getEmail())){
+            throw new PartyException(PARTY_NOT_FOUND_MEMBER);
+        }
+        // 파티가 진행중인지 검사
+        if(party.getState() != START){
+            throw new PartyException(PARTY_WRONG_STATUS);
+        }
+
+        party.setState(END);
         partyRepository.save(party);
     }
 

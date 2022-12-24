@@ -113,4 +113,10 @@ public class PartyApiController {
         @AuthenticationPrincipal Member member){
         partyService.extensionParty(partyId, member, endDt);
     }
+
+    @PostMapping("{partyId}/end")
+    public void partyExtension(@PathVariable Long partyId,
+        @AuthenticationPrincipal Member member){
+        partyService.endParty(partyId, member);
+    }
 }
