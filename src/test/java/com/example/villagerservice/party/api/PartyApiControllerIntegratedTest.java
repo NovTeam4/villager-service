@@ -1,6 +1,7 @@
 package com.example.villagerservice.party.api;
 
 
+import static com.example.villagerservice.party.domain.PartyState.*;
 import static com.example.villagerservice.party.type.PartyLikeResponseType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -606,6 +607,8 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
         // 저장된 개수 확인(모임장까지 +1개)
         assertThat(partyMemberRepository.count()).isEqualTo(applyCnt + 1);
+        // 모임 상태 바뀌었는지 확인
+        assertThat(partyRepository.findById(party.getId()).get().getState()).isEqualTo(START);
     }
 
     @Test

@@ -17,6 +17,7 @@ import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyApply;
 import com.example.villagerservice.party.domain.PartyMember;
+import com.example.villagerservice.party.domain.PartyState;
 import com.example.villagerservice.party.domain.PartyTag;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.PartyListDTO;
@@ -385,10 +386,14 @@ public class PartyServiceImplTest {
         given(partyApplyQueryService.getPartyApplyId(anyLong(), anyString()))
             .willReturn(partyApplyList);// 10개 다 허락안한 신청
 
+        ArgumentCaptor<Party> captor = ArgumentCaptor.forClass(Party.class);
+
         // when
         partyService.startParty(1L, member);
 
         // then
+        verify(partyRepository, times(1)).save(captor.capture());
+        assertEquals(captor.getValue().getState(), PartyState.START);
     }
 
     @Test

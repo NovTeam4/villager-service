@@ -1,5 +1,6 @@
 package com.example.villagerservice.party.service.impl;
 
+import static com.example.villagerservice.party.domain.PartyState.*;
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_DOES_NOT_START;
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_MEMBER_EMPTY;
 import static com.example.villagerservice.party.exception.PartyErrorCode.PARTY_NOT_END_TIME;
@@ -15,6 +16,7 @@ import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyApply;
 import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.domain.PartyMember;
+import com.example.villagerservice.party.domain.PartyState;
 import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyException;
@@ -125,6 +127,10 @@ public class PartyServiceImpl implements PartyService {
                 .memberId(member.getId())
                 .party(party)
                 .build());
+
+        // 모임 상태 변경
+        party.setState(START);
+        partyRepository.save(party);
     }
 
     @Override
