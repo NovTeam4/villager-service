@@ -13,6 +13,8 @@ public enum PostErrorCode {
     COMMENT_ID_NOT_FOUND("INFO-824", "해당 댓글을 찾을수가 없습니다"),
     COMMENT_VALID_NOT("INFO-830", "요청인자가 잘못되었습니다."),
     COMMENT_ROLE_NOT("INFO-834", "본인 댓글이 아닙니다. 권한이 없습니다.")
+
+
     ;
 
     private final String errorCode;

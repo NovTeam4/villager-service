@@ -1,5 +1,6 @@
 package com.example.villagerservice.post.service.impl;
 
+import com.example.villagerservice.comment.excepiton.CommentException;
 import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.member.domain.MemberRepository;
 import com.example.villagerservice.member.exception.MemberException;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.villagerservice.comment.excepiton.CommentErrorCode.COMMENT_POST_NOT_FOUND;
 import static com.example.villagerservice.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.example.villagerservice.post.exception.PostErrorCode.*;
 
@@ -29,8 +31,10 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     public void createPostComment(Long memberId, Long postId, CreatePostComment.Request request) {
+
         Post post = findByPostId(postId);
         Member member = findByMemberId(memberId);
+
         PostComment postComment = new PostComment(member, post, request.getComment());
         postCommentRepository.save(postComment);
     }

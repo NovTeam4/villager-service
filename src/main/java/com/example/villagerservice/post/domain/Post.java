@@ -4,9 +4,7 @@ import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.member.domain.Member;
 
 import com.example.villagerservice.postlike.domain.PostLike;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import com.example.villagerservice.post.exception.PostException;
 
 
@@ -18,6 +16,8 @@ import static com.example.villagerservice.post.exception.PostErrorCode.POST_DELE
 
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseTimeEntity {
     @Id
