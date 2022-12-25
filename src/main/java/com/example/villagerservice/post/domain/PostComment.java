@@ -2,15 +2,15 @@ package com.example.villagerservice.post.domain;
 
 import com.example.villagerservice.common.domain.BaseTimeEntity;
 import com.example.villagerservice.member.domain.Member;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 public class PostComment extends BaseTimeEntity {
 
     @Id
