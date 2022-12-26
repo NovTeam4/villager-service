@@ -111,43 +111,6 @@ public class PostCommentServiceImplTest {
 
 
     @Test
-    @DisplayName("댓글 생성시 (댓글에 한글씨라도 안썻을) 경우테스트")
-    void createPostCommentNotInput(){
-        // given
-        Member user = Member.builder()
-                .email("aaa@naver.com")
-                .nickname("user")
-                .build();
-
-        Post post = Post.builder()
-                .title("제목")
-                .contents("내용")
-                .member(user)
-                .build();
-
-        given(postRepository.findById(anyLong()))
-                .willReturn(Optional.of(post));
-
-        given(memberRepository.findById(anyLong()))
-                .willReturn(Optional.of(user));
-
-        CreatePostComment.Request comment = CreatePostComment.Request.builder()
-                .comment("")
-                .build();
-        //when
-        MethodArgumentNotValidException NotValidException = assertThrows(
-                MethodArgumentNotValidException.class, () -> postCommentServiceimpl.createPostComment(1L, 1L, comment));
-
-
-        //then
-
-
-        assertThat(NotValidException).isEqualTo(DATA_INVALID_ERROR.getErrorMessage());
-
-    }
-
-
-    @Test
     @DisplayName("댓글 작성 정상테스트")
     void getCommentNotFoundTest() {
 
