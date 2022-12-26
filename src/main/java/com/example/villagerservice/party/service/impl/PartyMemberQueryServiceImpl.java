@@ -13,8 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class PartyMemberQueryServiceImpl implements PartyMemberQueryService {
     private final PartyMemberQueryRepository partyMemberQueryRepository;
 
+    /**
+     * 모임원 id 조회
+     * @param partyId
+     * @return
+     */
     @Override
-    public List<Long> getPartyMemberId(Long partyId, String email) {
-        return partyMemberQueryRepository.getPartyMemberId(partyId, email);
+    public List<Long> getPartyMemberId(Long partyId) {
+        return partyMemberQueryRepository.getPartyMemberId(partyId);
     }
 }
