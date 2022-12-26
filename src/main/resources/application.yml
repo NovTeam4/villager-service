@@ -71,7 +71,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: villagerservice@gmail.com
-    password: uqyrsuhdldhaflax
+    password: ENC(4PbruYxDL+lD/89BSMHDe9910sg1jsXLmgvP32g0CcQ=)
     properties:
       mail:
         smtp:
