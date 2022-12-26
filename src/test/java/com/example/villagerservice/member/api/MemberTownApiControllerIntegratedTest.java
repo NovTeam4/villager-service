@@ -92,7 +92,7 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
         assertThat(memberTown.getTownName()).isEqualTo("서울");
         assertThat(memberTown.getTownLocation().getLatitude()).isEqualTo(33.319789);
         assertThat(memberTown.getTownLocation().getLongitude()).isEqualTo(126.774678);
-        assertThat(memberTown.getTown().getCode()).isEqualTo("5013032026");
+        assertThat(memberTown.getTown().getCode()).isEqualTo("1111051500");
     }
 
     @Test
@@ -176,10 +176,10 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
         FindMemberTownList.Response findMemberTownList = objectMapper.readValue(response.asString(), FindMemberTownList.Response.class);
         assertThat(findMemberTownList.getTowns().size()).isEqualTo(2);
         assertThat(findMemberTownList.getTowns().get(0).getMemberTownId()).isEqualTo(memberTownId1);
-        assertThat(findMemberTownList.getTowns().get(0).getCityName()).isEqualTo("제주특별자치도 서귀포시 표선면");
+        assertThat(findMemberTownList.getTowns().get(0).getCityName()).isEqualTo("서울특별시 종로구 청운효자동");
         assertThat(findMemberTownList.getTowns().get(0).getTownName()).isEqualTo("동네명");
         assertThat(findMemberTownList.getTowns().get(1).getMemberTownId()).isEqualTo(memberTownId2);
-        assertThat(findMemberTownList.getTowns().get(1).getCityName()).isEqualTo("제주특별자치도 서귀포시 표선면");
+        assertThat(findMemberTownList.getTowns().get(1).getCityName()).isEqualTo("서울특별시 종로구 청운효자동");
         assertThat(findMemberTownList.getTowns().get(1).getTownName()).isEqualTo("동네명");
     }
 
@@ -206,7 +206,7 @@ class MemberTownApiControllerIntegratedTest extends BaseDocumentation {
                 .statusCode(HttpStatus.OK.value())
                 .body("memberTownId", Matchers.equalTo(memberTownId.intValue()))
                 .body("townName", Matchers.equalTo("동네명"))
-                .body("cityName", Matchers.equalTo("제주특별자치도 서귀포시 표선면"))
+                .body("cityName", Matchers.equalTo("서울특별시 종로구 청운효자동"))
                 .body("latitude", Matchers.equalTo(32.0F))
                 .body("longitude", Matchers.equalTo(127.0F))
         ;
