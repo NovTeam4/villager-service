@@ -1,5 +1,6 @@
 package com.example.villagerservice.party.repository.impl;
 
+import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.repository.PartyLikeRepository;
@@ -39,6 +40,23 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
         return partyList;
     }
 
+    @Override
+    public List<PartyListDTO> getAllPartyWithMember(Member member) {
+
+        List<PartyListDTO> partyList = jdbcTemplate.query(getQueryWithMember(), mapRow(), member.getId());
+        for (PartyListDTO partyListDTO : partyList) {
+            List<String> tagNameList = getTagNameList(partyListDTO.getPartyId());
+            for (String tagName : tagNameList) {
+                partyListDTO.getTagNameList().add(tagName);
+            }
+
+            boolean partyLike = partyLikeRepository.existsByParty_IdAndMember_Email(partyListDTO.getPartyId(), member.getEmail());
+            partyListDTO.setPartyLike(partyLike);
+        }
+
+        return partyList;
+    }
+
     private List<String> getTagNameList(Long partyId) {
         return jdbcTemplate.query(" select tag_name from party_tag where party_id = ? ", new RowMapper<String>() {
             @Override
@@ -55,6 +73,13 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
                 " ORDER BY distance " +
                 " limit 5 ";
     }
+
+    private String getQueryWithMember() {
+        return " SELECT p.party_id ,p.party_name ,p.start_dt , p.end_dt ,m.nickname , p.content, p.location , m.member_id " +
+                " FROM party as p join member_detail as m on m.member_id = p.member_id " +
+                " WHERE p.member_id = ? ";
+    }
+
 
     private RowMapper<PartyListDTO> mapRow() {
 

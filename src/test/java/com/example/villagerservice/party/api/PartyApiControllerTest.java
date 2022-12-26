@@ -230,6 +230,18 @@ public class PartyApiControllerTest {
     }
 
     @Test
+    @WithMockCustomMember
+    @DisplayName("사용자가 속한 모임 전체 조회 테스트")
+    void getAllPartyWithMember() throws Exception {
+
+        mockMvc.perform(get("/api/v1/parties/"))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(partyQueryService,times(1)).getAllPartyWithMember(any());
+    }
+
+    @Test
     @DisplayName("모임 댓글 테스트")
     @WithMockCustomMember
     void createComment() throws Exception {

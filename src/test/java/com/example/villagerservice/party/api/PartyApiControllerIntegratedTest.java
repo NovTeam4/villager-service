@@ -6,6 +6,7 @@ import static com.example.villagerservice.party.type.PartyLikeResponseType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.example.document.BaseDocumentation;
@@ -243,6 +244,29 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 .when()
                 .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
                 .get("/api/v1/parties/{LAT}/{LNT}",127.1,127.1);
+
+        response
+                .then()
+                .statusCode(HttpStatus.OK.value());
+
+    }
+
+    @Test
+    @DisplayName("사용자가 속한 모임 전체 조회 테스트")
+    void getAllPartyWithMember() throws Exception {
+
+        JwtTokenResponse jwtTokenResponse = getJwtTokenResponse();
+        Member member = createMember("testparty@gmail.com", "홍길동");
+        Party party = saveParty(member);
+        createPartyComment(party , member.getMemberDetail().getNickname());
+        Party party2 = saveParty(member);
+        createPartyComment(party2 , member.getMemberDetail().getNickname());
+
+        Response response = givenAuth("",
+                template.requestRestDocumentation("사용자가 속한 모임 전체 조회"))
+                .when()
+                .header(AUTHORIZATION, "Bearer " + jwtTokenResponse.getAccessToken())
+                .get("/api/v1/parties");
 
         response
                 .then()
