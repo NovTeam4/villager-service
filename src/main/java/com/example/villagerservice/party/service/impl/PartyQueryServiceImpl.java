@@ -1,5 +1,6 @@
 package com.example.villagerservice.party.service.impl;
 
+import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.repository.PartyQueryRepository;
@@ -18,5 +19,10 @@ public class PartyQueryServiceImpl implements PartyQueryService {
     @Override
     public List<PartyListDTO> getPartyList(String email ,Double LAT, Double LNT) {
         return partyQueryRepository.getPartyList(email , LAT , LNT);
+    }
+
+    @Override
+    public List<PartyListDTO> getAllPartyWithMember(Member member) {
+        return partyQueryRepository.getAllPartyWithMember(member);
     }
 }

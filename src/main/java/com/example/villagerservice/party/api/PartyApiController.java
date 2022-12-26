@@ -44,6 +44,12 @@ public class PartyApiController {
 
     }
 
+    @GetMapping()
+    public List<PartyListDTO> getAllPartyWithMember(@AuthenticationPrincipal Member member) {
+
+        return partyQueryService.getAllPartyWithMember(member);
+    }
+
     @GetMapping("/{partyId}")
     public PartyDTO.Response getParty(@PathVariable Long partyId , @AuthenticationPrincipal Member member) {
 
