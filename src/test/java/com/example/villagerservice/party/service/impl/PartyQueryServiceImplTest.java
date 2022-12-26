@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.BDDMockito.given;
@@ -67,7 +68,48 @@ public class PartyQueryServiceImplTest {
                 .willReturn(responseList);
 
         List<PartyListDTO> partyList = partyQueryService.getPartyList(member.getEmail(), 127.1, 127.1);
-        org.assertj.core.api.Assertions.assertThat(partyList.size()).isEqualTo(2);
+        assertThat(partyList.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("모임 전체 조회 테스트")
+    void getAllPartyWithMember(){
+
+        PartyDTO.Request request = createRequest();
+
+        Member member = Member.builder()
+                .email("test@gmail.com")
+                .nickname("홍길동")
+                .build();
+
+        Party party = Party.createParty(request , member);
+
+        List<Party> list = new ArrayList<>();
+
+        list.add(Party.createParty(request , member));
+        list.add(Party.createParty(request , member));
+
+        PartyListDTO partyListDTO = PartyListDTO.builder()
+                .partyName(request.getPartyName())
+                .nickname(member.getMemberDetail().getNickname())
+                .build();
+
+        List<PartyListDTO> responseList = new ArrayList<>();
+        responseList.add(PartyListDTO.builder()
+                .partyName(request.getPartyName())
+                .nickname(member.getMemberDetail().getNickname())
+                .build());
+        responseList.add(PartyListDTO.builder()
+                .partyName(request.getPartyName())
+                .nickname(member.getMemberDetail().getNickname())
+                .build());
+
+        given(partyQueryRepository.getAllPartyWithMember(member))
+                .willReturn(responseList);
+
+        List<PartyListDTO> partyList = partyQueryService.getAllPartyWithMember(member);
+        assertThat(partyList.size()).isEqualTo(2);
+        assertThat(partyList.get(0).getMemberId()).isEqualTo(member.getId());
     }
 
     private static PartyDTO.Request createRequest() {
