@@ -20,11 +20,13 @@ public class PostItemDetail {
     private String categoryName;
     private String createAt;
     private String nearCreateAt;
+    private boolean isLike;
     private List<PostImageItem> images = new ArrayList<>();
     private List<PostCommentItem> comments = new ArrayList<>();
 
     public PostItemDetail(Long postId, Long categoryId, String nickName, Long viewCount,
-                          String title, String contents, String categoryName, LocalDateTime createAt, Long likeCount) {
+                          String title, String contents, String categoryName, LocalDateTime createAt, Long likeCount
+    , boolean isLike) {
         this.postId = postId;
         this.categoryId = categoryId;
         this.nickName = nickName;
@@ -35,6 +37,7 @@ public class PostItemDetail {
         this.contents = contents;
         this.categoryName = categoryName;
         this.likeCount = likeCount;
+        this.isLike = isLike;
     }
 
     public void setImages(List<PostImageItem> images) {

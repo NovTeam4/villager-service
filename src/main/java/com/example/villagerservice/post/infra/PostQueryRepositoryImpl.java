@@ -5,6 +5,7 @@ import com.example.villagerservice.post.dto.*;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -51,7 +52,15 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                                         JPAExpressions.select(count(postLike.id))
                                                 .from(postLike)
                                                 .where(postLike.post.eq(post)),
-                                        "postLikeCount")))
+                                        "postLikeCount"),
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(new CaseBuilder()
+                                                        .when(postLike.id.isNotNull())
+                                                        .then(true)
+                                                        .otherwise(false))
+                                                .from(postLike)
+                                                .where(getLikeMember(cond.getMemberId())), "isLike"))
+                )
                 .from(post)
                 .innerJoin(post.member, member)
                 .innerJoin(post.member.memberDetail, memberDetail)
@@ -76,8 +85,15 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 countQuery::fetchOne);
     }
 
+    private BooleanExpression getLikeMember(Long memberId) {
+        if(memberId == null) {
+            return null;
+        }
+        return postLike.member.id.eq(memberId).and(postLike.post.eq(post));
+    }
+
     @Override
-    public PostItemDetail getPostItemDetail(Long postId) {
+    public PostItemDetail getPostItemDetail(PostDetailCond cond) {
 
         PostItemDetail postItemDetail = queryFactory
                 .select(Projections.constructor(PostItemDetail.class,
@@ -93,14 +109,22 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                                 JPAExpressions.select(count(postLike.id))
                                         .from(postLike)
                                         .where(postLike.post.eq(post)),
-                                "postLikeCount")))
+                                "postLikeCount"),
+                        ExpressionUtils.as(
+                                JPAExpressions.select(new CaseBuilder()
+                                                .when(postLike.id.isNotNull())
+                                                .then(true)
+                                                .otherwise(false))
+                                        .from(postLike)
+                                        .where(getLikeMember(cond.getMemberId())), "isLike"))
+                )
                 .from(post)
                 .innerJoin(post.member, member)
                 .innerJoin(member.memberDetail, memberDetail)
                 .innerJoin(post.category, category)
                 .where(isActivePost(),
-                        post.id.eq(postId)).
-                fetchOne();
+                        post.id.eq(cond.getPostId()))
+                .fetchOne();
 
         List<PostImageItem> images = queryFactory
                 .select(Projections.constructor(PostImageItem.class,
@@ -111,7 +135,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 .from(postImage)
                 .innerJoin(postImage.post, post)
                 .where(isActivePost(),
-                        isSamePost(postId))
+                        isSamePost(cond.getPostId()))
                 .fetch();
 
 
@@ -127,7 +151,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 .innerJoin(postComment.member, member)
                 .innerJoin(member.memberDetail, memberDetail)
                 .where(isActivePost(),
-                        isSamePost(postId))
+                        isSamePost(cond.getPostId()))
                 .orderBy(postComment.createdAt.desc())
                 .fetch();
 

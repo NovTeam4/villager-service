@@ -17,9 +17,10 @@ public class ListPostItem {
     private String categoryName;
     private String createAt;
     private String nearCreateAt;
+    private boolean isLike;
 
     public ListPostItem(Long postId, Long categoryId, String nickName, Long viewCount,
-                        String title, String categoryName, LocalDateTime createAt, Long likeCount) {
+                        String title, String categoryName, LocalDateTime createAt, Long likeCount, boolean isLike) {
         this.postId = postId;
         this.categoryId = categoryId;
         this.nickName = nickName;
@@ -29,5 +30,6 @@ public class ListPostItem {
         this.title = title;
         this.categoryName = categoryName;
         this.likeCount = likeCount;
+        this.isLike = isLike;
     }
 }

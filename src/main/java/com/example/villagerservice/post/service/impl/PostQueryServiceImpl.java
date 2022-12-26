@@ -3,6 +3,7 @@ package com.example.villagerservice.post.service.impl;
 import com.example.villagerservice.post.domain.PostQueryRepository;
 import com.example.villagerservice.post.dto.ListPostItem;
 import com.example.villagerservice.post.dto.ListPostSearchCond;
+import com.example.villagerservice.post.dto.PostDetailCond;
 import com.example.villagerservice.post.dto.PostItemDetail;
 import com.example.villagerservice.post.service.PostQueryService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     }
 
     @Override
-    public PostItemDetail getPostItemDetail(Long postId) {
-        return postQueryRepository.getPostItemDetail(postId);
+    public PostItemDetail getPostItemDetail(PostDetailCond cond) {
+        return postQueryRepository.getPostItemDetail(cond);
     }
 }

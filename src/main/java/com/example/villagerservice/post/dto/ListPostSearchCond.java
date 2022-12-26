@@ -8,4 +8,5 @@ public class ListPostSearchCond {
 
     private Long categoryId;
     private String title;
+    private Long memberId;
 }

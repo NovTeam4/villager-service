@@ -318,7 +318,44 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
                 .body("content[0].viewCount", Matchers.equalTo(0))
                 .body("content[0].likeCount", Matchers.equalTo(0))
                 .body("content[0].title", Matchers.equalTo("제목입니다"))
-                .body("content[0].categoryName", Matchers.equalTo("이야기"));
+                .body("content[0].categoryName", Matchers.equalTo("이야기"))
+                .body("content[0].like", Matchers.equalTo(false));
+    }
+
+    @Test
+    @DisplayName("게시글 목록 조회 좋아요 테스트")
+    void getPostListLikeApiTest() {
+        // given
+        Category category = createCategory("이야기");
+        Member member = createToMember("post@gmail.com", "post");
+
+        Post post = new Post(member, category, "제목입니다", "본문입니다.");
+        postRepository.save(post);
+
+        postLikeRepository.save(PostLike.createPost(member, post));
+        assertThat(postRepository.count()).isEqualTo(1);
+
+        // when & then
+        Response response = givenAuthPass("",
+                template.allRestDocumentation(
+                        "게시글 목록 조회",
+                        getPostListRequestParameterFields(),
+                        ListPostSearchCond.class.getName(),
+                        getPostListResponseFields(),
+                        Page.class.getName()))
+                .when()
+                .get("/api/v1/posts?size=10&page=0&title=제목&categoryId=" + category.getId());
+
+        response
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("content.size()", Matchers.equalTo(1))
+                .body("content[0].nickName", Matchers.equalTo("post"))
+                .body("content[0].viewCount", Matchers.equalTo(0))
+                .body("content[0].likeCount", Matchers.equalTo(1))
+                .body("content[0].title", Matchers.equalTo("제목입니다"))
+                .body("content[0].categoryName", Matchers.equalTo("이야기"))
+                .body("content[0].like", Matchers.equalTo(true));
     }
 
     @Test
@@ -362,6 +399,7 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
                 .body("title", Matchers.equalTo("제목입니다."))
                 .body("contents", Matchers.equalTo("본문입니다."))
                 .body("categoryName", Matchers.equalTo("이야기"))
+                .body("like", Matchers.equalTo(true))
                 .body("images.size()", Matchers.equalTo(2))
                 .body("images[0].path", Matchers.equalTo(awsS3baseUrl.concat("aaa.png")))
                 .body("images[0].size", Matchers.equalTo(12345))
@@ -432,7 +470,8 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("content[].title").description("제목"),
                 fieldWithPath("content[].categoryName").description("카테고리명"),
                 fieldWithPath("content[].createAt").description("생성일"),
-                fieldWithPath("content[].nearCreateAt").description("생성일2")
+                fieldWithPath("content[].nearCreateAt").description("생성일2"),
+                fieldWithPath("content[].like").description("좋아요 여부")
         );
         return getContentsConcatPageResponseFields(fieldDescriptors);
     }
@@ -458,6 +497,7 @@ class PostApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("categoryName").description("게시글 id"),
                 fieldWithPath("createAt").description("게시글 id"),
                 fieldWithPath("nearCreateAt").description("게시글 id"),
+                fieldWithPath("like").description("좋아요 여부"),
                 fieldWithPath("images").type(JsonFieldType.ARRAY).description("이미지 목록"),
                 fieldWithPath("images[].imageId").description("이미지 id"),
                 fieldWithPath("images[].path").description("경로"),

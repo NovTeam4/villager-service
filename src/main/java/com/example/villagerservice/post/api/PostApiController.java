@@ -1,6 +1,7 @@
 package com.example.villagerservice.post.api;
 
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.post.domain.PostRepository;
 import com.example.villagerservice.post.dto.*;
 import com.example.villagerservice.post.service.PostCommentService;
 import com.example.villagerservice.post.service.PostQueryService;
@@ -23,17 +24,31 @@ public class PostApiController {
     private final PostService postService;
     private final PostCommentService postCommentService;
     private final PostQueryService postQueryService;
+    private final PostRepository postRepository;
 
     @GetMapping
-    public Page<ListPostItem> getPostList(@ModelAttribute ListPostSearchCond searchCond,
-                                          @PageableDefault Pageable pageable) {
+    public Page<ListPostItem> getPostList(
+            @AuthenticationPrincipal Member member,
+            @ModelAttribute ListPostSearchCond searchCond,
+            @PageableDefault Pageable pageable) {
+
+        if (member != null) {
+            searchCond.setMemberId(member.getId());
+        }
         return postQueryService.getPostList(searchCond, pageable);
     }
 
     @GetMapping("/{postId}")
-    public PostItemDetail getPost(@PathVariable Long postId) {
+    public PostItemDetail getPost(
+            @AuthenticationPrincipal Member member,
+            @PathVariable Long postId) {
         postService.postViewCountUp(postId);
-        return postQueryService.getPostItemDetail(postId);
+        PostDetailCond postDetailCond = new PostDetailCond();
+        if(member != null) {
+            postDetailCond.setMemberId(member.getId());
+        }
+        postDetailCond.setPostId(postId);
+        return postQueryService.getPostItemDetail(postDetailCond);
     }
 
     @PostMapping
@@ -59,27 +74,28 @@ public class PostApiController {
     @PostMapping("/comments/{id}")
     public void createPostComment(@AuthenticationPrincipal Member member,
                                   @PathVariable("id") Long postId,
-                                  @Valid @RequestBody CreatePostComment.Request request){
-        postCommentService.createPostComment(member.getId(),postId,request);
+                                  @Valid @RequestBody CreatePostComment.Request request) {
+        postCommentService.createPostComment(member.getId(), postId, request);
 
     }
 
     @DeleteMapping("/comments/{postId}/{commentId}")
     public void deleteComment(@AuthenticationPrincipal Member member,
                               @PathVariable("postId") Long postId,
-                              @PathVariable("commentId") Long commentId){
-        postCommentService.deletePostComment(member.getId(),postId,commentId);
+                              @PathVariable("commentId") Long commentId) {
+        postCommentService.deletePostComment(member.getId(), postId, commentId);
     }
 
     @PutMapping("/comments/{postId}/{commentId}")
     public void updatePostComment(@AuthenticationPrincipal Member member,
                                   @PathVariable("postId") Long postId,
                                   @PathVariable("commentId") Long commentId,
-                                  @Valid @RequestBody UpdatePostComment.Request request){
-        postCommentService.updatePostComment(member.getId(),postId,commentId,request);
+                                  @Valid @RequestBody UpdatePostComment.Request request) {
+        postCommentService.updatePostComment(member.getId(), postId, commentId, request);
     }
+
     @GetMapping("/category")
-    public List<CategoryDto.Response> postCategoryToList(){
+    public List<CategoryDto.Response> postCategoryToList() {
         return postService.getCategoryList();
     }
 
