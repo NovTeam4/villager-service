@@ -1,4 +1,4 @@
-package com.example.villagerservice.party.infra;
+package com.example.villagerservice.party.repository.impl;
 
 import com.example.villagerservice.party.domain.PartyApply;
 import com.example.villagerservice.party.domain.QPartyApply;
