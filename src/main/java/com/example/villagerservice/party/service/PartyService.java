@@ -33,4 +33,11 @@ public interface PartyService {
      * @param endTime
      */
     void extensionParty(Long partyId, Member member, LocalDate endTime);
+
+    /**
+     * 모임 종료
+     * @param partyId
+     * @param member
+     */
+    void endParty(Long partyId, Member member);
 }
