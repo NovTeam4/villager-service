@@ -1,7 +1,7 @@
 package com.example.villagerservice.party.service.impl;
 
 import com.example.villagerservice.party.domain.PartyApply;
-import com.example.villagerservice.party.infra.PartyApplyQueryRepository;
+import com.example.villagerservice.party.repository.impl.PartyApplyQueryRepository;
 import com.example.villagerservice.party.service.PartyApplyQueryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
