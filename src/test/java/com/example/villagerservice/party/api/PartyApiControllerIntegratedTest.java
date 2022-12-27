@@ -136,7 +136,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Party party = saveParty(member);
         createPartyComment(party , member.getMemberDetail().getNickname());
         Long partyId = party.getId();
-        partyApplyRepository.save(PartyApply.createPartyList(party , member.getId()));
+        savePartyMember(party , member.getId());
 
         Response response = givenAuth("",
                 template.allRestDocumentation("모임 조회",
@@ -187,7 +187,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Party party = saveParty(member);
         createPartyComment(party , member.getMemberDetail().getNickname());
         Long partyId = party.getId();
-        partyApplyRepository.save(PartyApply.createPartyList(party , member.getId()));
+        savePartyMember(party , member.getId());
 
         List<PartyTag> newList = new ArrayList<>();
         newList.add(PartyTag.builder().tagName("축구").build());
@@ -265,6 +265,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         createPartyComment(party , member.getMemberDetail().getNickname());
         Party party2 = saveParty(member);
         createPartyComment(party2 , member.getMemberDetail().getNickname());
+        savePartyMember(party , member.getId());
 
         Response response = givenAuth("",
                 template.requestRestDocumentation("사용자가 속한 모임 전체 조회"))

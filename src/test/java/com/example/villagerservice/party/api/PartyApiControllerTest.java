@@ -44,6 +44,9 @@ public class PartyApiControllerTest {
     @MockBean
     private PartyCommentService partyCommentService;
 
+    @MockBean
+    private PartyMemberQueryService partyMemberQueryService;
+
     @Autowired
     private MockMvc mockMvc;
 
