@@ -1,7 +1,6 @@
 package com.example.villagerservice.party.repository.impl;
 
-import com.example.villagerservice.party.domain.PartyApply;
-import com.example.villagerservice.party.domain.QPartyApply;
+import com.example.villagerservice.party.domain.QPartyMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,7 @@ public class PartyMemberQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     public List<Long> getPartyMemberId(Long partyId) {
-        QPartyApply p = QPartyApply.partyApply;
+        QPartyMember p = QPartyMember.partyMember;
 
         List<Long> result = queryFactory
             .select(p.id)
