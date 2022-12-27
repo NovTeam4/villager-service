@@ -896,7 +896,9 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("[].location").type(JsonFieldType.STRING).description("모임 장소"),
                 fieldWithPath("[].tagNameList").type(JsonFieldType.ARRAY).description("모임 태그 목록"),
                 fieldWithPath("[].partyLike").type(JsonFieldType.BOOLEAN).description("모임 좋아요"),
-                fieldWithPath("[].memberId").type(JsonFieldType.NUMBER).description("모임 주최자 id")
+                fieldWithPath("[].memberId").type(JsonFieldType.NUMBER).description("모임 주최자 id"),
+                fieldWithPath("[].numberPeople").type(JsonFieldType.NUMBER).description("모임 전체 인원 수"),
+                fieldWithPath("[].partyPeople").type(JsonFieldType.NUMBER).description("현재 모임 구성원 수")
         );
     }
 
