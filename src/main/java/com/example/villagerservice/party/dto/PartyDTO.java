@@ -1,5 +1,6 @@
 package com.example.villagerservice.party.dto;
 
+import com.example.villagerservice.member.domain.Member;
 import com.example.villagerservice.party.domain.Party;
 import com.example.villagerservice.party.domain.PartyComment;
 import com.example.villagerservice.party.domain.PartyState;
@@ -90,7 +91,11 @@ public class PartyDTO {
 
         private PartyState state;
 
-        public static PartyDTO.Response createPartyResponse(Party party , List<PartyComment> partyCommentList , Boolean PartyLike) {
+        private List<MemberClub> memberClubs;
+
+        private Integer partyPeople;
+
+        public static PartyDTO.Response createPartyResponse(Party party , List<PartyComment> partyCommentList , Boolean PartyLike , List<Member> memberList) {
             Response response = Response.builder()
                     .partyName(party.getPartyName())
                     .score(party.getScore())
@@ -103,6 +108,8 @@ public class PartyDTO {
                     .state(party.getState())
                     .tagNameList(new ArrayList<>())
                     .commentList(new ArrayList<>())
+                    .memberClubs(new ArrayList<>())
+                    .partyPeople(memberList.size())
                     .nickname(party.getMember().getMemberDetail().getNickname())
                     .mannerPoint(party.getMember().getMemberDetail().getMannerPoint().getPoint())
                     .PartyLike(PartyLike)
@@ -123,6 +130,13 @@ public class PartyDTO {
                                 .isOwner(isOwner)
                                 .partyCommentId(partyComment.getId())
                                 .partyId(partyComment.getParty().getId()).build());
+            }
+
+            for (Member member : memberList) {
+                response.memberClubs.add(MemberClub.builder()
+                        .memberName(member.getMemberDetail().getNickname())
+                        .memberId(member.getId())
+                        .build());
             }
 
             return response;
