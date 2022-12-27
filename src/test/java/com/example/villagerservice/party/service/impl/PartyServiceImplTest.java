@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.constraints.NotNull;
+
+import com.example.villagerservice.party.service.PartyMemberQueryService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,6 +49,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -75,6 +79,9 @@ public class PartyServiceImplTest {
 
     @Mock
     PartyLikeService partyLikeService;
+
+    @Mock
+    PartyMemberQueryService partyMemberQueryService;
 
     @Mock
     PartyApplyQueryService partyApplyQueryService;
