@@ -44,6 +44,8 @@ import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.mail.Part;
+
 @Import({AuthConfig.class})
 public class PartyApiControllerIntegratedTest extends BaseDocumentation {
 
@@ -134,6 +136,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Party party = saveParty(member);
         createPartyComment(party , member.getMemberDetail().getNickname());
         Long partyId = party.getId();
+        partyApplyRepository.save(PartyApply.createPartyList(party , member.getId()));
 
         Response response = givenAuth("",
                 template.allRestDocumentation("모임 조회",
@@ -184,6 +187,7 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
         Party party = saveParty(member);
         createPartyComment(party , member.getMemberDetail().getNickname());
         Long partyId = party.getId();
+        partyApplyRepository.save(PartyApply.createPartyList(party , member.getId()));
 
         List<PartyTag> newList = new ArrayList<>();
         newList.add(PartyTag.builder().tagName("축구").build());
@@ -872,7 +876,11 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("주최자 이름"),
                 fieldWithPath("mannerPoint").type(JsonFieldType.NUMBER).description("주최자 매너점수"),
                 fieldWithPath("partyLike").type(JsonFieldType.BOOLEAN).description("모임 좋아요"),
-                fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("주최자 id")
+                fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("주최자 id"),
+                fieldWithPath("partyPeople").type(JsonFieldType.NUMBER).description("현재 모임원 수"),
+                fieldWithPath("memberClubs").type(JsonFieldType.ARRAY).description("현재 모임원 정보"),
+                fieldWithPath("memberClubs[].memberName").type(JsonFieldType.STRING).description("현재 모임원의 이름"),
+                fieldWithPath("memberClubs[].memberId").type(JsonFieldType.NUMBER).description("현재 모임원의 id")
         );
     }
 
@@ -888,7 +896,9 @@ public class PartyApiControllerIntegratedTest extends BaseDocumentation {
                 fieldWithPath("[].location").type(JsonFieldType.STRING).description("모임 장소"),
                 fieldWithPath("[].tagNameList").type(JsonFieldType.ARRAY).description("모임 태그 목록"),
                 fieldWithPath("[].partyLike").type(JsonFieldType.BOOLEAN).description("모임 좋아요"),
-                fieldWithPath("[].memberId").type(JsonFieldType.NUMBER).description("모임 주최자 id")
+                fieldWithPath("[].memberId").type(JsonFieldType.NUMBER).description("모임 주최자 id"),
+                fieldWithPath("[].numberPeople").type(JsonFieldType.NUMBER).description("모임 전체 인원 수"),
+                fieldWithPath("[].partyPeople").type(JsonFieldType.NUMBER).description("현재 모임 구성원 수")
         );
     }
 
