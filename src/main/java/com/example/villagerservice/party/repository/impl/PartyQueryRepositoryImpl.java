@@ -62,6 +62,10 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
             partyListDTO.setPartyPeople(partyMemberList.size());
         }
 
+        for (PartyListDTO partyListDTO : partyList) {
+            System.out.println("partyListDTO.getPartyName() = " + partyListDTO.getPartyName());
+        }
+
         return partyList;
     }
 
@@ -84,8 +88,8 @@ public class PartyQueryRepositoryImpl implements PartyQueryRepository {
 
     private String getQueryWithMember() {
         return " SELECT p.party_id ,p.party_name ,p.start_dt , p.end_dt ,m.nickname , p.content, p.location , p.number_people , m.member_id " +
-                " FROM party as p join member_detail as m on m.member_id = p.member_id " +
-                " WHERE p.member_id = ? ";
+                " FROM party as p join party_member as pm on p.party_id = pm.party_id join member_detail as m on m.member_id = pm.member_id" +
+                " WHERE pm.member_id = ? ";
     }
 
 
