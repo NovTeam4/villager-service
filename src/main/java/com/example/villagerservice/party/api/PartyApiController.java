@@ -1,22 +1,33 @@
 package com.example.villagerservice.party.api;
 
 import com.example.villagerservice.member.domain.Member;
+import com.example.villagerservice.party.dto.PartyApplyDto;
 import com.example.villagerservice.party.dto.PartyDTO;
+import com.example.villagerservice.party.dto.PartyLikeDto;
 import com.example.villagerservice.party.dto.PartyListDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
-import com.example.villagerservice.party.dto.PartyApplyDto;
-import com.example.villagerservice.party.dto.PartyLikeDto;
-import com.example.villagerservice.party.service.*;
+import com.example.villagerservice.party.service.PartyApplyService;
+import com.example.villagerservice.party.service.PartyCommentService;
+import com.example.villagerservice.party.service.PartyLikeService;
+import com.example.villagerservice.party.service.PartyMemberQueryService;
+import com.example.villagerservice.party.service.PartyQueryService;
+import com.example.villagerservice.party.service.PartyService;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -28,6 +39,7 @@ public class PartyApiController {
     private final PartyApplyService partyApplyService;
     private final PartyLikeService partyLikeService;
     private final PartyCommentService partyCommentService;
+    private final PartyMemberQueryService partyMemberQueryService;
 
 
     @PostMapping()
@@ -124,5 +136,10 @@ public class PartyApiController {
     public void partyExtension(@PathVariable Long partyId,
         @AuthenticationPrincipal Member member){
         partyService.endParty(partyId, member);
+    }
+
+    @GetMapping("{partyId}/member")
+    public List<Long> getPartyMemberList(@PathVariable Long partyId){
+        return partyMemberQueryService.getPartyMemberId(partyId);
     }
 }

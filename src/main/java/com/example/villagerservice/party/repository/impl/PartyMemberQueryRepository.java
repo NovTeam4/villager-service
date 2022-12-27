@@ -15,7 +15,7 @@ public class PartyMemberQueryRepository {
         QPartyMember p = QPartyMember.partyMember;
 
         List<Long> result = queryFactory
-            .select(p.id)
+            .select(p.memberId)
             .from(p)
             .where(p.party.id.eq(partyId))
             .fetch();
