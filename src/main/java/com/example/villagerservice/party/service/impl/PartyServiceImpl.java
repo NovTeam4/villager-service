@@ -22,10 +22,8 @@ import com.example.villagerservice.party.dto.PartyDTO;
 import com.example.villagerservice.party.dto.UpdatePartyDTO;
 import com.example.villagerservice.party.exception.PartyException;
 import com.example.villagerservice.party.repository.*;
-import com.example.villagerservice.party.service.PartyApplyQueryService;
-import com.example.villagerservice.party.service.PartyCommentService;
-import com.example.villagerservice.party.service.PartyLikeService;
-import com.example.villagerservice.party.service.PartyService;
+import com.example.villagerservice.party.service.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +43,8 @@ public class PartyServiceImpl implements PartyService {
     private final PartyCreatedEventService partyCreatedEventService;
     private final PartyLikeService partyLikeService;
     private final PartyApplyQueryService partyApplyQueryService;
+
+    private final PartyMemberQueryService partyMemberQueryService;
     private final PartyApplyRepository partyApplyRepository;
     private final PartyMemberRepository partyMemberRepository;
 
@@ -80,8 +80,20 @@ public class PartyServiceImpl implements PartyService {
         Party party = partyCheckedById(partyId);
         List<PartyComment> commentList = partyCommentService.getAllComment(partyId);
         boolean partyLike = partyLikeService.isPartyLike(partyId, email);
+        List<Member> memberList = getMemberList(partyId);
 
-        return PartyDTO.Response.createPartyResponse(party , commentList , partyLike);
+        return PartyDTO.Response.createPartyResponse(party , commentList , partyLike , memberList);
+    }
+
+    private List<Member> getMemberList(Long partyId) {
+        List<Member> memberList = new ArrayList<>();
+        List<Long> partyMemberId = partyMemberQueryService.getPartyMemberId(partyId);
+        for (Long memberId : partyMemberId) {
+            Member member = memberCheckedById(memberId);
+            memberList.add(member);
+        }
+
+        return memberList;
     }
 
     @Override
@@ -210,7 +222,8 @@ public class PartyServiceImpl implements PartyService {
         List<PartyComment> commentList = partyCommentService.getAllComment(party.getId());
         boolean partyLike = partyLikeService.isPartyLike(party.getId(), email);
         party.updatePartyInfo(updatePartyRequest);
-        return PartyDTO.Response.createPartyResponse(party , commentList , partyLike);
+        List<Member> memberList = getMemberList(party.getId());
+        return PartyDTO.Response.createPartyResponse(party , commentList , partyLike , memberList);
     }
 
 }
